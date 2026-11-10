@@ -1,0 +1,10 @@
+Bagian Fitur	Nama Kelas Utama	Fungsi
+Header Navbar	.katalog-navbar	Navigasi atas, logo, & tombol aksi
+Hero Title	.katalog-hero	Judul utama & deskripsi pengenalan
+Search & Filter	.katalog-filter-bar	Kolom pencarian, dropdown sortir, & filter chips
+Tag Kategori	.katalog-category-chips	Pilihan tag: Adat Jawa, Sunda, Modern, dll
+Kartu Undangan	.template-card	Kontainer satu tema undangan
+Mockup HP/Gambar	.template-card__preview	Area pratinjau smartphone & badge diskon
+Harga & Rating	.template-card__price-tag	Harga promo, harga coret, & bintang
+Tombol Aksi	.template-card__actions	Tombol "Coba Demo" dan "Pesan via WA/Beli"
+Banner Custom	.custom-banner-cta	Kotak promo bawah (Ingin Desain Custom?)

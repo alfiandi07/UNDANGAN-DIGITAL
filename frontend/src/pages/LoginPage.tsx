@@ -16,8 +16,12 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
-      navigate("/dashboard/produk", { replace: true });
+      const pengguna = await login(email, password);
+      if (pengguna.peran === "admin") {
+        navigate("/dashboard/produk", { replace: true });
+      } else {
+        navigate("/dashboard/katalog", { replace: true });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login gagal");
     } finally {

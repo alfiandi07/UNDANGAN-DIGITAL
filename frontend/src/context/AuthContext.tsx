@@ -11,8 +11,8 @@ import type { Pengguna } from "../lib/api";
 type AuthContextType = {
   user: Pengguna | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  daftar: (nama: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<Pengguna>;
+  daftar: (nama: string, email: string, password: string) => Promise<Pengguna>;
   logout: () => void;
 };
 
@@ -40,12 +40,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const pengguna = await api.login(email, password);
     setUser(pengguna);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pengguna));
+    return pengguna;
   }
 
   async function daftar(nama: string, email: string, password: string) {
     const pengguna = await api.daftar(nama, email, password);
     setUser(pengguna);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pengguna));
+    return pengguna;
   }
 
   function logout() {

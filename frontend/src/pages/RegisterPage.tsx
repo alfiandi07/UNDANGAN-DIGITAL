@@ -22,7 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await daftar(nama, email, password);
-      navigate("/dashboard/produk", { replace: true });
+      navigate("/dashboard/katalog", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Pendaftaran gagal");
     } finally {

@@ -28,13 +28,27 @@ export default function DashboardPage() {
                 Undangan Digital
               </h1>
               <nav className="flex gap-1">
-                <NavLink to="/dashboard/produk" className={linkClass}>
-                  📦 Produk
-                </NavLink>
-                {user?.peran === "admin" && (
-                  <NavLink to="/dashboard/pengguna" className={linkClass}>
-                    👥 Pengguna
-                  </NavLink>
+                {user?.peran === "admin" ? (
+                  <>
+                    <NavLink to="/dashboard/produk" className={linkClass}>
+                      📦 Kelola Produk
+                    </NavLink>
+                    <NavLink to="/dashboard/pengguna" className={linkClass}>
+                      👥 Pengguna
+                    </NavLink>
+                    <NavLink to="/dashboard/transaksi" className={linkClass}>
+                      📋 Transaksi
+                    </NavLink>
+                  </>
+                ) : (
+                  <>
+                    <NavLink to="/dashboard/katalog" className={linkClass}>
+                      🛍️ Katalog Template
+                    </NavLink>
+                    <NavLink to="/dashboard/transaksi" className={linkClass}>
+                      🛒 Pesanan Saya
+                    </NavLink>
+                  </>
                 )}
               </nav>
             </div>
@@ -47,10 +61,10 @@ export default function DashboardPage() {
                 </span>
               </span>
               <span
-                className={`text-xs px-2 py-1 rounded-full font-medium ${
+                className={`text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider ${
                   user?.peran === "admin"
-                    ? "bg-indigo-100 text-indigo-700"
-                    : "bg-gray-100 text-gray-600"
+                    ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
+                    : "bg-emerald-100 text-emerald-700 border border-emerald-200"
                 }`}
               >
                 {user?.peran}

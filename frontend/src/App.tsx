@@ -1,17 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BerandaKatalog from "./pages/BerandaKatalog";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProdukPage from "./pages/ProdukPage";
 import PenggunaPage from "./pages/PenggunaPage";
+import TransaksiPage from "./pages/TransaksiPage";
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Halaman Utama Publik */}
+          <Route path="/" element={<BerandaKatalog />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/daftar" element={<RegisterPage />} />
 
@@ -20,12 +24,14 @@ export default function App() {
             <Route element={<DashboardPage />}>
               <Route index element={<Navigate to="produk" replace />} />
               <Route path="produk" element={<ProdukPage />} />
+              <Route path="katalog" element={<ProdukPage />} />
               <Route path="pengguna" element={<PenggunaPage />} />
+              <Route path="transaksi" element={<TransaksiPage />} />
             </Route>
           </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/dashboard/produk" replace />} />
+          {/* Fallback jika URL tidak ditemukan, arahkan ke Beranda */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

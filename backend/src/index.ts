@@ -4,6 +4,7 @@ import { pool } from "./db.js";
 import { produkRouter } from "./routes/produk.js";
 import { authRouter, penggunaRouter } from "./routes/pengguna.js";
 import { errorHandler } from "./middleware/error.js";
+import { transaksiRouter } from "./routes/transaksi.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 app.use(express.json());
@@ -19,7 +20,7 @@ app.get(
     });
   },
 );
-// Tiga router dipasang: /api/produk,api/auth, /api/pengguna.
+// Tiga router dipasang: /api/produk,api/auth, /api/pengguna, /api/transaksi.
 app.use(
   "/api/produk",
 
@@ -37,6 +38,7 @@ app.use(
 
   penggunaRouter,
 );
+app.use("/api/transaksi", transaksiRouter);
 
 // Urutan penting: route → 404 → errorHandler paling akhir
 app.use((_req, res) => {
