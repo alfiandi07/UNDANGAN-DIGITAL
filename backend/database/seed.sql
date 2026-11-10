@@ -1,6 +1,6 @@
 -- Data awal: 10 produk dan 2 pengguna
 USE ASMUdanganDigital;
-INSERT INTO produk (nama, harga, stok, kategory) VALUES
+INSERT INTO produk (nama, harga, stok, kategori) VALUES
 ('ADAT JAWA', 75000, 8, 'Adat Jawa'),
 ('Tema 1', 18000, 3,'modern'),
 ('Tema 2', 16000, 0,'Elegant'),
