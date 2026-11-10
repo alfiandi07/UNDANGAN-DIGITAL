@@ -38,13 +38,5 @@ export async function daftar(req: Request, res: Response) {
     return;
   }
   const hash = await bcrypt.hash(password, 10);
-  res.status(201).json(
-    await repo.tambahPengguna(
-      nama,
-      email,
-      hash,
-
-      "user",
-    ),
-  );
+  res.status(201).json(await repo.tambahPengguna(nama, email, hash, "admin"));
 }

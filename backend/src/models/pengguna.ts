@@ -1,4 +1,4 @@
-export type Peran = "admin" | "user";
+export type Peran = "admin" | "creator";
 // Data yang boleh dikirim ke browser (tanpa password)
 export type Pengguna = {
   id: number;
