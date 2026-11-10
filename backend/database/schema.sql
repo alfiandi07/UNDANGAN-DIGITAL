@@ -2,8 +2,10 @@
 CREATE DATABASE IF NOT EXISTS ASMUdanganDigital
 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE ASMUdanganDigital;
-DROP TABLE IF EXISTS produk;
-DROP TABLE IF EXISTS pengguna;
+DROP TABLE IF EXISTS detail_transaksi; -- 1. Hapus tabel anak paling bawah
+DROP TABLE IF EXISTS transaksi;        -- 2. Hapus tabel anak transaksi
+DROP TABLE IF EXISTS produk;           -- 3. Baru hapus produk
+DROP TABLE IF EXISTS pengguna;         -- 4. Baru hapus pengguna
 CREATE TABLE produk (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 nama VARCHAR(100) NOT NULL UNIQUE,
