@@ -12,4 +12,4 @@ INSERT INTO produk (nama, harga, stok, kategory) VALUES
 INSERT INTO pengguna (nama, email, password, peran) VALUES
 ('Sari','sari@ASMUndanganDigital.id','1234567890','admin'),
 
-('Budi', 'budi@ASMUndanganDigital.id', '1234567890', 'user');
+('Budi', 'budi@ASMUndanganDigital.id', '1234567890', 'creator');
