@@ -36,43 +36,50 @@ Berbeda dengan *marketplace* terbuka yang rumit, platform ini menggunakan model 
 
 ## 3. ATURAN BISNIS, PAKET HARGA & PEMBATAS SISTEM (SYSTEM LIMITER)
 
-Sistem menerapkan pembatasan otomatis pada tingkat database dan *middleware* berdasarkan paket yang dipilih pembeli:
+Sistem menerapkan model produk di mana **setiap template adalah produk mandiri yang terikat pada satu tipe paket desain tertentu** (Standar atau Premium) dengan **harga yang ditentukan bebas secara dinamis oleh Admin** saat menambahkan produk ke katalog:
 
-| Parameter & Fitur | Paket Basic (Rp 79.000) | Paket Standard (Rp 99.000) | Paket Spesial / VIP (Rp 120.000) |
-| :--- | :--- | :--- | :--- |
-| **Kode Sistem (`package_type`)** | `basic` | `standard` | `special` |
-| **Batas Kuota Foto (`max_photos`)** | Maksimal **15 Foto** | Maksimal **15 Foto** | Maksimal **30 Foto** |
-| **Batas Ukuran per Foto** | Maks. 500 KB (Auto-WebP) | Maks. 500 KB (Auto-WebP) | Maks. 800 KB (Auto-WebP) |
-| **Masa Aktif Link (`expires_at`)** | **3 Bulan** (90 Hari) | **6 Bulan** (180 Hari) | **12 Bulan** (365 Hari) |
-| **Fitur Interaktif Utama** | Hitung Mundur, Maps, RSVP, Generator Nama Tamu | Semua fitur Basic + **Amplop Digital/QRIS & Musik Latar** | Semua fitur Standard + **Custom Elemen & Audio Khusus** |
-| **Jadwal Auto-Delete Cloudinary** | **H+7** setelah *Expired* | **H+7** setelah *Expired* | **H+14** setelah *Expired* |
+| Parameter & Fitur | Paket Standar (`standard`) | Paket Premium (`premium`) |
+| :--- | :--- | :--- |
+| **Konsep Desain** | Layout clean, fokus teks & ornamen minimalis elegan | Desain mewah, ornamen eksklusif, tata letak visual premium |
+| **Harga Produk** | **Ditetapkan bebas oleh Admin** saat upload (misal: Rp 49.000 / Rp 69.000) | **Ditetapkan bebas oleh Admin** saat upload (misal: Rp 99.000 / Rp 149.000) |
+| **Galeri Foto (`max_photos`)** | **Tanpa Foto** (`0 Foto`) – Form galeri foto otomatis dikunci | **Maksimal 30 Foto** (Auto-WebP, slider & grid interaktif) |
+| **Batas Ukuran per Foto** | N/A (Tanpa unggahan foto) | Maks. 800 KB per foto (Auto-kompresi ke WebP) |
+| **Masa Aktif Link (`expires_at`)** | **6 Bulan** (180 Hari dari aktivasi) | **12 Bulan** (365 Hari dari aktivasi) |
+| **Fitur Interaktif** | Hitung Mundur, Navigasi Maps, RSVP, Generator Nama Tamu WhatsApp, Amplop Digital | Semua fitur Standar + **Galeri Foto 30 Slot, Autoplay Musik Latar, Animasi & Desain Mewah** |
+| **Jadwal Auto-Delete Cloudinary** | N/A (Tidak ada beban foto di cloud) | **H+14** setelah status *Expired* |
 
-**Fitur Upselling / Add-on Otomatis di Dashboard Klien:**
-* **Tambah Kuota Foto (+Rp 20.000):** Menambahkan $+10$ pada nilai `max_photos` di database.
-* **Perpanjang Masa Aktif (+Rp 25.000):** Menambahkan $+3\text{ Bulan}$ pada nilai `expires_at` di database.
+**Aturan Bisnis Utama:**
+1. **Validasi Wajib Kategori:** Saat Admin mendaftarkan template, kolom **Kategori Acara** (`wedding`, `khitan`, `birthday`, `aqiqah`) dan **Tipe Paket** (`standard`, `premium`) **wajib diisi**. Jika kosong, sistem menolak dengan pesan *"Kategori wajib diisi"*.
+2. **Keterikatan Desain & Paket:** Pembeli **tidak dapat membeli template yang sama di paket berbeda** karena tata letak/arsitektur desainnya terpisah sejak awal. Pembeli memilih template berdasarkan preview desain dan paket yang sudah ditentukan.
+3. **Fleksibilitas Harga Admin:** Admin bebas menentukan harga promo, diskon, atau harga pasar untuk setiap template tanpa batasan sistem kaku.
+4. **Fitur Upselling / Add-on di Dashboard Klien:**
+   * **Upgrade Tambah Kuota Foto (+Rp 25.000):** Khusus paket Standar jika ingin membuka slot $+10$ foto, atau paket Premium $+10$ foto tambahan.
+   * **Perpanjang Masa Aktif (+Rp 25.000):** Menambahkan $+3\text{ Bulan}$ pada nilai `expires_at`.
 
 ---
 
 ## 4. SPESIFIKASI FITUR FUNGSIONAL (FUNCTIONAL REQUIREMENTS)
 
 ### 4.1. Modul A: Katalog Publik & Live Demo (Frictionless Browsing)
-* **FR-A1 (Eksplorasi Tanpa Login):** Pengunjung dapat membuka halaman katalog utama, memfilter berdasarkan jenis acara (*Pernikahan, Khitanan, Ulang Tahun, Aqiqah*) atau tema (*Adat Jawa, Modern, Rustic, Islami*) tanpa harus login.
-* **FR-A2 (Interactive Live Demo):** Setiap kartu produk memiliki tombol **"Live Demo"** yang menampilkan pratinjau undangan sesungguhnya dalam bingkai rasio HP (`max-w-md`), lengkap dengan musik dan animasi sampul.
-* **FR-A3 (Real-time Slug Checker):** Saat tombol **"Pesan Sekarang"** diklik, pembeli dapat mengetik *slug* URL impian mereka (contoh: `undang_an.digital/bagas-sekar`) dan sistem langsung memvalidasi ketersediaannya ke database MySQL.
+* **FR-A1 (Eksplorasi Tanpa Login):** Pengunjung dapat membuka halaman katalog utama, memfilter berdasarkan jenis acara (*Pernikahan, Khitanan, Ulang Tahun, Aqiqah*) atau tipe paket (*Standar, Premium*) tanpa harus login.
+* **FR-A2 (Interactive Live Demo):** Setiap kartu produk memiliki tombol **"Live Demo"** yang menampilkan pratinjau undangan sesungguhnya dalam bingkai rasio HP (`max-w-md`), lengkap dengan musik, animasi sampul, dan badge paket (`Standar` / `Premium`).
+* **FR-A3 (Real-time Slug Checker & Instant Price):** Saat tombol **"Pilih Desain"** diklik, paket dan harga template otomatis terkunci. Pembeli cukup mengetik *slug* URL impian mereka (contoh: `undang_an.digital/bagas-sekar`) dan sistem langsung memvalidasi ketersediaannya ke database MySQL.
 
 ### 4.2. Modul B: Checkout & Integrasi Midtrans Webhook
-* **FR-B1 (Snap Checkout):** Sistem menghasilkan `order_id` unik dan memunculkan pop-up pembayaran Midtrans sesuai harga paket (Rp 79.000 / Rp 99.000 / Rp 120.000).
+* **FR-B1 (Snap Checkout):** Sistem menghasilkan `order_id` unik dan memunculkan pop-up pembayaran Midtrans sesuai harga yang ditentukan admin pada template tersebut (`gross_amount = template.price`).
 * **FR-B2 (Auto-Activation Webhook):** Endpoint `POST /api/payment/webhook` menangkap sinyal `settlement` atau `capture` dari Midtrans, lalu secara otomatis:
   1. Mengubah status pesanan menjadi `paid`.
   2. Mengaktifkan akses dashboard klien.
-  3. Mengatur nilai `max_photos` ($15$ atau $30$) dan menghitung tanggal `expires_at` ($+3$, $+6$, atau $+12$ bulan dari tanggal bayar).
+  3. Mengatur nilai `max_photos` ($0$ untuk Standar, $30$ untuk Premium) dan menghitung tanggal `expires_at` ($+6$ bulan untuk Standar, $+12$ bulan untuk Premium).
 
 ### 4.3. Modul C: Dashboard Klien & Editor Undangan (Multi-Acara)
 * **FR-C1 (Dynamic Event Form):** Formulir pengisian data menyesuaikan labelnya secara dinamis berdasarkan kategori acara:
   * *Pernikahan:* Mempelai Pria & Wanita, Orang Tua, Akad/Panggih, Resepsi.
   * *Khitanan:* Nama Anak, Nama Orang Tua, Waktu & Lokasi Syukuran Khitan.
   * *Ulang Tahun:* Nama yang Berulang Tahun, Usia/Keberapa, Waktu & Lokasi Pesta.
-* **FR-C2 (Photo Quota Enforcer):** *Middleware* Express.js memeriksa jumlah foto yang sudah diunggah ($\text{current\_photos} < \text{max\_photos}$). Jika kuota penuh, unggahan ditolak dan sistem menampilkan tombol *Upgrade Kuota*.
+* **FR-C2 (Photo Quota Enforcer & Package Lock):** 
+  * Untuk **Paket Standar**: Bagian galeri foto otomatis dinonaktifkan (keterangan: *Paket Standar Tanpa Galeri Foto*).
+  * Untuk **Paket Premium**: *Middleware* Express.js memeriksa kuota foto ($\text{current\_photos} < \text{max\_photos}$, maks 30). Jika kuota penuh, unggahan ditolak dan sistem menampilkan tombol *Tambah Kuota Foto*.
 * **FR-C3 (WhatsApp Guest Link Generator):** Fitur bagi klien untuk memasukkan daftar nama tamu (per baris) dan menghasilkan tautan siap bagikan ke WhatsApp dengan parameter `?to=Nama+Tamu`.
 
 ### 4.4. Modul D: Halaman Undangan Tamu (Guest View & Viral Loop)
@@ -122,6 +129,8 @@ CREATE TABLE templates (
     slug VARCHAR(100) UNIQUE NOT NULL,
     title VARCHAR(150) NOT NULL,
     category ENUM('wedding', 'khitan', 'birthday', 'aqiqah') NOT NULL,
+    package_type ENUM('standard', 'premium') NOT NULL DEFAULT 'standard',
+    price DECIMAL(10, 2) NOT NULL, -- Diinput bebas oleh Admin saat tambah produk
     theme_style VARCHAR(100) NOT NULL, -- contoh: Adat Jawa, Modern, Rustic
     thumbnail_url VARCHAR(255) NOT NULL,
     demo_url VARCHAR(255) NOT NULL,
@@ -138,8 +147,8 @@ CREATE TABLE orders (
     buyer_email VARCHAR(100) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     template_id INT NOT NULL,
-    package_type ENUM('basic', 'standard', 'special') NOT NULL,
-    gross_amount DECIMAL(10, 2) NOT NULL,
+    package_type ENUM('standard', 'premium') NOT NULL,
+    gross_amount DECIMAL(10, 2) NOT NULL, -- Mengikuti templates.price
     payment_status ENUM('pending', 'paid', 'expired', 'failed') DEFAULT 'pending',
     paid_at DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -152,8 +161,8 @@ CREATE TABLE invitations (
     order_id VARCHAR(100) UNIQUE NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL, -- contoh: bagas-sekar
     template_id INT NOT NULL,
-    package_type ENUM('basic', 'standard', 'special') NOT NULL,
-    max_photos INT NOT NULL DEFAULT 15, -- 15 untuk Basic/Std, 30 untuk Special
+    package_type ENUM('standard', 'premium') NOT NULL,
+    max_photos INT NOT NULL DEFAULT 0, -- 0 untuk Standard (tanpa foto), 30 untuk Premium
     current_photos INT NOT NULL DEFAULT 0,
     event_details JSON NOT NULL, -- Menyimpan profil acara, waktu, maps, & array foto Cloudinary
     status ENUM('draft', 'active', 'expired', 'cleaned') DEFAULT 'draft',
