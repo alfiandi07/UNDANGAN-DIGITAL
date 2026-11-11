@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BerandaKatalog from "./pages/BerandaKatalog";
 import LoginPage from "./pages/LoginPage";
@@ -8,6 +8,14 @@ import DashboardPage from "./pages/DashboardPage";
 import ProdukPage from "./pages/ProdukPage";
 import PenggunaPage from "./pages/PenggunaPage";
 import TransaksiPage from "./pages/TransaksiPage";
+
+function DashboardIndex() {
+  const { user } = useAuth();
+  if (user?.peran === "admin") {
+    return <Navigate to="/dashboard/produk" replace />;
+  }
+  return <Navigate to="/dashboard/transaksi" replace />;
+}
 
 export default function App() {
   return (
@@ -22,9 +30,9 @@ export default function App() {
           {/* Protected Area */}
           <Route path="/dashboard" element={<ProtectedRoute />}>
             <Route element={<DashboardPage />}>
-              <Route index element={<Navigate to="produk" replace />} />
+              <Route index element={<DashboardIndex />} />
               <Route path="produk" element={<ProdukPage />} />
-              <Route path="katalog" element={<ProdukPage />} />
+              <Route path="katalog" element={<Navigate to="/" replace />} />
               <Route path="pengguna" element={<PenggunaPage />} />
               <Route path="transaksi" element={<TransaksiPage />} />
             </Route>

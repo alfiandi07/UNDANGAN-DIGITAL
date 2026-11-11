@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Template, DataTemplateInput } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
@@ -150,6 +151,24 @@ export default function ProdukPage() {
       currency: "IDR",
       minimumFractionDigits: 0,
     }).format(nilai);
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="bg-white p-8 rounded-2xl border border-gray-100 text-center max-w-md mx-auto my-12 space-y-4 shadow-xs">
+        <span className="text-4xl">🔒</span>
+        <h3 className="text-lg font-bold text-gray-800">Akses Terbatas</h3>
+        <p className="text-sm text-gray-500">
+          Halaman kelola master template hanya dapat diakses oleh Admin Studio.
+        </p>
+        <Link
+          to="/dashboard/transaksi"
+          className="inline-block px-5 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-bold transition"
+        >
+          Lihat Undangan Saya
+        </Link>
+      </div>
+    );
   }
 
   return (

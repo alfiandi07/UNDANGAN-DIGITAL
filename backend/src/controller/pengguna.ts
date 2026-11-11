@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import * as repo from "../repository/pengguna.js";
+import type { Peran } from "../models/pengguna.js";
 export async function daftarPengguna(_req: Request, res: Response) {
   res.json(await repo.semuaPengguna());
 }
@@ -38,5 +39,6 @@ export async function daftar(req: Request, res: Response) {
     return;
   }
   const hash = await bcrypt.hash(password, 10);
-  res.status(201).json(await repo.tambahPengguna(nama, email, hash, "admin"));
+  const peran: Peran = req.body?.peran === "admin" ? "admin" : "user";
+  res.status(201).json(await repo.tambahPengguna(nama, email, hash, peran));
 }

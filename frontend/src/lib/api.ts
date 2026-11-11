@@ -3,7 +3,7 @@ export type Pengguna = {
   id: number;
   nama: string;
   email: string;
-  peran: "admin" | "creator";
+  peran: "admin" | "user";
 };
 
 export type Produk = {
