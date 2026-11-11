@@ -150,3 +150,41 @@ export function cekKetersediaanSlug(slug: string) {
   );
 }
 
+// ── Admin Template CRUD ──────────────────────────────────
+export type DataTemplateInput = {
+  slug: string;
+  title: string;
+  category: "wedding" | "khitan" | "birthday" | "aqiqah";
+  theme_style: string;
+  thumbnail_url: string;
+  demo_url?: string;
+  price_basic: number;
+  price_standard: number;
+  price_special: number;
+  is_active?: boolean;
+};
+
+export function ambilSemuaTemplatesAdmin() {
+  return request<Template[]>("/api/templates/admin/semua");
+}
+
+export function tambahTemplate(data: DataTemplateInput) {
+  return request<Template>("/api/templates", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function ubahTemplate(id: number, data: Partial<DataTemplateInput>) {
+  return request<Template>(`/api/templates/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export function hapusTemplate(id: number) {
+  return request<{ message: string }>(`/api/templates/${id}`, {
+    method: "DELETE",
+  });
+}
+

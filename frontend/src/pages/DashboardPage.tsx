@@ -11,42 +11,47 @@ export default function DashboardPage() {
   }
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-2 rounded-lg text-sm font-medium transition ${
+    `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition ${
       isActive
-        ? "bg-indigo-100 text-indigo-700"
-        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+        ? "bg-[#4A151E] text-[#FFF9F2] shadow-xs"
+        : "text-[#69584F] hover:bg-[#F8F4ED] hover:text-[#381118]"
     }`;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F2]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white border-b border-[#EBE3D5] sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-6">
-              <h1 className="text-xl font-bold text-indigo-700">
-                Undangan Digital
-              </h1>
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-black text-lg tracking-tight text-[#381118]">
+                  asm.invitation
+                </span>
+                <span className="text-[10px] bg-[#F5EFE6] text-[#7A6237] border border-[#E8DEC8] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                  STUDIO
+                </span>
+              </div>
               <nav className="flex gap-1">
                 {user?.peran === "admin" ? (
                   <>
                     <NavLink to="/dashboard/produk" className={linkClass}>
-                      📦 Kelola Produk
+                      🎨 Kelola Template
                     </NavLink>
                     <NavLink to="/dashboard/pengguna" className={linkClass}>
                       👥 Pengguna
                     </NavLink>
                     <NavLink to="/dashboard/transaksi" className={linkClass}>
-                      📋 Transaksi
+                      📋 Pesanan Undangan
                     </NavLink>
                   </>
                 ) : (
                   <>
-                    <NavLink to="/dashboard/katalog" className={linkClass}>
-                      🛍️ Katalog Template
+                    <NavLink to="/" className={linkClass}>
+                      🛍️ Katalog Master
                     </NavLink>
                     <NavLink to="/dashboard/transaksi" className={linkClass}>
-                      🛒 Pesanan Saya
+                      💌 Undangan Saya
                     </NavLink>
                   </>
                 )}

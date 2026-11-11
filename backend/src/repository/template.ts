@@ -1,6 +1,6 @@
-import type { RowDataPacket } from "mysql2";
+import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import { pool } from "../db.js";
-import type { Template } from "../models/template.js";
+import type { Template, DataTemplate } from "../models/template.js";
 
 type BarisTemplate = RowDataPacket & Template;
 
@@ -19,6 +19,21 @@ export async function semuaTemplates(kategori?: string): Promise<Template[]> {
   return rows;
 }
 
+export async function semuaTemplatesAdmin(): Promise<Template[]> {
+  const [rows] = await pool.execute<BarisTemplate[]>(
+    "SELECT * FROM templates ORDER BY id DESC"
+  );
+  return rows;
+}
+
+export async function cariTemplateById(id: number): Promise<Template | null> {
+  const [rows] = await pool.execute<BarisTemplate[]>(
+    "SELECT * FROM templates WHERE id = ?",
+    [id]
+  );
+  return rows.length > 0 ? rows[0] : null;
+}
+
 export async function cariTemplateBySlug(slug: string): Promise<Template | null> {
   const [rows] = await pool.execute<BarisTemplate[]>(
     "SELECT * FROM templates WHERE slug = ? AND is_active = TRUE",
@@ -35,3 +50,72 @@ export async function isSlugTersedia(slug: string): Promise<boolean> {
   );
   return rows.length === 0;
 }
+
+export async function tambahTemplate(data: DataTemplate): Promise<Template> {
+  const isActive = data.is_active ?? true;
+  const [res] = await pool.execute<ResultSetHeader>(
+    `INSERT INTO templates (slug, title, category, theme_style, thumbnail_url, demo_url, price_basic, price_standard, price_special, is_active)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      data.slug,
+      data.title,
+      data.category,
+      data.theme_style,
+      data.thumbnail_url || "",
+      data.demo_url || `/demo/${data.slug}`,
+      data.price_basic || 79000,
+      data.price_standard || 99000,
+      data.price_special || 120000,
+      isActive,
+    ]
+  );
+  const created = await cariTemplateById(res.insertId);
+  if (!created) throw new Error("Gagal mengambil data template yang baru dibuat");
+  return created;
+}
+
+export async function ubahTemplate(id: number, data: Partial<DataTemplate>): Promise<Template | null> {
+  const existing = await cariTemplateById(id);
+  if (!existing) return null;
+
+  const slug = data.slug ?? existing.slug;
+  const title = data.title ?? existing.title;
+  const category = data.category ?? existing.category;
+  const theme_style = data.theme_style ?? existing.theme_style;
+  const thumbnail_url = data.thumbnail_url ?? existing.thumbnail_url;
+  const demo_url = data.demo_url ?? existing.demo_url;
+  const price_basic = data.price_basic ?? existing.price_basic;
+  const price_standard = data.price_standard ?? existing.price_standard;
+  const price_special = data.price_special ?? existing.price_special;
+  const is_active = data.is_active ?? existing.is_active;
+
+  await pool.execute(
+    `UPDATE templates 
+     SET slug = ?, title = ?, category = ?, theme_style = ?, thumbnail_url = ?, demo_url = ?, price_basic = ?, price_standard = ?, price_special = ?, is_active = ?
+     WHERE id = ?`,
+    [
+      slug,
+      title,
+      category,
+      theme_style,
+      thumbnail_url,
+      demo_url,
+      price_basic,
+      price_standard,
+      price_special,
+      is_active,
+      id,
+    ]
+  );
+
+  return cariTemplateById(id);
+}
+
+export async function hapusTemplate(id: number): Promise<boolean> {
+  const [res] = await pool.execute<ResultSetHeader>(
+    "DELETE FROM templates WHERE id = ?",
+    [id]
+  );
+  return res.affectedRows > 0;
+}
+

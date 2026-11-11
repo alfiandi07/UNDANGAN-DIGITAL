@@ -4,33 +4,6 @@ import * as api from "../lib/api";
 import type { Template } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
-// Helper fallback gambar cover template
-function getCoverThumbnail(thumbnailUrl?: string, slug?: string, category?: string): string {
-  if (thumbnailUrl && thumbnailUrl.startsWith("http")) return thumbnailUrl;
-  
-  const presets: Record<string, string> = {
-    "jawa-keraton-royal": "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80",
-    "sunda-siger-luxury": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
-    "modern-minimalist-couture": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80",
-    "islamic-luxe-andalusia": "https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?auto=format&fit=crop&w=600&q=80",
-    "earthy-botanical-sage": "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=600&q=80",
-    "khitan-ceria-superhero": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80",
-  };
-
-  if (slug && presets[slug]) return presets[slug];
-
-  switch (category) {
-    case "khitan":
-      return "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80";
-    case "birthday":
-      return "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=600&q=80";
-    case "aqiqah":
-      return "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80";
-    default:
-      return "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80";
-  }
-}
-
 export default function BerandaKatalog() {
   const { user } = useAuth();
   const [templateList, setTemplateList] = useState<Template[]>([]);
@@ -231,46 +204,30 @@ export default function BerandaKatalog() {
                 className="template-card bg-white rounded-2xl border border-[#EBE3D5] shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between"
               >
                 {/* Preview Mockup Container */}
-                <div className="template-card__preview relative h-64 bg-[#F7F2EA] flex items-center justify-center overflow-hidden border-b border-[#EBE3D5] group">
-                  {/* Ambient background blur */}
-                  <img
-                    src={getCoverThumbnail(item.thumbnail_url, item.slug, item.category)}
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-0 w-full h-full object-cover blur-md opacity-25 scale-125 transition-transform duration-500 group-hover:scale-135"
-                  />
-
-                  <span className="template-card__badge-exclusive absolute top-3 left-3 bg-[#4A151E] text-[#FFF9F2] text-[10px] font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider z-10 shadow-xs">
+                <div className="template-card__preview relative h-64 bg-[#F7F2EA] flex items-center justify-center overflow-hidden border-b border-[#EBE3D5]">
+                  <span className="template-card__badge-exclusive absolute top-3 left-3 bg-[#4A151E] text-[#FFF9F2] text-[10px] font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
                     MASTER TEMPLATE
                   </span>
-                  <span className="template-card__badge-discount absolute top-3 right-3 bg-[#FFC554] text-[#422B00] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase z-10 shadow-xs">
+                  <span className="template-card__badge-discount absolute top-3 right-3 bg-[#FFC554] text-[#422B00] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
                     {item.category}
                   </span>
 
-                  {/* Smartphone Frame Mockup with Real Preview Image */}
-                  <div className="template-card__phone-mockup relative w-36 h-52 bg-gray-900 rounded-2xl shadow-xl border-4 border-gray-900 overflow-hidden flex flex-col z-10 transition-transform duration-300 group-hover:scale-105">
-                    {/* Notch / Speaker */}
-                    <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-1 bg-gray-800 rounded-full z-20" />
-
-                    <img
-                      src={getCoverThumbnail(item.thumbnail_url, item.slug, item.category)}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-
-                    {/* Gradient Overlay & Title */}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent pt-6 pb-2 px-2 text-center">
-                      <p className="text-[10px] font-serif font-bold text-white line-clamp-1 drop-shadow-sm">
-                        {item.title}
-                      </p>
-                      <p className="text-[8px] text-amber-200 uppercase tracking-widest font-semibold">
-                        {item.theme_style}
-                      </p>
-                    </div>
+                  {/* Smartphone Frame Mockup */}
+                  <div className="template-card__phone-mockup w-32 h-48 bg-white rounded-xl shadow-md border-4 border-gray-800 flex flex-col items-center justify-center p-2 text-center text-xs text-gray-400">
+                    <div className="w-8 h-1 bg-gray-700 rounded-full mb-auto" />
+                    <span className="text-3xl my-auto">
+                      {item.category === "wedding"
+                        ? "💍"
+                        : item.category === "khitan"
+                        ? "✂️"
+                        : item.category === "birthday"
+                        ? "🎂"
+                        : "👶"}
+                    </span>
+                    <p className="text-[9px] font-serif font-bold text-gray-700 line-clamp-1">{item.title}</p>
                   </div>
 
-                  <div className="absolute bottom-2 inset-x-2 flex justify-center gap-2 text-[10px] text-gray-700 font-medium bg-white/90 backdrop-blur-xs py-1 rounded-md z-10 shadow-xs">
+                  <div className="absolute bottom-2 inset-x-2 flex justify-center gap-2 text-[10px] text-gray-500 bg-white/80 backdrop-blur-xs py-1 rounded-md">
                     <span>🎵 Autoplay</span>
                     <span>💌 Amplop</span>
                     <span>📍 Maps</span>
