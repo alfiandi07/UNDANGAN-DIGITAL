@@ -9,3 +9,4 @@ orderRouter.post("/:orderId/simulasi-bayar", order.simulasiBayar); // POST /api/
 orderRouter.get("/my-orders", order.getBuyerOrders); // GET /api/orders/my-orders?email=...
 orderRouter.get("/admin/all", order.getAllOrdersAdmin); // GET /api/orders/admin/all
 orderRouter.get("/:orderId", order.getOrderDetail); // GET /api/orders/:orderId
+

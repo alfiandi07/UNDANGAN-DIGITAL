@@ -193,3 +193,17 @@ export async function setOrderPaid(orderId: string, expiresAt: Date): Promise<bo
     connection.release();
   }
 }
+
+export async function updateEventDetails(
+  slug: string,
+  eventDetails: EventDetails,
+  photosCount: number
+): Promise<Invitation | null> {
+  await pool.execute(
+    `UPDATE invitations
+     SET event_details = ?, current_photos = ?
+     WHERE slug = ?`,
+    [JSON.stringify(eventDetails), photosCount, slug]
+  );
+  return cariInvitationBySlug(slug);
+}

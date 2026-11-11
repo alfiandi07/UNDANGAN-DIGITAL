@@ -285,3 +285,18 @@ export function ambilDetailOrder(orderId: string) {
   return request<{ order: Order; invitation: Invitation }>(`/api/orders/${orderId}`);
 }
 
+// ── Modul C: Editor Acara Undangan & Kuota Foto ──────────
+export function ambilDetailUndangan(slug: string) {
+  return request<Invitation>(`/api/invitations/${slug}`);
+}
+
+export function simpanEventDetails(slug: string, eventDetails: EventDetails) {
+  return request<{ success: boolean; message: string; invitation: Invitation }>(
+    `/api/invitations/${slug}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({ event_details: eventDetails }),
+    }
+  );
+}
+

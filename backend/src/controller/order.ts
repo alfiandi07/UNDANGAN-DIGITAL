@@ -295,3 +295,56 @@ export async function getOrderDetail(req: Request, res: Response) {
     res.status(500).json({ error: "Gagal mengambil detail pesanan" });
   }
 }
+
+// GET /api/invitations/:slug (Ambil detail undangan untuk Editor & Tampilan Tamu)
+export async function getInvitationBySlug(req: Request, res: Response) {
+  try {
+    const slug = String(req.params.slug);
+    const invitation = await repo.cariInvitationBySlug(slug);
+    if (!invitation) {
+      res.status(404).json({ error: "Undangan tidak ditemukan" });
+      return;
+    }
+    res.json(invitation);
+  } catch (err) {
+    res.status(500).json({ error: "Gagal mengambil data undangan" });
+  }
+}
+
+// PUT /api/invitations/:slug (Simpan Data Acara & Foto - PRD Modul C)
+export async function saveEventDetails(req: Request, res: Response) {
+  try {
+    const slug = String(req.params.slug);
+    const invitation = await repo.cariInvitationBySlug(slug);
+    if (!invitation) {
+      res.status(404).json({ error: "Undangan tidak ditemukan" });
+      return;
+    }
+
+    const { event_details } = req.body ?? {};
+    if (!event_details || typeof event_details !== "object") {
+      res.status(400).json({ error: "Format data acara tidak valid" });
+      return;
+    }
+
+    // FR-C2: Photo Quota Enforcer Middleware check
+    const photos: string[] = Array.isArray(event_details.photos) ? event_details.photos : [];
+    if (photos.length > invitation.max_photos) {
+      res.status(400).json({
+        error: `Kuota foto terlampaui! Batas maksimal untuk Paket ${invitation.package_type.toUpperCase()} adalah ${invitation.max_photos} foto (Anda mengunggah ${photos.length} foto).`,
+      });
+      return;
+    }
+
+    const updated = await repo.updateEventDetails(slug, event_details, photos.length);
+    res.json({
+      success: true,
+      message: "Data acara berhasil disimpan!",
+      invitation: updated,
+    });
+  } catch (err) {
+    console.error("Save event error:", err);
+    res.status(500).json({ error: "Gagal menyimpan detail acara" });
+  }
+}
+

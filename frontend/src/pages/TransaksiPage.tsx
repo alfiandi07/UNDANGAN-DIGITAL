@@ -165,12 +165,12 @@ export default function TransaksiPage() {
                   >
                     👁️ Pratinjau
                   </a>
-                  <button
-                    onClick={() => alert(`Fitur Editor Acara untuk /${inv.slug} (Modul C) siap diisi!`)}
+                  <Link
+                    to={`/dashboard/undangan/${inv.slug}/edit`}
                     className="flex-1 py-2 text-center text-xs font-bold bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl transition shadow-xs cursor-pointer"
                   >
                     ✏️ Edit Acara
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

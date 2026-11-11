@@ -56,3 +56,4 @@ export type CreateOrderInput = {
   package_type: PackageType;
   slug: string;
 };
+
