@@ -9,6 +9,7 @@ import ProdukPage from "./pages/ProdukPage";
 import PenggunaPage from "./pages/PenggunaPage";
 import TransaksiPage from "./pages/TransaksiPage";
 import EditorUndanganPage from "./pages/EditorUndanganPage";
+import UndanganTamuPage from "./pages/UndanganTamuPage";
 
 function DashboardIndex() {
   const { user } = useAuth();
@@ -39,6 +40,9 @@ export default function App() {
               <Route path="undangan/:slug/edit" element={<EditorUndanganPage />} />
             </Route>
           </Route>
+
+          {/* Halaman Undangan Tamu (FR-D1: Guest View 100dvh) */}
+          <Route path="/:slug" element={<UndanganTamuPage />} />
 
           {/* Fallback jika URL tidak ditemukan, arahkan ke Beranda */}
           <Route path="*" element={<Navigate to="/" replace />} />

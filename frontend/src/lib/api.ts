@@ -300,3 +300,33 @@ export function simpanEventDetails(slug: string, eventDetails: EventDetails) {
   );
 }
 
+// ── Modul D: RSVP & Buku Tamu Realtime ───────────────────
+export type Attendance = "hadir" | "tidak_hadir" | "ragu";
+
+export type Rsvp = {
+  id: number;
+  invitation_id: number;
+  guest_name: string;
+  attendance: Attendance;
+  pax: number;
+  message: string;
+  created_at?: string;
+};
+
+export function ambilDaftarRsvps(slug: string) {
+  return request<Rsvp[]>(`/api/invitations/${slug}/rsvps`);
+}
+
+export function kirimRsvp(
+  slug: string,
+  data: { guest_name: string; attendance: Attendance; pax?: number; message: string }
+) {
+  return request<{ success: boolean; message: string; rsvp: Rsvp }>(
+    `/api/invitations/${slug}/rsvps`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+}
+

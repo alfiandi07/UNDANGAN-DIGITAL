@@ -9,6 +9,7 @@ import { templateRouter } from "./routes/template.js";
 import { checkSlug } from "./controller/template.js";
 import { orderRouter } from "./routes/order.js";
 import { midtransWebhook, getInvitationBySlug, saveEventDetails } from "./controller/order.js";
+import { daftarRsvps, kirimRsvp } from "./controller/rsvp.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 app.use(express.json());
@@ -49,6 +50,8 @@ app.use("/api/orders", orderRouter); // PRD Modul B: Checkout & Orders
 app.post("/api/payment/webhook", midtransWebhook); // PRD FR-B2: Midtrans Webhook URL standard
 app.get("/api/invitations/:slug", getInvitationBySlug); // PRD Modul C & D
 app.put("/api/invitations/:slug", saveEventDetails); // PRD Modul C: Editor Acara & Photo Quota
+app.get("/api/invitations/:slug/rsvps", daftarRsvps); // PRD Modul D: Daftar Ucapan Doa
+app.post("/api/invitations/:slug/rsvps", kirimRsvp); // PRD Modul D: Submit RSVP & Ucapan Tamu
 
 // Urutan penting: route → 404 → errorHandler paling akhir
 app.use((_req, res) => {
