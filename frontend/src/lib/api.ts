@@ -29,9 +29,17 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
   });
   const body = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new Error(
-      (body as { error?: string })?.error ?? `Request gagal (${res.status})`
-    );
+    let rawError = (body as { error?: string })?.error ?? `Request gagal (${res.status})`;
+    if (
+      rawError.includes("doesn't exist") ||
+      rawError.includes("SQL") ||
+      rawError.includes("ER_") ||
+      rawError.includes("SyntaxError") ||
+      rawError.includes("Table '")
+    ) {
+      rawError = "Terjadi kendala pada server saat memproses data. Silakan coba beberapa saat lagi.";
+    }
+    throw new Error(rawError);
   }
   return body as T;
 }

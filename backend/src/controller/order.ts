@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import * as repo from "../repository/order.js";
 import * as templateRepo from "../repository/template.js";
+import * as userRepo from "../repository/pengguna.js";
 import type { PackageType } from "../models/order.js";
 
 function hitungMasaAktif(packageType: PackageType): Date {
@@ -71,8 +72,17 @@ export async function createOrder(req: Request, res: Response) {
 
     const expiresAt = hitungMasaAktif(pkg);
 
-    // 3. Hash password pembeli untuk disimpan di pesanan & dipakai login dashboard
+    // 3. Hash password pembeli & daftarkan ke tabel pengguna agar bisa login
     const passwordHash = await bcrypt.hash(String(password), 10);
+    const existingUser = await userRepo.cariPenggunaByEmail(String(buyer_email).trim());
+    if (!existingUser) {
+      await userRepo.tambahPengguna(
+        String(buyer_name).trim(),
+        String(buyer_email).trim(),
+        passwordHash,
+        "user"
+      );
+    }
 
     // 4. Generate order_id unik: ASM-YYMMDD-XXXX
     const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, "");
@@ -174,7 +184,16 @@ export async function createOrder(req: Request, res: Response) {
     });
   } catch (err) {
     console.error("Order creation error:", err);
-    res.status(500).json({ error: err instanceof Error ? err.message : "Gagal memproses pesanan" });
+    let pesanError = "Terjadi kendala pada server saat memproses pesanan. Silakan coba kembali beberapa saat lagi.";
+    if (err instanceof Error) {
+      const msg = err.message;
+      if (msg.includes("Duplicate entry") || (err as { code?: string }).code === "ER_DUP_ENTRY") {
+        pesanError = "Tautan undangan ini sudah pernah digunakan oleh pengantin lain. Silakan pilih tautan (slug) lain.";
+      } else if (!msg.includes("Table") && !msg.includes("SQL") && !msg.includes("doesn't exist")) {
+        pesanError = msg;
+      }
+    }
+    res.status(500).json({ error: pesanError });
   }
 }
 

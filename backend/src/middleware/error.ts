@@ -11,9 +11,9 @@ export function errorHandler(
     return;
   }
   if (e.code === "ER_DUP_ENTRY") {
-    res.status(409).json({ error: "Nama produk sudah ada" });
+    res.status(409).json({ error: "Tautan atau data ini sudah terdaftar di sistem. Silakan gunakan nama tautan lain." });
     return;
   }
-  console.error(err);
-  res.status(500).json({ error: "Terjadi kesalahan di server" });
+  console.error("Unhandled Error:", err);
+  res.status(500).json({ error: "Terjadi kendala pada sistem server. Silakan coba beberapa saat lagi." });
 }
