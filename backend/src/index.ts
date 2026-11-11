@@ -5,6 +5,8 @@ import { produkRouter } from "./routes/produk.js";
 import { authRouter, penggunaRouter } from "./routes/pengguna.js";
 import { errorHandler } from "./middleware/error.js";
 import { transaksiRouter } from "./routes/transaksi.js";
+import { templateRouter } from "./routes/template.js";
+import { checkSlug } from "./controller/template.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 app.use(express.json());
@@ -39,6 +41,8 @@ app.use(
   penggunaRouter,
 );
 app.use("/api/transaksi", transaksiRouter);
+app.use("/api/templates", templateRouter); // GET /api/templates
+app.post("/api/check-slug", checkSlug); // POST /api/check-slug (PRD FR-A3)
 
 // Urutan penting: route → 404 → errorHandler paling akhir
 app.use((_req, res) => {

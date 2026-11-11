@@ -113,3 +113,40 @@ export function buatTransaksi(data: { id_pengguna: number; items: ItemPesan[] })
   );
 }
 
+// ── Master Template (PRD asm.invitation) ─────────────────
+export type Template = {
+  id: number;
+  slug: string;
+  title: string;
+  category: "wedding" | "khitan" | "birthday" | "aqiqah";
+  theme_style: string;
+  thumbnail_url: string;
+  demo_url: string;
+  price_basic: number;
+  price_standard: number;
+  price_special: number;
+  is_active: boolean;
+};
+
+export function ambilSemuaTemplates(category?: string) {
+  const url =
+    category && category !== "Semua" && category !== "all"
+      ? `/api/templates?category=${category}`
+      : "/api/templates";
+  return request<Template[]>(url);
+}
+
+export function ambilDetailTemplate(slug: string) {
+  return request<Template>(`/api/templates/${slug}`);
+}
+
+export function cekKetersediaanSlug(slug: string) {
+  return request<{ slug: string; available: boolean; message: string }>(
+    "/api/check-slug",
+    {
+      method: "POST",
+      body: JSON.stringify({ slug }),
+    }
+  );
+}
+
