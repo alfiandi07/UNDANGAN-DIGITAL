@@ -188,3 +188,100 @@ export function hapusTemplate(id: number) {
   });
 }
 
+// ── Modul B: Order & Midtrans Checkout ───────────────────
+export type PackageType = "basic" | "standard" | "special";
+export type PaymentStatus = "pending" | "paid" | "expired" | "failed";
+
+export type Order = {
+  id: number;
+  order_id: string;
+  buyer_name: string;
+  buyer_whatsapp: string;
+  buyer_email: string;
+  template_id: number;
+  package_type: PackageType;
+  gross_amount: number;
+  payment_status: PaymentStatus;
+  paid_at?: string | null;
+  created_at?: string;
+  template_title?: string;
+  slug?: string;
+  invitation_status?: string;
+};
+
+export type EventDetails = {
+  title?: string;
+  mempelai?: {
+    pria?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string };
+    wanita?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string };
+  };
+  akad?: { tanggal?: string; jam?: string; lokasi?: string; alamat?: string; maps_url?: string };
+  resepsi?: { tanggal?: string; jam?: string; lokasi?: string; alamat?: string; maps_url?: string };
+  music_url?: string;
+  amplop?: Array<{ bank: string; no_rek: string; atas_nama: string }>;
+  photos?: string[];
+  love_story?: Array<{ tahun: string; cerita: string }>;
+};
+
+export type Invitation = {
+  id: number;
+  order_id: string;
+  slug: string;
+  template_id: number;
+  package_type: PackageType;
+  max_photos: number;
+  current_photos: number;
+  event_details: EventDetails;
+  status: "draft" | "active" | "expired" | "cleaned";
+  expires_at: string;
+  created_at?: string;
+  template_title?: string;
+  buyer_name?: string;
+};
+
+export type CreateOrderInput = {
+  buyer_name: string;
+  buyer_whatsapp: string;
+  buyer_email: string;
+  password: string;
+  template_id: number;
+  package_type: PackageType;
+  slug: string;
+};
+
+export type CreateOrderResponse = {
+  success: boolean;
+  order: Order;
+  invitation: Invitation;
+  snap_token: string;
+  redirect_url: string;
+};
+
+export function buatOrder(data: CreateOrderInput) {
+  return request<CreateOrderResponse>("/api/orders", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function simulasiBayarOrder(orderId: string) {
+  return request<{ success: boolean; message: string; order: Order; invitation: Invitation }>(
+    `/api/orders/${orderId}/simulasi-bayar`,
+    { method: "POST" }
+  );
+}
+
+export function ambilPesananSaya(email: string) {
+  return request<{ orders: Order[]; invitations: Invitation[] }>(
+    `/api/orders/my-orders?email=${encodeURIComponent(email)}`
+  );
+}
+
+export function ambilSemuaPesananAdmin() {
+  return request<Order[]>("/api/orders/admin/all");
+}
+
+export function ambilDetailOrder(orderId: string) {
+  return request<{ order: Order; invitation: Invitation }>(`/api/orders/${orderId}`);
+}
+

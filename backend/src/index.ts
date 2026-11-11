@@ -7,6 +7,8 @@ import { errorHandler } from "./middleware/error.js";
 import { transaksiRouter } from "./routes/transaksi.js";
 import { templateRouter } from "./routes/template.js";
 import { checkSlug } from "./controller/template.js";
+import { orderRouter } from "./routes/order.js";
+import { midtransWebhook } from "./controller/order.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 app.use(express.json());
@@ -22,7 +24,7 @@ app.get(
     });
   },
 );
-// Tiga router dipasang: /api/produk,api/auth, /api/pengguna, /api/transaksi.
+// Router dipasang: /api/produk, api/auth, /api/pengguna, /api/transaksi, /api/templates, /api/orders
 app.use(
   "/api/produk",
 
@@ -43,6 +45,8 @@ app.use(
 app.use("/api/transaksi", transaksiRouter);
 app.use("/api/templates", templateRouter); // GET /api/templates
 app.post("/api/check-slug", checkSlug); // POST /api/check-slug (PRD FR-A3)
+app.use("/api/orders", orderRouter); // PRD Modul B: Checkout & Orders
+app.post("/api/payment/webhook", midtransWebhook); // PRD FR-B2: Midtrans Webhook URL standard
 
 // Urutan penting: route → 404 → errorHandler paling akhir
 app.use((_req, res) => {

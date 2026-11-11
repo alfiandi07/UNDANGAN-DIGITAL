@@ -11,11 +11,24 @@ export default function BerandaKatalog() {
   const [kategoriAktif, setKategoriAktif] = useState("Semua");
   const [keyword, setKeyword] = useState("");
 
-  // Modal Slug Checker State (PRD FR-A3)
+  // Modal Slug Checker & Checkout State (PRD Modul B)
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
+  const [selectedPackage, setSelectedPackage] = useState<api.PackageType>("standard");
   const [slugInput, setSlugInput] = useState("");
   const [slugChecking, setSlugChecking] = useState(false);
   const [slugResult, setSlugResult] = useState<{ available: boolean; message: string } | null>(null);
+
+  // Form Pembeli
+  const [buyerName, setBuyerName] = useState("");
+  const [buyerWhatsapp, setBuyerWhatsapp] = useState("");
+  const [buyerEmail, setBuyerEmail] = useState("");
+  const [buyerPassword, setBuyerPassword] = useState("");
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
+  const [orderError, setOrderError] = useState("");
+  const [createdOrderData, setCreatedOrderData] = useState<api.CreateOrderResponse | null>(null);
+  const [paySimulating, setPaySimulating] = useState(false);
+  const [paymentSuccessMsg, setPaymentSuccessMsg] = useState("");
 
   const kategoriPilihan = [
     { label: "Semua Acara", val: "Semua" },
@@ -33,6 +46,76 @@ export default function BerandaKatalog() {
       .catch((err) => console.error("Gagal memuat template:", err))
       .finally(() => setLoading(false));
   }, [kategoriAktif]);
+
+  function handleBukaCheckout(item: Template) {
+    setSelectedTemplate(item);
+    setCheckoutStep(1);
+    setSelectedPackage("standard");
+    setSlugInput("");
+    setSlugResult(null);
+    setBuyerName(user?.nama ?? "");
+    setBuyerWhatsapp("");
+    setBuyerEmail(user?.email ?? "");
+    setBuyerPassword("");
+    setOrderError("");
+    setCreatedOrderData(null);
+    setPaymentSuccessMsg("");
+  }
+
+  function getSelectedPackagePrice(): number {
+    if (!selectedTemplate) return 0;
+    if (selectedPackage === "basic") return selectedTemplate.price_basic;
+    if (selectedPackage === "special") return selectedTemplate.price_special;
+    return selectedTemplate.price_standard;
+  }
+
+  async function handleBuatPesanan(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedTemplate || !slugResult?.available) return;
+
+    setOrderSubmitting(true);
+    setOrderError("");
+    try {
+      const res = await api.buatOrder({
+        buyer_name: buyerName,
+        buyer_whatsapp: buyerWhatsapp,
+        buyer_email: buyerEmail,
+        password: buyerPassword,
+        template_id: selectedTemplate.id,
+        package_type: selectedPackage,
+        slug: slugInput,
+      });
+
+      setCreatedOrderData(res);
+      setCheckoutStep(3);
+    } catch (err) {
+      setOrderError(err instanceof Error ? err.message : "Gagal memproses pesanan");
+    } finally {
+      setOrderSubmitting(false);
+    }
+  }
+
+  async function handleBayarSimulasi() {
+    if (!createdOrderData) return;
+    setPaySimulating(true);
+    try {
+      const res = await api.simulasiBayarOrder(createdOrderData.order.order_id);
+      setPaymentSuccessMsg(res.message);
+      setCreatedOrderData((prev) =>
+        prev
+          ? {
+              ...prev,
+              order: { ...prev.order, payment_status: "paid" },
+              invitation: { ...prev.invitation, status: "active" },
+            }
+          : null
+      );
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Gagal simulasi bayar");
+    } finally {
+      setPaySimulating(false);
+    }
+  }
 
   // Real-time Slug Checker
   async function handleCekSlug(val: string) {
@@ -272,11 +355,7 @@ export default function BerandaKatalog() {
                       👁️ Live Demo
                     </a>
                     <button
-                      onClick={() => {
-                        setSelectedTemplate(item);
-                        setSlugInput("");
-                        setSlugResult(null);
-                      }}
+                      onClick={() => handleBukaCheckout(item)}
                       className="template-card__btn-order py-2 px-3 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                     >
                       🎁 Pesan Sekarang
@@ -290,15 +369,20 @@ export default function BerandaKatalog() {
       </main>
 
       {/* ========================================================
-          4. MODAL REALTIME SLUG CHECKER (PRD FR-A3)
+          4. MODAL CHECKOUT & SLUG CHECKER (PRD MODUL B)
       ======================================================== */}
       {selectedTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in duration-150">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in duration-200 my-8">
+            {/* Header Modal */}
+            <div className="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
               <div>
                 <span className="text-[10px] font-bold uppercase text-[#8C6D3B] tracking-wider">
-                  Langkah 1: Tentukan Tautan Undangan
+                  {checkoutStep === 1
+                    ? "Langkah 1/3: Pilih Paket & Cek Slug"
+                    : checkoutStep === 2
+                    ? "Langkah 2/3: Data Pemesan & Akun Klien"
+                    : "Langkah 3/3: Konfirmasi & Pembayaran"}
                 </span>
                 <h3 className="text-xl font-bold font-serif text-[#3B171D]">
                   {selectedTemplate.title}
@@ -306,90 +390,312 @@ export default function BerandaKatalog() {
               </div>
               <button
                 onClick={() => setSelectedTemplate(null)}
-                className="text-gray-400 hover:text-gray-600 text-lg cursor-pointer"
+                className="text-gray-400 hover:text-gray-600 text-lg cursor-pointer p-1"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-gray-500 mb-5">
-              Ketik nama/slug yang lo inginkan untuk link undanganmu. Sistem kami akan mengecek ketersediaannya secara <em>real-time</em> ke database.
-            </p>
+            {/* STEP 1: PILIH PAKET & SLUG CHECKER */}
+            {checkoutStep === 1 && (
+              <div className="space-y-4">
+                {/* 3 Paket Resmi PRD */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-2">
+                    Pilih Paket Resmi:
+                  </label>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {/* Basic */}
+                    <div
+                      onClick={() => setSelectedPackage("basic")}
+                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer transition ${
+                        selectedPackage === "basic"
+                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <p className="font-bold text-gray-800 text-xs">Basic</p>
+                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
+                        {formatRupiah(selectedTemplate.price_basic)}
+                      </p>
+                      <p className="text-[10px] text-gray-500">15 Foto • 3 Bln</p>
+                    </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Tautan Impian Anda
-                </label>
-                <div className="flex items-center border border-gray-300 rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-[#4A151E]/20 bg-gray-50">
-                  <span className="text-xs text-gray-400 select-none">undang_an.digital/</span>
+                    {/* Standard */}
+                    <div
+                      onClick={() => setSelectedPackage("standard")}
+                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer relative transition ${
+                        selectedPackage === "standard"
+                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#4A151E] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">
+                        Terpopuler
+                      </span>
+                      <p className="font-bold text-gray-800 text-xs">Standard</p>
+                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
+                        {formatRupiah(selectedTemplate.price_standard)}
+                      </p>
+                      <p className="text-[10px] text-gray-500">15 Foto • 6 Bln</p>
+                    </div>
+
+                    {/* Special */}
+                    <div
+                      onClick={() => setSelectedPackage("special")}
+                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer transition ${
+                        selectedPackage === "special"
+                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <p className="font-bold text-gray-800 text-xs">Special</p>
+                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
+                        {formatRupiah(selectedTemplate.price_special)}
+                      </p>
+                      <p className="text-[10px] text-gray-500">30 Foto • 12 Bln</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slug Input */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Tautan / Slug Undangan Anda:
+                  </label>
+                  <div className="flex items-center border border-gray-300 rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-[#4A151E]/20 bg-gray-50">
+                    <span className="text-xs text-gray-400 select-none">undang_an.digital/</span>
+                    <input
+                      type="text"
+                      placeholder="contoh: dimas-dinda"
+                      value={slugInput}
+                      onChange={(e) => handleCekSlug(e.target.value)}
+                      className="w-full bg-transparent text-sm font-semibold text-gray-800 outline-none pl-1"
+                    />
+                    {slugChecking && <span className="text-xs text-gray-400 animate-spin">⏳</span>}
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    Hanya gunakan huruf kecil, angka, dan strip (minimal 3 huruf).
+                  </p>
+                </div>
+
+                {slugResult && (
+                  <div
+                    className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                      slugResult.available
+                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                        : "bg-red-50 text-red-800 border border-red-200"
+                    }`}
+                  >
+                    <span>{slugResult.available ? "✅" : "❌"}</span>
+                    <span>{slugResult.message}</span>
+                  </div>
+                )}
+
+                <div className="pt-3 flex justify-between items-center border-t border-gray-100">
+                  <div className="text-xs">
+                    <span className="text-gray-400">Total Biaya: </span>
+                    <strong className="text-sm text-[#4A151E]">
+                      {formatRupiah(getSelectedPackagePrice())}
+                    </strong>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={!slugResult?.available}
+                    onClick={() => setCheckoutStep(2)}
+                    className="px-5 py-2.5 text-xs font-bold rounded-xl transition shadow-xs bg-[#4A151E] hover:bg-[#360F15] text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Lanjut Isi Data Pemesan →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: DATA PEMESAN & AKUN LOGIN */}
+            {checkoutStep === 2 && (
+              <form onSubmit={handleBuatPesanan} className="space-y-4">
+                {orderError && (
+                  <div className="bg-red-50 text-red-700 p-3 rounded-xl text-xs border border-red-200">
+                    {orderError}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Nama Lengkap Pemesan <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
-                    placeholder="contoh: bagas-sekar"
-                    value={slugInput}
-                    onChange={(e) => handleCekSlug(e.target.value)}
-                    className="w-full bg-transparent text-sm font-semibold text-gray-800 outline-none pl-1"
+                    required
+                    value={buyerName}
+                    onChange={(e) => setBuyerName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
+                    placeholder="Contoh: Budi Santoso"
                   />
-                  {slugChecking && <span className="text-xs text-gray-400 animate-spin">⏳</span>}
                 </div>
-              </div>
 
-              {slugResult && (
-                <div
-                  className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
-                    slugResult.available
-                      ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                      : "bg-red-50 text-red-800 border border-red-200"
-                  }`}
-                >
-                  <span>{slugResult.available ? "✅" : "❌"}</span>
-                  <span>{slugResult.message}</span>
-                </div>
-              )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Nomor WhatsApp <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={buyerWhatsapp}
+                      onChange={(e) => setBuyerWhatsapp(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
+                      placeholder="081234567890"
+                    />
+                  </div>
 
-              {/* Pilihan Paket Harga Sesuai PRD */}
-              <div className="bg-[#FFFDF9] border border-[#EBE3D5] p-4 rounded-2xl space-y-2 text-xs">
-                <p className="font-bold text-[#3B171D]">Pilihan Paket Resmi PRD:</p>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="p-2 border rounded-xl bg-white">
-                    <p className="font-bold text-gray-800">Basic</p>
-                    <p className="text-[#4A151E] font-extrabold">{formatRupiah(selectedTemplate.price_basic)}</p>
-                    <p className="text-[10px] text-gray-400">15 Foto / 3 Bln</p>
-                  </div>
-                  <div className="p-2 border-2 border-[#4A151E] rounded-xl bg-white shadow-xs">
-                    <span className="text-[8px] bg-[#4A151E] text-white px-1 rounded font-bold uppercase">Popular</span>
-                    <p className="font-bold text-gray-800">Standard</p>
-                    <p className="text-[#4A151E] font-extrabold">{formatRupiah(selectedTemplate.price_standard)}</p>
-                    <p className="text-[10px] text-gray-400">15 Foto / 6 Bln</p>
-                  </div>
-                  <div className="p-2 border rounded-xl bg-white">
-                    <p className="font-bold text-gray-800">Special</p>
-                    <p className="text-[#4A151E] font-extrabold">{formatRupiah(selectedTemplate.price_special)}</p>
-                    <p className="text-[10px] text-gray-400">30 Foto / 12 Bln</p>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Email Pembeli <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={buyerEmail}
+                      onChange={(e) => setBuyerEmail(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
+                      placeholder="budi@example.com"
+                    />
                   </div>
                 </div>
-              </div>
 
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedTemplate(null)}
-                  className="px-4 py-2 text-xs font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition cursor-pointer"
-                >
-                  Tutup
-                </button>
-                <Link
-                  to={slugResult?.available ? `/daftar?template=${selectedTemplate.slug}&slug=${slugInput}` : "#"}
-                  className={`px-5 py-2.5 text-xs font-bold rounded-xl transition shadow-xs ${
-                    slugResult?.available
-                      ? "bg-[#4A151E] hover:bg-[#360F15] text-white cursor-pointer"
-                      : "bg-gray-200 text-gray-400 cursor-not-allowed pointer-events-none"
-                  }`}
-                >
-                  Lanjut ke Pembayaran Midtrans →
-                </Link>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Password Akun Klien <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={buyerPassword}
+                    onChange={(e) => setBuyerPassword(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
+                    placeholder="Minimal 6 karakter (untuk login dashboard)"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    Password ini akan dipakai login ke Dashboard Klien untuk edit acara & upload foto.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-[#FAF7F2] rounded-xl text-xs space-y-1 border border-[#EBE3D5]">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Tautan Undangan:</span>
+                    <strong className="font-mono text-[#4A151E]">/{slugInput}</strong>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Paket:</span>
+                    <span className="font-semibold uppercase">{selectedPackage}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-900 border-t border-gray-200 pt-1 font-bold">
+                    <span>Total Pembayaran:</span>
+                    <span className="text-[#4A151E]">{formatRupiah(getSelectedPackagePrice())}</span>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex justify-between items-center">
+                  <button
+                    type="button"
+                    onClick={() => setCheckoutStep(1)}
+                    className="px-4 py-2 text-xs font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition cursor-pointer"
+                  >
+                    ← Kembali
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={orderSubmitting}
+                    className="px-5 py-2.5 text-xs font-bold rounded-xl transition shadow-xs bg-[#4A151E] hover:bg-[#360F15] text-white disabled:opacity-50 cursor-pointer"
+                  >
+                    {orderSubmitting ? "Memproses Order..." : "Konfirmasi & Lanjut Bayar →"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* STEP 3: STATUS PEMESANAN & PEMBAYARAN MIDTRANS */}
+            {checkoutStep === 3 && createdOrderData && (
+              <div className="space-y-4 text-center py-2">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-2xl mx-auto">
+                  {createdOrderData.order.payment_status === "paid" ? "🎉" : "📋"}
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-serif font-bold text-gray-900">
+                    {createdOrderData.order.payment_status === "paid"
+                      ? "Pembayaran Berhasil & Undangan Aktif!"
+                      : "Pesanan Berhasil Dibuat!"}
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Nomor Pesanan:{" "}
+                    <strong className="font-mono text-gray-800">{createdOrderData.order.order_id}</strong>
+                  </p>
+                </div>
+
+                {paymentSuccessMsg && (
+                  <div className="bg-emerald-50 text-emerald-800 p-3 rounded-xl text-xs font-medium border border-emerald-200">
+                    {paymentSuccessMsg}
+                  </div>
+                )}
+
+                <div className="bg-[#FAF7F2] p-4 rounded-2xl text-xs text-left space-y-2 border border-[#EBE3D5]">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Pemesan:</span>
+                    <strong className="text-gray-800">{createdOrderData.order.buyer_name}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Tautan:</span>
+                    <strong className="font-mono text-indigo-700">undang_an.digital/{createdOrderData.invitation.slug}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Total:</span>
+                    <strong className="text-gray-900">{formatRupiah(createdOrderData.order.gross_amount)}</strong>
+                  </div>
+                  <div className="flex justify-between items-center border-t border-gray-200 pt-2">
+                    <span className="text-gray-500">Status Pembayaran:</span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        createdOrderData.order.payment_status === "paid"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {createdOrderData.order.payment_status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-col gap-2">
+                  {createdOrderData.order.payment_status !== "paid" ? (
+                    <button
+                      type="button"
+                      disabled={paySimulating}
+                      onClick={handleBayarSimulasi}
+                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <span>⚡</span> {paySimulating ? "Memproses Aktivasi..." : "Bayar Sekarang (Simulasi Midtrans Lunas)"}
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="w-full py-3 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition shadow-xs text-center cursor-pointer block"
+                    >
+                      Masuk ke Dashboard Klien & Isi Acara →
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTemplate(null)}
+                    className="w-full py-2 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-xl transition cursor-pointer"
+                  >
+                    Kembali ke Katalog
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
