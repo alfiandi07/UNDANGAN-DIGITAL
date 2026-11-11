@@ -19,3 +19,4 @@ export type FinanceSummary = {
   }>;
   expenses: OperationalCost[];
 };
+

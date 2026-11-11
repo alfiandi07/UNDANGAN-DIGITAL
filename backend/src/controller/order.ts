@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import * as repo from "../repository/order.js";
 import * as templateRepo from "../repository/template.js";
-import * as userRepo from "../repository/pengguna.js";
 import type { PackageType } from "../models/order.js";
 
 function hitungMasaAktif(packageType: PackageType): Date {
@@ -72,17 +71,8 @@ export async function createOrder(req: Request, res: Response) {
 
     const expiresAt = hitungMasaAktif(pkg);
 
-    // 3. Hash password pembeli & daftarkan ke tabel pengguna agar bisa login
+    // 3. Hash password pembeli untuk disimpan di pesanan & dipakai login dashboard
     const passwordHash = await bcrypt.hash(String(password), 10);
-    const existingUser = await userRepo.cariPenggunaByEmail(String(buyer_email).trim());
-    if (!existingUser) {
-      await userRepo.tambahPengguna(
-        String(buyer_name).trim(),
-        String(buyer_email).trim(),
-        passwordHash,
-        "user"
-      );
-    }
 
     // 4. Generate order_id unik: ASM-YYMMDD-XXXX
     const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, "");

@@ -69,3 +69,4 @@ export async function triggerCleanup(_req: Request, res: Response) {
     res.status(500).json({ error: "Gagal menjalankan pembersihan server" });
   }
 }
+
