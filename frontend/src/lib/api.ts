@@ -330,3 +330,50 @@ export function kirimRsvp(
   );
 }
 
+// ── Modul E: Laporan Finansial & Bagi Hasil Bertiga ──────
+export type OperationalCost = {
+  id: number;
+  period_month: string;
+  expense_name: string;
+  amount: number;
+  created_at?: string;
+};
+
+export type FinanceSummary = {
+  total_omset: number;
+  total_orders_paid: number;
+  total_expenses: number;
+  net_profit: number;
+  share_per_member: number;
+  team_members: Array<{
+    name: string;
+    role: string;
+    share_amount: number;
+  }>;
+  expenses: OperationalCost[];
+};
+
+export function ambilLaporanFinansial() {
+  return request<FinanceSummary>("/api/finance/summary");
+}
+
+export function tambahBiayaOperasional(data: { expense_name: string; amount: number; period_month?: string }) {
+  return request<OperationalCost>("/api/finance/expenses", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function hapusBiayaOperasional(id: number) {
+  return request<{ message: string }>(`/api/finance/expenses/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export function jalankanCleanupServer() {
+  return request<{ success: boolean; message: string; result: { cleaned_count: number; cleaned_slugs: string[] } }>(
+    "/api/finance/cleanup-now",
+    { method: "POST" }
+  );
+}
+

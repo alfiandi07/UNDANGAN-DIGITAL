@@ -16,3 +16,4 @@ export type CreateRsvpInput = {
   pax?: number;
   message: string;
 };
+

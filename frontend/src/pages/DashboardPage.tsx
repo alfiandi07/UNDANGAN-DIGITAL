@@ -44,6 +44,9 @@ export default function DashboardPage() {
                     <NavLink to="/dashboard/transaksi" className={linkClass}>
                       📋 Pesanan Undangan
                     </NavLink>
+                    <NavLink to="/dashboard/keuangan" className={linkClass}>
+                      💰 Laporan Finansial
+                    </NavLink>
                   </>
                 ) : (
                   <>

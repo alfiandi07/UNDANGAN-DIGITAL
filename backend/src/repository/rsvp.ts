@@ -29,3 +29,4 @@ export async function ambilRsvpsByInvitationId(invitationId: number): Promise<Rs
   );
   return rows;
 }
+

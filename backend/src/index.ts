@@ -10,6 +10,7 @@ import { checkSlug } from "./controller/template.js";
 import { orderRouter } from "./routes/order.js";
 import { midtransWebhook, getInvitationBySlug, saveEventDetails } from "./controller/order.js";
 import { daftarRsvps, kirimRsvp } from "./controller/rsvp.js";
+import { financeRouter } from "./routes/finance.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 app.use(express.json());
@@ -52,6 +53,7 @@ app.get("/api/invitations/:slug", getInvitationBySlug); // PRD Modul C & D
 app.put("/api/invitations/:slug", saveEventDetails); // PRD Modul C: Editor Acara & Photo Quota
 app.get("/api/invitations/:slug/rsvps", daftarRsvps); // PRD Modul D: Daftar Ucapan Doa
 app.post("/api/invitations/:slug/rsvps", kirimRsvp); // PRD Modul D: Submit RSVP & Ucapan Tamu
+app.use("/api/finance", financeRouter); // PRD Modul E: Laporan Finansial & Auto-Cleanup
 
 // Urutan penting: route → 404 → errorHandler paling akhir
 app.use((_req, res) => {

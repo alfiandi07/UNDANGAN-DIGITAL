@@ -57,3 +57,4 @@ export async function kirimRsvp(req: Request, res: Response) {
     res.status(500).json({ error: "Gagal mengirimkan ucapan RSVP" });
   }
 }
+

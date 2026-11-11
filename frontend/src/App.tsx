@@ -10,6 +10,7 @@ import PenggunaPage from "./pages/PenggunaPage";
 import TransaksiPage from "./pages/TransaksiPage";
 import EditorUndanganPage from "./pages/EditorUndanganPage";
 import UndanganTamuPage from "./pages/UndanganTamuPage";
+import KeuanganPage from "./pages/KeuanganPage";
 
 function DashboardIndex() {
   const { user } = useAuth();
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="katalog" element={<Navigate to="/" replace />} />
               <Route path="pengguna" element={<PenggunaPage />} />
               <Route path="transaksi" element={<TransaksiPage />} />
+              <Route path="keuangan" element={<KeuanganPage />} />
               <Route path="undangan/:slug/edit" element={<EditorUndanganPage />} />
             </Route>
           </Route>
