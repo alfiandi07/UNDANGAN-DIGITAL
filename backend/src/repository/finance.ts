@@ -108,7 +108,7 @@ export async function jalankanCleanupServer(): Promise<{
        AND (
          (package_type IN ('basic', 'standard') AND NOW() > DATE_ADD(expires_at, INTERVAL 7 DAY))
          OR
-         (package_type = 'special' AND NOW() > DATE_ADD(expires_at, INTERVAL 14 DAY))
+         (package_type IN ('special', 'premium') AND NOW() > DATE_ADD(expires_at, INTERVAL 14 DAY))
        )`
   );
 

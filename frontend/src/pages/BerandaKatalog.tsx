@@ -9,7 +9,6 @@ export default function BerandaKatalog() {
   const [templateList, setTemplateList] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [kategoriAktif, setKategoriAktif] = useState("Semua");
-  const [paketAktif, setPaketAktif] = useState("Semua");
   const [keyword, setKeyword] = useState("");
 
   // Modal Slug Checker & Checkout State (PRD Modul B)
@@ -39,26 +38,19 @@ export default function BerandaKatalog() {
     { label: "👶 Aqiqah", val: "aqiqah" },
   ];
 
-  const paketPilihan = [
-    { label: "Semua Tipe", val: "Semua" },
-    { label: "⚡ Standar (Tanpa Foto)", val: "standard" },
-    { label: "👑 Koleksi Premium (Mewah)", val: "premium" },
-  ];
-
   useEffect(() => {
     setLoading(true);
     const categoryParam = kategoriAktif === "Semua" ? undefined : kategoriAktif;
-    const packageParam = paketAktif === "Semua" ? undefined : paketAktif;
-    api.ambilSemuaTemplates(categoryParam, packageParam)
+    api.ambilSemuaTemplates(categoryParam)
       .then((data) => setTemplateList(data))
       .catch((err) => console.error("Gagal memuat template:", err))
       .finally(() => setLoading(false));
-  }, [kategoriAktif, paketAktif]);
+  }, [kategoriAktif]);
 
   function handleBukaCheckout(item: Template) {
     setSelectedTemplate(item);
     setCheckoutStep(1);
-    setSelectedPackage((item.package_type as api.PackageType) || "standard");
+    setSelectedPackage("standard");
     setSlugInput("");
     setSlugResult(null);
     setBuyerName(user?.nama ?? "");
@@ -72,7 +64,9 @@ export default function BerandaKatalog() {
 
   function getSelectedPackagePrice(): number {
     if (!selectedTemplate) return 0;
-    return selectedTemplate.price || selectedTemplate.price_standard || 99000;
+    if (selectedPackage === "basic") return selectedTemplate.price_basic;
+    if (selectedPackage === "special") return selectedTemplate.price_special;
+    return selectedTemplate.price_standard;
   }
 
   async function handleBuatPesanan(e: React.FormEvent) {
@@ -253,46 +247,21 @@ export default function BerandaKatalog() {
           </div>
         </div>
 
-        {/* Category & Package Filter Chips */}
-        <div className="space-y-3 max-w-4xl mx-auto mt-6">
-          {/* Baris 1: Filter Kategori Acara */}
-          <div className="katalog-category-chips flex flex-wrap justify-center gap-2">
-            {kategoriPilihan.map((kat) => (
-              <button
-                key={kat.val}
-                onClick={() => setKategoriAktif(kat.val)}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  kategoriAktif === kat.val
-                    ? "bg-[#4A151E] text-[#FFF9F2] shadow-sm"
-                    : "bg-white border border-[#E3D9C9] text-[#69584F] hover:bg-[#F8F4ED]"
-                }`}
-              >
-                {kat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Baris 2: Filter Tipe Paket (Standar vs Premium) */}
-          <div className="flex flex-wrap justify-center items-center gap-2 pt-1">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mr-1">
-              Tipe Desain:
-            </span>
-            {paketPilihan.map((pkt) => (
-              <button
-                key={pkt.val}
-                onClick={() => setPaketAktif(pkt.val)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                  paketAktif === pkt.val
-                    ? pkt.val === "premium"
-                      ? "bg-amber-600 text-white font-bold shadow-xs"
-                      : "bg-[#2D2424] text-white shadow-xs"
-                    : "bg-[#F5EFE6]/60 border border-[#E3D9C9] text-gray-600 hover:bg-[#EFE7D8]"
-                }`}
-              >
-                {pkt.label}
-              </button>
-            ))}
-          </div>
+        {/* Category Filter Chips */}
+        <div className="katalog-category-chips flex flex-wrap justify-center gap-2 max-w-4xl mx-auto mt-6">
+          {kategoriPilihan.map((kat) => (
+            <button
+              key={kat.val}
+              onClick={() => setKategoriAktif(kat.val)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                kategoriAktif === kat.val
+                  ? "bg-[#4A151E] text-[#FFF9F2] shadow-sm"
+                  : "bg-white border border-[#E3D9C9] text-[#69584F] hover:bg-[#F8F4ED]"
+              }`}
+            >
+              {kat.label}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -320,16 +289,10 @@ export default function BerandaKatalog() {
                 {/* Preview Mockup Container */}
                 <div className="template-card__preview relative h-64 bg-[#F7F2EA] flex items-center justify-center overflow-hidden border-b border-[#EBE3D5]">
                   <span className="template-card__badge-exclusive absolute top-3 left-3 bg-[#4A151E] text-[#FFF9F2] text-[10px] font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
-                    {item.category}
+                    MASTER TEMPLATE
                   </span>
-                  <span
-                    className={`template-card__badge-discount absolute top-3 right-3 text-[10px] font-black px-2.5 py-0.5 rounded uppercase tracking-wide shadow-xs ${
-                      item.package_type === "premium"
-                        ? "bg-amber-400 text-amber-950 border border-amber-300"
-                        : "bg-white text-gray-800 border border-gray-200"
-                    }`}
-                  >
-                    {item.package_type === "premium" ? "👑 PREMIUM" : "⚡ STANDAR"}
+                  <span className="template-card__badge-discount absolute top-3 right-3 bg-[#FFC554] text-[#422B00] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
+                    {item.category}
                   </span>
 
                   {/* Smartphone Frame Mockup */}
@@ -371,19 +334,13 @@ export default function BerandaKatalog() {
 
                   <div className="template-card__price-wrapper pt-1 border-t border-gray-100 flex items-baseline justify-between">
                     <div>
-                      <p className="text-[10px] text-gray-400 uppercase font-bold">Harga Desain</p>
+                      <p className="text-[10px] text-gray-400 uppercase font-bold">Mulai Paket Basic</p>
                       <span className="template-card__price-current font-extrabold text-xl text-[#3B171D]">
-                        {formatRupiah(item.price || item.price_standard || 99000)}
+                        {formatRupiah(item.price_basic)}
                       </span>
                     </div>
-                    <span
-                      className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
-                        item.package_type === "premium"
-                          ? "text-amber-800 bg-amber-50 border border-amber-200"
-                          : "text-blue-800 bg-blue-50 border border-blue-200"
-                      }`}
-                    >
-                      {item.package_type === "premium" ? "30 Foto • 12 Bln" : "Tanpa Foto • 6 Bln"}
+                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                      Kuota 15 Foto
                     </span>
                   </div>
 
@@ -439,37 +396,66 @@ export default function BerandaKatalog() {
               </button>
             </div>
 
-            {/* STEP 1: INFORMASI TEMPLATE & SLUG CHECKER */}
+            {/* STEP 1: PILIH PAKET & SLUG CHECKER */}
             {checkoutStep === 1 && (
               <div className="space-y-4">
-                {/* Detail Paket & Harga Template Terkunci */}
-                <div className="p-4 rounded-2xl border border-[#EBE3D5] bg-[#FAF7F2] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {selectedTemplate.package_type === "premium" ? (
-                        <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full text-xs font-black flex items-center gap-1 shadow-2xs">
-                          👑 PAKET PREMIUM
-                        </span>
-                      ) : (
-                        <span className="bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                          ⚡ PAKET STANDAR
-                        </span>
-                      )}
-                      <span className="text-xs text-gray-500 font-medium">
-                        {selectedTemplate.theme_style}
-                      </span>
+                {/* 3 Paket Resmi PRD */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-2">
+                    Pilih Paket Resmi:
+                  </label>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {/* Basic */}
+                    <div
+                      onClick={() => setSelectedPackage("basic")}
+                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer transition ${
+                        selectedPackage === "basic"
+                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <p className="font-bold text-gray-800 text-xs">Basic</p>
+                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
+                        {formatRupiah(selectedTemplate.price_basic)}
+                      </p>
+                      <p className="text-[10px] text-gray-500">15 Foto • 3 Bln</p>
                     </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-[#4A151E]">
-                        {formatRupiah(getSelectedPackagePrice())}
+
+                    {/* Standard */}
+                    <div
+                      onClick={() => setSelectedPackage("standard")}
+                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer relative transition ${
+                        selectedPackage === "standard"
+                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#4A151E] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">
+                        Terpopuler
                       </span>
+                      <p className="font-bold text-gray-800 text-xs">Standard</p>
+                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
+                        {formatRupiah(selectedTemplate.price_standard)}
+                      </p>
+                      <p className="text-[10px] text-gray-500">15 Foto • 6 Bln</p>
+                    </div>
+
+                    {/* Special */}
+                    <div
+                      onClick={() => setSelectedPackage("special")}
+                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer transition ${
+                        selectedPackage === "special"
+                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <p className="font-bold text-gray-800 text-xs">Special</p>
+                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
+                        {formatRupiah(selectedTemplate.price_special)}
+                      </p>
+                      <p className="text-[10px] text-gray-500">30 Foto • 12 Bln</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {selectedTemplate.package_type === "premium"
-                      ? "✨ Desain mewah & eksklusif, galeri foto hingga 30 foto (Auto-WebP), musik autoplay, amplop digital QRIS, dan masa aktif 12 bulan."
-                      : "⚡ Desain minimalis clean & elegan, teks acara lengkap, peta Google Maps, RSVP realtime, dan masa aktif 6 bulan (tanpa galeri foto)."}
-                  </p>
                 </div>
 
                 {/* Slug Input */}
@@ -601,11 +587,9 @@ export default function BerandaKatalog() {
                     <span>Tautan Undangan:</span>
                     <strong className="font-mono text-[#4A151E]">/{slugInput}</strong>
                   </div>
-                  <div className="flex justify-between text-gray-600 items-center">
-                    <span>Paket Desain:</span>
-                    <span className="font-bold uppercase text-[11px] px-2 py-0.5 rounded bg-white border border-[#E8DEC8]">
-                      {selectedTemplate.package_type === "premium" ? "👑 PREMIUM" : "⚡ STANDAR"}
-                    </span>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Paket:</span>
+                    <span className="font-semibold uppercase">{selectedPackage}</span>
                   </div>
                   <div className="flex justify-between text-gray-900 border-t border-gray-200 pt-1 font-bold">
                     <span>Total Pembayaran:</span>

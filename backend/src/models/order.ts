@@ -1,4 +1,4 @@
-export type PackageType = "standard" | "premium" | "basic" | "special";
+export type PackageType = "basic" | "premium";
 export type PaymentStatus = "pending" | "paid" | "expired" | "failed";
 export type InvitationStatus = "draft" | "active" | "expired" | "cleaned";
 
@@ -23,8 +23,20 @@ export type EventDetails = {
     pria?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string };
     wanita?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string };
   };
-  akad?: { tanggal?: string; jam?: string; lokasi?: string; alamat?: string; maps_url?: string };
-  resepsi?: { tanggal?: string; jam?: string; lokasi?: string; alamat?: string; maps_url?: string };
+  akad?: {
+    tanggal?: string;
+    jam?: string;
+    lokasi?: string;
+    alamat?: string;
+    maps_url?: string;
+  };
+  resepsi?: {
+    tanggal?: string;
+    jam?: string;
+    lokasi?: string;
+    alamat?: string;
+    maps_url?: string;
+  };
   music_url?: string;
   amplop?: Array<{ bank: string; no_rek: string; atas_nama: string }>;
   photos?: string[];
@@ -56,4 +68,3 @@ export type CreateOrderInput = {
   package_type: PackageType;
   slug: string;
 };
-

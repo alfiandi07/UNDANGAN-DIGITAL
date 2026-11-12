@@ -21,3 +21,4 @@ MODIFY COLUMN package_type ENUM('basic', 'standard', 'special', 'premium') NOT N
 
 ALTER TABLE invitations 
 MODIFY COLUMN package_type ENUM('basic', 'standard', 'special', 'premium') NOT NULL DEFAULT 'standard';
+

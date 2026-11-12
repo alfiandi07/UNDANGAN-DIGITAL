@@ -7,10 +7,10 @@ import type { PackageType } from "../models/order.js";
 
 function hitungMasaAktif(packageType: PackageType): Date {
   const now = new Date();
-  if (packageType === "premium" || packageType === "special") {
-    now.setFullYear(now.getFullYear() + 1); // 12 bulan (1 tahun)
+  if (packageType === "premium") {
+    now.setFullYear(now.getFullYear() + 1); // 12 bulan (1 tahun) premium
   } else {
-    now.setMonth(now.getMonth() + 6); // 6 bulan (Standar)
+    now.setMonth(now.getMonth() + 6); // 6 bulan (Standar) basic
   }
   return now;
 }
@@ -28,21 +28,37 @@ export async function createOrder(req: Request, res: Response) {
       slug,
     } = req.body ?? {};
 
-    if (!buyer_name || !buyer_whatsapp || !buyer_email || !password || !template_id || !slug) {
+    if (
+      !buyer_name ||
+      !buyer_whatsapp ||
+      !buyer_email ||
+      !password ||
+      !template_id ||
+      !slug
+    ) {
       res.status(400).json({ error: "Seluruh kolom wajib diisi lengkap" });
       return;
     }
 
     // 1. Normalisasi & Validasi Slug
-    const cleanSlug = String(slug).trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const cleanSlug = String(slug)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
     if (cleanSlug.length < 3) {
-      res.status(400).json({ error: "Slug minimal 3 karakter (hanya huruf, angka, dan strip -)" });
+      res.status(400).json({
+        error: "Slug minimal 3 karakter (hanya huruf, angka, dan strip -)",
+      });
       return;
     }
 
     const slugTersedia = await templateRepo.isSlugTersedia(cleanSlug);
     if (!slugTersedia) {
-      res.status(400).json({ error: `Tautan tautan/${cleanSlug} sudah digunakan, silakan pilih slug lain.` });
+      res.status(400).json({
+        error: `Tautan tautan/${cleanSlug} sudah digunakan, silakan pilih slug lain.`,
+      });
       return;
     }
 
@@ -54,11 +70,18 @@ export async function createOrder(req: Request, res: Response) {
     }
 
     // Paket ditentukan oleh template yang dipilih, atau fallback dari request
-    const templateTier = (template.package_type as PackageType) || (package_type as PackageType) || "standard";
-    const pkg: PackageType = templateTier === "premium" || templateTier === "special" ? "premium" : "standard";
+    const templateTier =
+      (template.package_type as PackageType) ||
+      (package_type as PackageType) ||
+      "basic";
+    const pkg: PackageType = templateTier === "premium" ? "premium" : "basic";
 
     // Harga ditetapkan dari harga template yang diinput admin
-    const grossAmount = template.price || (pkg === "premium" ? template.price_special || 149000 : template.price_standard || 99000);
+    const grossAmount =
+      template.price ||
+      (pkg === "premium"
+        ? template.price_special || 149000
+        : template.price_standard || 99000);
     // Standar = 0 foto (tanpa foto), Premium = 30 foto
     const maxPhotos = pkg === "premium" ? 30 : 0;
 
@@ -143,7 +166,10 @@ export async function createOrder(req: Request, res: Response) {
         });
 
         if (snapResponse.ok) {
-          const snapData = (await snapResponse.json()) as { token?: string; redirect_url?: string };
+          const snapData = (await snapResponse.json()) as {
+            token?: string;
+            redirect_url?: string;
+          };
           snapToken = snapData.token ?? "";
           redirectUrl = snapData.redirect_url ?? "";
         }
@@ -167,12 +193,21 @@ export async function createOrder(req: Request, res: Response) {
     });
   } catch (err) {
     console.error("Order creation error:", err);
-    let pesanError = "Terjadi kendala pada server saat memproses pesanan. Silakan coba kembali beberapa saat lagi.";
+    let pesanError =
+      "Terjadi kendala pada server saat memproses pesanan. Silakan coba kembali beberapa saat lagi.";
     if (err instanceof Error) {
       const msg = err.message;
-      if (msg.includes("Duplicate entry") || (err as { code?: string }).code === "ER_DUP_ENTRY") {
-        pesanError = "Tautan undangan ini sudah pernah digunakan oleh pengantin lain. Silakan pilih tautan (slug) lain.";
-      } else if (!msg.includes("Table") && !msg.includes("SQL") && !msg.includes("doesn't exist")) {
+      if (
+        msg.includes("Duplicate entry") ||
+        (err as { code?: string }).code === "ER_DUP_ENTRY"
+      ) {
+        pesanError =
+          "Tautan undangan ini sudah pernah digunakan oleh pengantin lain. Silakan pilih tautan (slug) lain.";
+      } else if (
+        !msg.includes("Table") &&
+        !msg.includes("SQL") &&
+        !msg.includes("doesn't exist")
+      ) {
         pesanError = msg;
       }
     }
@@ -183,8 +218,14 @@ export async function createOrder(req: Request, res: Response) {
 // POST /api/payment/webhook (Midtrans Callback FR-B2)
 export async function midtransWebhook(req: Request, res: Response) {
   try {
-    const { order_id, transaction_status, fraud_status, status_code, signature_key, gross_amount } =
-      req.body ?? {};
+    const {
+      order_id,
+      transaction_status,
+      fraud_status,
+      status_code,
+      signature_key,
+      gross_amount,
+    } = req.body ?? {};
 
     if (!order_id) {
       res.status(400).json({ error: "Missing order_id" });
@@ -195,7 +236,10 @@ export async function midtransWebhook(req: Request, res: Response) {
     const serverKey = process.env.MIDTRANS_SERVER_KEY;
     if (serverKey && signature_key) {
       const payload = `${order_id}${status_code}${gross_amount}${serverKey}`;
-      const expectedSignature = crypto.createHash("sha512").update(payload).digest("hex");
+      const expectedSignature = crypto
+        .createHash("sha512")
+        .update(payload)
+        .digest("hex");
       if (signature_key !== expectedSignature) {
         res.status(403).json({ error: "Invalid signature key" });
         return;
@@ -268,7 +312,9 @@ export async function getAllOrdersAdmin(_req: Request, res: Response) {
     const orders = await repo.semuaOrdersAdmin();
     res.json(orders);
   } catch (err) {
-    res.status(500).json({ error: "Gagal mengambil daftar pesanan untuk admin" });
+    res
+      .status(500)
+      .json({ error: "Gagal mengambil daftar pesanan untuk admin" });
   }
 }
 
@@ -320,10 +366,13 @@ export async function saveEventDetails(req: Request, res: Response) {
     }
 
     // FR-C2: Photo Quota Enforcer Middleware check
-    const photos: string[] = Array.isArray(event_details.photos) ? event_details.photos : [];
+    const photos: string[] = Array.isArray(event_details.photos)
+      ? event_details.photos
+      : [];
     if (invitation.max_photos === 0 && photos.length > 0) {
       res.status(400).json({
-        error: "Paket Standar tidak menyertakan fitur galeri foto. Silakan upgrade ke Paket Premium untuk mengunggah foto.",
+        error:
+          "Paket Standar tidak menyertakan fitur galeri foto. Silakan upgrade ke Paket Premium untuk mengunggah foto.",
       });
       return;
     }
@@ -334,7 +383,11 @@ export async function saveEventDetails(req: Request, res: Response) {
       return;
     }
 
-    const updated = await repo.updateEventDetails(slug, event_details, photos.length);
+    const updated = await repo.updateEventDetails(
+      slug,
+      event_details,
+      photos.length,
+    );
     res.json({
       success: true,
       message: "Data acara berhasil disimpan!",
@@ -345,4 +398,3 @@ export async function saveEventDetails(req: Request, res: Response) {
     res.status(500).json({ error: "Gagal menyimpan detail acara" });
   }
 }
-
