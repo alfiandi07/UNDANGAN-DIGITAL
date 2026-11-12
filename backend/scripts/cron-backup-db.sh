@@ -31,3 +31,4 @@ fi
 find "${BACKUP_DIR}" -type f -name "db_backup_*.sql.gz" -mtime +7 -delete
 
 echo "[$(date "+%Y-%m-%d %H:%M:%S")] [ASM-BACKUP] Rotasi 7 hari selesai."
+
