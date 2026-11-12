@@ -5,7 +5,14 @@ import * as repo from "../repository/template.js";
 export async function daftar(req: Request, res: Response) {
   try {
     const kategori = typeof req.query.category === "string" ? req.query.category : undefined;
-    const data = await repo.semuaTemplates(kategori);
+    const packageType =
+      typeof req.query.package_type === "string"
+        ? req.query.package_type
+        : typeof req.query.tier === "string"
+        ? req.query.tier
+        : undefined;
+
+    const data = await repo.semuaTemplates(kategori, packageType);
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: "Gagal mengambil daftar template" });
@@ -29,6 +36,8 @@ export async function tambah(req: Request, res: Response) {
       slug,
       title,
       category,
+      package_type,
+      price,
       theme_style,
       thumbnail_url,
       demo_url,
@@ -38,21 +47,32 @@ export async function tambah(req: Request, res: Response) {
       is_active,
     } = req.body ?? {};
 
+    // Validasi wajib: Kategori harus diisi
+    if (!category || String(category).trim() === "") {
+      res.status(400).json({ error: "Kategori wajib diisi" });
+      return;
+    }
+
     if (!title || !slug) {
       res.status(400).json({ error: "Judul dan slug template wajib diisi" });
       return;
     }
 
+    const packageType = package_type === "premium" ? "premium" : "standard";
+    const finalPrice = Number(price) || Number(price_standard) || (packageType === "premium" ? 149000 : 99000);
+
     const created = await repo.tambahTemplate({
       slug: String(slug).trim().toLowerCase(),
       title: String(title).trim(),
-      category: category || "wedding",
+      category: category,
+      package_type: packageType,
+      price: finalPrice,
       theme_style: String(theme_style ?? "Modern").trim(),
       thumbnail_url: String(thumbnail_url ?? "").trim(),
       demo_url: String(demo_url ?? `/demo/${slug}`).trim(),
-      price_basic: Number(price_basic) || 79000,
-      price_standard: Number(price_standard) || 99000,
-      price_special: Number(price_special) || 120000,
+      price_basic: Number(price_basic) || finalPrice,
+      price_standard: Number(price_standard) || finalPrice,
+      price_special: Number(price_special) || finalPrice,
       is_active: is_active ?? true,
     });
 
@@ -69,6 +89,11 @@ export async function ubah(req: Request, res: Response) {
     const id = Number(req.params.id);
     if (!id) {
       res.status(400).json({ error: "ID template tidak valid" });
+      return;
+    }
+
+    if (req.body && req.body.category !== undefined && String(req.body.category).trim() === "") {
+      res.status(400).json({ error: "Kategori wajib diisi" });
       return;
     }
 

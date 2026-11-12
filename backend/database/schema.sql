@@ -40,6 +40,8 @@ CREATE TABLE templates (
     slug VARCHAR(100) UNIQUE NOT NULL,
     title VARCHAR(150) NOT NULL,
     category ENUM('wedding', 'khitan', 'birthday', 'aqiqah') NOT NULL,
+    package_type ENUM('standard', 'premium') NOT NULL DEFAULT 'standard',
+    price INT UNSIGNED NOT NULL DEFAULT 99000,
     theme_style VARCHAR(100) NOT NULL, -- contoh: Adat Jawa, Modern, Rustic, Islamic
     thumbnail_url VARCHAR(255) NOT NULL,
     demo_url VARCHAR(255) NOT NULL,

@@ -122,6 +122,11 @@ export default function EditorUndanganPage() {
     const max = invitation?.max_photos ?? 15;
     const current = eventDetails.photos?.length ?? 0;
 
+    if (max === 0) {
+      alert("Paket Standar tidak menyertakan fitur galeri foto.");
+      return;
+    }
+
     if (current >= max) {
       alert(`Kuota foto maksimal (${max} foto) sudah tercapai!`);
       return;
@@ -709,62 +714,74 @@ export default function EditorUndanganPage() {
               </div>
             </div>
 
-            {/* Input Tambah Foto */}
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
-              <label className="block text-xs font-bold text-gray-700">
-                Tambah URL Foto Galeri (Cloudinary / WebP)
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  disabled={isQuotaFull}
-                  value={newPhotoUrl}
-                  onChange={(e) => setNewPhotoUrl(e.target.value)}
-                  placeholder={
-                    isQuotaFull
-                      ? "Kuota foto telah penuh (maksimal tercapai)"
-                      : "https://res.cloudinary.com/... atau tautan gambar lainnya"
-                  }
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E] disabled:bg-gray-100"
-                />
-                <button
-                  type="button"
-                  disabled={isQuotaFull || !newPhotoUrl.trim()}
-                  onClick={handleTambahFoto}
-                  className="px-4 py-2 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition disabled:opacity-40 cursor-pointer"
-                >
-                  + Tambah
-                </button>
-              </div>
-            </div>
-
-            {/* Grid Pratinjau Foto */}
-            {eventDetails.photos && eventDetails.photos.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                {eventDetails.photos.map((foto, idx) => (
-                  <div
-                    key={idx}
-                    className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-100 shadow-xs"
-                  >
-                    <img src={foto} alt="" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleHapusFoto(idx)}
-                      className="absolute top-1.5 right-1.5 bg-red-600/90 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer"
-                      title="Hapus foto ini"
-                    >
-                      ✕
-                    </button>
-                    <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
-                      #{idx + 1}
-                    </span>
-                  </div>
-                ))}
+            {/* Input Tambah Foto atau Pemberitahuan Paket Standar */}
+            {maxPhotosCount === 0 ? (
+              <div className="p-6 bg-amber-50 rounded-2xl border border-amber-200 text-center space-y-2">
+                <span className="text-3xl">📷</span>
+                <h4 className="font-bold text-amber-900 text-sm">Paket Standar Tanpa Galeri Foto</h4>
+                <p className="text-xs text-amber-800 max-w-md mx-auto leading-relaxed">
+                  Undangan Anda terdaftar pada <strong>Paket Standar</strong> dengan layout elegan tanpa galeri foto. Jika ingin menambahkan galeri hingga 30 foto berkualitas tinggi, silakan upgrade ke <strong>Paket Premium</strong>.
+                </p>
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-400 border border-dashed rounded-2xl">
-                <p className="text-sm">Belum ada foto yang ditambahkan ke galeri.</p>
-              </div>
+              <>
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
+                  <label className="block text-xs font-bold text-gray-700">
+                    Tambah URL Foto Galeri (Cloudinary / WebP)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      disabled={isQuotaFull}
+                      value={newPhotoUrl}
+                      onChange={(e) => setNewPhotoUrl(e.target.value)}
+                      placeholder={
+                        isQuotaFull
+                          ? "Kuota foto telah penuh (maksimal tercapai)"
+                          : "https://res.cloudinary.com/... atau tautan gambar lainnya"
+                      }
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E] disabled:bg-gray-100"
+                    />
+                    <button
+                      type="button"
+                      disabled={isQuotaFull || !newPhotoUrl.trim()}
+                      onClick={handleTambahFoto}
+                      className="px-4 py-2 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition disabled:opacity-40 cursor-pointer"
+                    >
+                      + Tambah
+                    </button>
+                  </div>
+                </div>
+
+                {/* Grid Pratinjau Foto */}
+                {eventDetails.photos && eventDetails.photos.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {eventDetails.photos.map((foto, idx) => (
+                      <div
+                        key={idx}
+                        className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-100 shadow-xs"
+                      >
+                        <img src={foto} alt="" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => handleHapusFoto(idx)}
+                          className="absolute top-1.5 right-1.5 bg-red-600/90 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                          title="Hapus foto ini"
+                        >
+                          ✕
+                        </button>
+                        <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
+                          #{idx + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-400 border border-dashed rounded-2xl">
+                    <p className="text-sm">Belum ada foto yang ditambahkan ke galeri.</p>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Musik Latar */}

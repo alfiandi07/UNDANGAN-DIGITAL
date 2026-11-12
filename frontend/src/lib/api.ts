@@ -122,11 +122,15 @@ export function buatTransaksi(data: { id_pengguna: number; items: ItemPesan[] })
 }
 
 // ── Master Template (PRD asm.invitation) ─────────────────
+export type PackageTier = "standard" | "premium";
+
 export type Template = {
   id: number;
   slug: string;
   title: string;
   category: "wedding" | "khitan" | "birthday" | "aqiqah";
+  package_type?: PackageTier;
+  price?: number;
   theme_style: string;
   thumbnail_url: string;
   demo_url: string;
@@ -136,12 +140,16 @@ export type Template = {
   is_active: boolean;
 };
 
-export function ambilSemuaTemplates(category?: string) {
-  const url =
-    category && category !== "Semua" && category !== "all"
-      ? `/api/templates?category=${category}`
-      : "/api/templates";
-  return request<Template[]>(url);
+export function ambilSemuaTemplates(category?: string, packageType?: string) {
+  const params = new URLSearchParams();
+  if (category && category !== "Semua" && category !== "all") {
+    params.set("category", category);
+  }
+  if (packageType && packageType !== "Semua" && packageType !== "all") {
+    params.set("package_type", packageType);
+  }
+  const query = params.toString();
+  return request<Template[]>(query ? `/api/templates?${query}` : "/api/templates");
 }
 
 export function ambilDetailTemplate(slug: string) {
@@ -163,12 +171,14 @@ export type DataTemplateInput = {
   slug: string;
   title: string;
   category: "wedding" | "khitan" | "birthday" | "aqiqah";
+  package_type?: PackageTier;
+  price?: number;
   theme_style: string;
   thumbnail_url: string;
   demo_url?: string;
-  price_basic: number;
-  price_standard: number;
-  price_special: number;
+  price_basic?: number;
+  price_standard?: number;
+  price_special?: number;
   is_active?: boolean;
 };
 
@@ -197,7 +207,7 @@ export function hapusTemplate(id: number) {
 }
 
 // ── Modul B: Order & Midtrans Checkout ───────────────────
-export type PackageType = "basic" | "standard" | "special";
+export type PackageType = "standard" | "premium" | "basic" | "special";
 export type PaymentStatus = "pending" | "paid" | "expired" | "failed";
 
 export type Order = {

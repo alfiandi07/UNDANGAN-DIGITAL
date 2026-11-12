@@ -1,4 +1,4 @@
-export type PackageType = "basic" | "standard" | "special";
+export type PackageType = "standard" | "premium" | "basic" | "special";
 export type PaymentStatus = "pending" | "paid" | "expired" | "failed";
 export type InvitationStatus = "draft" | "active" | "expired" | "cleaned";
 

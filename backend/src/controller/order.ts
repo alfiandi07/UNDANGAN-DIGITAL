@@ -7,12 +7,10 @@ import type { PackageType } from "../models/order.js";
 
 function hitungMasaAktif(packageType: PackageType): Date {
   const now = new Date();
-  if (packageType === "basic") {
-    now.setMonth(now.getMonth() + 3); // 3 bulan
-  } else if (packageType === "standard") {
-    now.setMonth(now.getMonth() + 6); // 6 bulan
-  } else {
+  if (packageType === "premium" || packageType === "special") {
     now.setFullYear(now.getFullYear() + 1); // 12 bulan (1 tahun)
+  } else {
+    now.setMonth(now.getMonth() + 6); // 6 bulan (Standar)
   }
   return now;
 }
@@ -55,19 +53,14 @@ export async function createOrder(req: Request, res: Response) {
       return;
     }
 
-    const pkg: PackageType =
-      package_type === "standard" || package_type === "special" ? package_type : "basic";
+    // Paket ditentukan oleh template yang dipilih, atau fallback dari request
+    const templateTier = (template.package_type as PackageType) || (package_type as PackageType) || "standard";
+    const pkg: PackageType = templateTier === "premium" || templateTier === "special" ? "premium" : "standard";
 
-    let grossAmount = template.price_basic;
-    let maxPhotos = 15;
-
-    if (pkg === "standard") {
-      grossAmount = template.price_standard;
-      maxPhotos = 15;
-    } else if (pkg === "special") {
-      grossAmount = template.price_special;
-      maxPhotos = 30;
-    }
+    // Harga ditetapkan dari harga template yang diinput admin
+    const grossAmount = template.price || (pkg === "premium" ? template.price_special || 149000 : template.price_standard || 99000);
+    // Standar = 0 foto (tanpa foto), Premium = 30 foto
+    const maxPhotos = pkg === "premium" ? 30 : 0;
 
     const expiresAt = hitungMasaAktif(pkg);
 
@@ -328,6 +321,12 @@ export async function saveEventDetails(req: Request, res: Response) {
 
     // FR-C2: Photo Quota Enforcer Middleware check
     const photos: string[] = Array.isArray(event_details.photos) ? event_details.photos : [];
+    if (invitation.max_photos === 0 && photos.length > 0) {
+      res.status(400).json({
+        error: "Paket Standar tidak menyertakan fitur galeri foto. Silakan upgrade ke Paket Premium untuk mengunggah foto.",
+      });
+      return;
+    }
     if (photos.length > invitation.max_photos) {
       res.status(400).json({
         error: `Kuota foto terlampaui! Batas maksimal untuk Paket ${invitation.package_type.toUpperCase()} adalah ${invitation.max_photos} foto (Anda mengunggah ${photos.length} foto).`,
