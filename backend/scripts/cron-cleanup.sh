@@ -14,3 +14,4 @@ RESPONSE=$(curl -s -X POST "${API_URL}" -H "Content-Type: application/json")
 
 echo "[${TIMESTAMP}] [ASM-CRON] Hasil: ${RESPONSE}"
 echo "[${TIMESTAMP}] [ASM-CRON] Selesai."
+
