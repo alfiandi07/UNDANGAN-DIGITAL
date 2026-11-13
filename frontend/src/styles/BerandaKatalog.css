@@ -10,9 +10,7 @@
 .katalog-page {
   position: relative;
   min-height: 100vh;
-  background-color: #fbf7ee;
-  background-image: radial-gradient(rgba(184, 145, 96, 0.22) 1.5px, transparent 1.5px);
-  background-size: 28px 28px;
+  background-color: #ffffff;
   color: #2d2424;
   overflow-x: hidden;
   font-family:
@@ -24,86 +22,139 @@
     sans-serif;
 }
 
-/* 1.1 AMBIENT GLOW ANIMATION (Luxury Aesthetic Background) */
-.katalog-ambient-glow {
+/* 1.1 FLORAL CORNERS (4 Sudut Bunga Rimbun & Jelas) */
+.katalog-floral-corner {
   position: fixed;
-  inset: 0;
   pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.katalog-glow-orb {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(55px);
-  opacity: 0.85;
+  z-index: 1;
+  background-repeat: no-repeat;
   will-change: transform;
+  transition: transform 0.1s ease-out;
+  opacity: 0.95;
 }
 
-/* Orb 1: Rich Warm Gold di kiri atas */
-.katalog-glow-orb--1 {
-  top: -8%;
-  left: -6%;
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(circle, rgba(235, 178, 76, 0.48) 0%, rgba(247, 215, 148, 0.28) 50%, transparent 75%);
-  animation: floatGlow1 18s ease-in-out infinite alternate;
+/* Sudut Kiri Atas */
+.katalog-floral-corner--tl {
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 360px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: top left;
+  background-size: 600px auto;
+  border-bottom-right-radius: 50%;
 }
 
-/* Orb 2: Vibrant Rose & Royal Maroon di kanan tengah */
-.katalog-glow-orb--2 {
-  top: 25%;
-  right: -10%;
-  width: 580px;
-  height: 580px;
-  background: radial-gradient(circle, rgba(199, 78, 107, 0.42) 0%, rgba(230, 135, 157, 0.22) 55%, transparent 75%);
-  animation: floatGlow2 22s ease-in-out infinite alternate;
+/* Sudut Kanan Atas (Mirror) */
+.katalog-floral-corner--tr {
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 360px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: top left;
+  background-size: 600px auto;
+  border-bottom-left-radius: 50%;
 }
 
-/* Orb 3: Golden Amber Glow di kiri bawah */
-.katalog-glow-orb--3 {
-  bottom: 2%;
-  left: 10%;
-  width: 480px;
-  height: 480px;
-  background: radial-gradient(circle, rgba(214, 158, 75, 0.42) 0%, rgba(240, 198, 138, 0.2) 50%, transparent 75%);
-  animation: floatGlow3 16s ease-in-out infinite alternate;
+/* Sudut Kiri Bawah (Mirror) */
+.katalog-floral-corner--bl {
+  bottom: 0;
+  left: 0;
+  width: 380px;
+  height: 380px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: bottom right;
+  background-size: 600px auto;
+  border-top-right-radius: 50%;
 }
 
-@keyframes floatGlow1 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(80px, 60px, 0) scale(1.1);
-  }
-  100% {
-    transform: translate3d(30px, 120px, 0) scale(0.95);
+/* Sudut Kanan Bawah */
+.katalog-floral-corner--br {
+  bottom: 0;
+  right: 0;
+  width: 380px;
+  height: 380px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: bottom right;
+  background-size: 600px auto;
+  border-top-left-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .katalog-floral-corner {
+    width: 220px;
+    height: 220px;
+    background-size: 400px auto;
+    opacity: 0.85;
   }
 }
 
-@keyframes floatGlow2 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(-70px, 80px, 0) scale(1.12);
-  }
-  100% {
-    transform: translate3d(-40px, -50px, 0) scale(0.92);
-  }
+/* 1.1 FLORAL CORNERS (4 Sudut Bunga Rimbun & Jelas) */
+.katalog-floral-corner {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  background-repeat: no-repeat;
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+  opacity: 0.95;
 }
 
-@keyframes floatGlow3 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(60px, -60px, 0) scale(1.08);
-  }
-  100% {
-    transform: translate3d(-50px, 40px, 0) scale(0.9);
+/* Sudut Kiri Atas */
+.katalog-floral-corner--tl {
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 360px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: top left;
+  background-size: 600px auto;
+  border-bottom-right-radius: 50%;
+}
+
+/* Sudut Kanan Atas (Mirror) */
+.katalog-floral-corner--tr {
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 360px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: top left;
+  background-size: 600px auto;
+  border-bottom-left-radius: 50%;
+}
+
+/* Sudut Kiri Bawah (Mirror) */
+.katalog-floral-corner--bl {
+  bottom: 0;
+  left: 0;
+  width: 380px;
+  height: 380px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: bottom right;
+  background-size: 600px auto;
+  border-top-right-radius: 50%;
+}
+
+/* Sudut Kanan Bawah */
+.katalog-floral-corner--br {
+  bottom: 0;
+  right: 0;
+  width: 380px;
+  height: 380px;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-position: bottom right;
+  background-size: 600px auto;
+  border-top-left-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .katalog-floral-corner {
+    width: 220px;
+    height: 220px;
+    background-size: 400px auto;
+    opacity: 0.85;
   }
 }
 
@@ -112,7 +163,7 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background-color: rgb(244, 235, 217);
+  background-color: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid #f0ebe1;
   padding: 0.85rem 1.5rem;
@@ -318,106 +369,6 @@
   border-color: #4a151e;
   color: #fff9f2;
   box-shadow: 0 1px 3px rgba(74, 21, 30, 0.2);
-}
-
-/* 3.1 FLOATING GLASSMORPHISM FEATURE STACK (MotionSites Inspiration) */
-.hero-feature-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  max-width: 32rem;
-  margin: 2rem auto 0 auto;
-  padding: 0 1rem;
-  position: relative;
-  z-index: 3;
-  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-}
-
-.hero-feature-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.7rem 1.35rem;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(220, 195, 165, 0.65);
-  border-radius: 9999px;
-  box-shadow: 0 4px 18px -2px rgba(74, 21, 30, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: default;
-}
-
-.hero-feature-pill:hover {
-  transform: translateY(-3px) scale(1.015);
-  background: rgba(255, 255, 255, 0.98);
-  border-color: #b89160;
-  box-shadow: 0 10px 24px -4px rgba(74, 21, 30, 0.14);
-}
-
-.hero-feature-pill__icon {
-  font-size: 1.15rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
-.hero-feature-pill__text {
-  flex: 1;
-  text-align: left;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #3b2c2c;
-  letter-spacing: 0.01em;
-}
-
-.hero-feature-pill__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background-color: #b89160;
-  box-shadow: 0 0 8px rgba(184, 145, 96, 0.8);
-  animation: pulseDot 2s infinite ease-in-out;
-}
-
-@keyframes pulseDot {
-  0%, 100% {
-    transform: scale(0.85);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.25);
-    opacity: 1;
-  }
-}
-
-/* 3.2 BOTANICAL MOSS ARCH PARALLAX DIVIDER (MotionSites Style) */
-.hero-botanical-arch-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 58rem;
-  margin: -1.5rem auto -3.5rem auto;
-  pointer-events: none;
-  z-index: 2;
-  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-}
-
-.hero-botanical-arch-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 14px 28px rgba(45, 60, 30, 0.12));
-}
-
-@media (max-width: 768px) {
-  .hero-botanical-arch-wrapper {
-    max-width: 100%;
-    margin: -0.5rem auto -2rem auto;
-  }
 }
 
 /* 4. KATALOG CARD GRID */
@@ -738,4 +689,65 @@
   text-align: center;
   font-size: 0.75rem;
   color: #6b7280;
+}
+
+/* ==========================================================================
+   8. RESPONSIVE MOBILE OPTIMIZATION (Mobile-First Polish)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .katalog-navbar {
+    padding: 0.65rem 1rem;
+  }
+
+  .katalog-navbar__container {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .katalog-navbar__menu {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 1.25rem;
+    font-size: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(230, 215, 205, 0.4);
+  }
+
+  .katalog-hero {
+    padding: 2.25rem 1rem 1.5rem 1rem;
+  }
+
+  .katalog-hero__title {
+    font-size: 1.65rem;
+    line-height: 1.25;
+  }
+
+  .katalog-hero__desc {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  .katalog-search-wrapper {
+    padding: 0;
+  }
+
+  .katalog-chips-container {
+    gap: 0.35rem;
+  }
+
+  .katalog-chip {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .katalog-grid-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .katalog-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }

@@ -57,12 +57,27 @@ export default function BerandaKatalog() {
 
   return (
     <div className="katalog-page">
-      {/* Ambient Animated Glow Background */}
-      <div className="katalog-ambient-glow" aria-hidden="true">
-        <div className="katalog-glow-orb katalog-glow-orb--1" />
-        <div className="katalog-glow-orb katalog-glow-orb--2" />
-        <div className="katalog-glow-orb katalog-glow-orb--3" />
-      </div>
+      {/* 4 Sudut Bunga Floral Watercolor Parallax */}
+      <div
+        className="katalog-floral-corner katalog-floral-corner--tl"
+        aria-hidden="true"
+        style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0)` }}
+      />
+      <div
+        className="katalog-floral-corner katalog-floral-corner--tr"
+        aria-hidden="true"
+        style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0) scaleX(-1)` }}
+      />
+      <div
+        className="katalog-floral-corner katalog-floral-corner--bl"
+        aria-hidden="true"
+        style={{ transform: `translate3d(0, ${-scrollY * 0.08}px, 0) scaleX(-1)` }}
+      />
+      <div
+        className="katalog-floral-corner katalog-floral-corner--br"
+        aria-hidden="true"
+        style={{ transform: `translate3d(0, ${-scrollY * 0.08}px, 0)` }}
+      />
 
       {/* ========================================================
           1. NAVBAR HEADER
@@ -160,50 +175,6 @@ export default function BerandaKatalog() {
               {kat.label}
             </button>
           ))}
-        </div>
-
-        {/* Floating Glassmorphism Feature Stack with Scroll Parallax */}
-        <div
-          className="hero-feature-stack"
-          style={{
-            transform: `translateY(${-scrollY * 0.05}px)`,
-          }}
-        >
-          <div className="hero-feature-pill">
-            <span className="hero-feature-pill__icon">🎵</span>
-            <span className="hero-feature-pill__text">Autoplay Audio & Kontrol Musik Eksklusif</span>
-            <span className="hero-feature-pill__dot" />
-          </div>
-          <div className="hero-feature-pill">
-            <span className="hero-feature-pill__icon">💌</span>
-            <span className="hero-feature-pill__text">Amplop Digital, Direct Rekening & QRIS</span>
-            <span className="hero-feature-pill__dot" />
-          </div>
-          <div className="hero-feature-pill">
-            <span className="hero-feature-pill__icon">📍</span>
-            <span className="hero-feature-pill__text">Panduan Navigasi Google Maps Presisi</span>
-            <span className="hero-feature-pill__dot" />
-          </div>
-          <div className="hero-feature-pill">
-            <span className="hero-feature-pill__icon">⏱️</span>
-            <span className="hero-feature-pill__text">Hitung Mundur Acara & Buku Tamu RSVP Realtime</span>
-            <span className="hero-feature-pill__dot" />
-          </div>
-        </div>
-
-        {/* Botanical Moss Arch Parallax Divider (MotionSites Style) */}
-        <div
-          className="hero-botanical-arch-wrapper"
-          aria-hidden="true"
-          style={{
-            transform: `translateY(${scrollY * 0.12}px) scale(${1 + Math.min(scrollY * 0.0003, 0.05)})`,
-          }}
-        >
-          <img
-            src="/botanical-moss-arch.jpg"
-            alt="Botanical Moss Arch"
-            className="hero-botanical-arch-img"
-          />
         </div>
       </section>
 
