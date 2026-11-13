@@ -9,7 +9,7 @@
 /* 1. PAGE WRAPPER */
 .katalog-page {
   min-height: 100vh;
-  background-color: #4f1010;
+  background-color: #fffdf9;
   color: #2d2424;
   font-family:
     system-ui,
@@ -25,7 +25,7 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background-color: #4a151e;
+  background-color: rgba(255, 253, 249, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid #f0ebe1;
   padding: 0.85rem 1.5rem;
