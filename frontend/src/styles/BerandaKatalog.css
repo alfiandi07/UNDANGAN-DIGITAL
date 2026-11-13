@@ -22,13 +22,13 @@
     sans-serif;
 }
 
-/* 1.1 FULL FIXED FLORAL BACKGROUND (Full Sampai Bawah & Tidak Tabrakan) */
+/* 1.1 FULL FIXED FLORAL BACKGROUND (Full HD 1920x1080 - Super Tajam) */
 .katalog-floral-bg {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("/bg-wedding-floral.jpg");
+  background-image: url("/bg-wedding-floral-hd.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
