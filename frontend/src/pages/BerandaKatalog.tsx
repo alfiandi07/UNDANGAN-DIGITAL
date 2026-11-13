@@ -13,6 +13,18 @@ export default function BerandaKatalog() {
   const [loading, setLoading] = useState(true);
   const [kategoriAktif, setKategoriAktif] = useState("Semua");
   const [keyword, setKeyword] = useState("");
+  const [activeNav, setActiveNav] = useState<"katalog" | "paket" | "custom">(
+    "katalog",
+  );
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Modal Checkout Template Terpilih
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
@@ -45,6 +57,13 @@ export default function BerandaKatalog() {
 
   return (
     <div className="katalog-page">
+      {/* Ambient Animated Glow Background */}
+      <div className="katalog-ambient-glow" aria-hidden="true">
+        <div className="katalog-glow-orb katalog-glow-orb--1" />
+        <div className="katalog-glow-orb katalog-glow-orb--2" />
+        <div className="katalog-glow-orb katalog-glow-orb--3" />
+      </div>
+
       {/* ========================================================
           1. NAVBAR HEADER
       ======================================================== */}
@@ -58,14 +77,25 @@ export default function BerandaKatalog() {
           <nav className="katalog-navbar__menu">
             <a
               href="#katalog"
-              className="katalog-navbar__link katalog-navbar__link--active"
+              onClick={() => setActiveNav("katalog")}
+              className={`katalog-navbar__link ${activeNav === "katalog" ? "katalog-navbar__link--active" : ""}`}
             >
               Katalog Master
             </a>
-            <a href="#paket" className="katalog-navbar__link">
+
+            <a
+              href="#paket"
+              onClick={() => setActiveNav("paket")}
+              className={`katalog-navbar__link ${activeNav === "paket" ? "katalog-navbar__link--active" : ""}`}
+            >
               Paket Harga
             </a>
-            <a href="#custom" className="katalog-navbar__link">
+
+            <a
+              href="#custom"
+              onClick={() => setActiveNav("custom")}
+              className={`katalog-navbar__link ${activeNav === "custom" ? "katalog-navbar__link--active" : ""}`}
+            >
               Desain Custom
             </a>
           </nav>
@@ -130,6 +160,50 @@ export default function BerandaKatalog() {
               {kat.label}
             </button>
           ))}
+        </div>
+
+        {/* Floating Glassmorphism Feature Stack with Scroll Parallax */}
+        <div
+          className="hero-feature-stack"
+          style={{
+            transform: `translateY(${-scrollY * 0.05}px)`,
+          }}
+        >
+          <div className="hero-feature-pill">
+            <span className="hero-feature-pill__icon">🎵</span>
+            <span className="hero-feature-pill__text">Autoplay Audio & Kontrol Musik Eksklusif</span>
+            <span className="hero-feature-pill__dot" />
+          </div>
+          <div className="hero-feature-pill">
+            <span className="hero-feature-pill__icon">💌</span>
+            <span className="hero-feature-pill__text">Amplop Digital, Direct Rekening & QRIS</span>
+            <span className="hero-feature-pill__dot" />
+          </div>
+          <div className="hero-feature-pill">
+            <span className="hero-feature-pill__icon">📍</span>
+            <span className="hero-feature-pill__text">Panduan Navigasi Google Maps Presisi</span>
+            <span className="hero-feature-pill__dot" />
+          </div>
+          <div className="hero-feature-pill">
+            <span className="hero-feature-pill__icon">⏱️</span>
+            <span className="hero-feature-pill__text">Hitung Mundur Acara & Buku Tamu RSVP Realtime</span>
+            <span className="hero-feature-pill__dot" />
+          </div>
+        </div>
+
+        {/* Botanical Moss Arch Parallax Divider (MotionSites Style) */}
+        <div
+          className="hero-botanical-arch-wrapper"
+          aria-hidden="true"
+          style={{
+            transform: `translateY(${scrollY * 0.12}px) scale(${1 + Math.min(scrollY * 0.0003, 0.05)})`,
+          }}
+        >
+          <img
+            src="/botanical-moss-arch.jpg"
+            alt="Botanical Moss Arch"
+            className="hero-botanical-arch-img"
+          />
         </div>
       </section>
 
