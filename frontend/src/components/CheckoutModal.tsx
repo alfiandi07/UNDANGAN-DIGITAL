@@ -26,11 +26,21 @@ interface CheckoutModalProps {
 export default function CheckoutModal({ template, onClose }: CheckoutModalProps) {
   const { user } = useAuth();
 
-  // [STATE] Tahapan Checkout: 1 = Paket & Slug, 2 = Form Pemesan, 3 = Pembayaran
+  // [STATE] Tahapan Checkout: 1 = Slug, 2 = Form Pemesan, 3 = Pembayaran
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
 
-  // [STATE] Pilihan 2 Paket Resmi
-  const [selectedPackage, setSelectedPackage] = useState<PackageType>("basic");
+  // [LOGIKA] Paket & Harga Terkunci Sesuai PRD Section 3 & FR-A3
+  const isPremiumTemplate =
+    template.package_type === "premium" ||
+    (template.price !== undefined && template.price >= 100000);
+  const selectedPackage: PackageType = isPremiumTemplate ? "premium" : "standard";
+  const packagePrice =
+    template.price ||
+    (isPremiumTemplate ? template.price_standard || 149000 : template.price_basic || 79000);
+
+  function getSelectedPackagePrice(): number {
+    return packagePrice;
+  }
 
   // [STATE] Slug Checker
   const [slugInput, setSlugInput] = useState("");
@@ -59,14 +69,6 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
       }
     };
   }, []);
-
-  // [LOGIKA] Harga 2 Paket Resmi
-  const hargaBasic = template.price_basic || template.price || 79000;
-  const hargaPremium = template.price_special || template.price_standard || 149000;
-
-  function getSelectedPackagePrice(): number {
-    return selectedPackage === "premium" ? hargaPremium : hargaBasic;
-  }
 
   // [LOGIKA] Pengecekan Slug dengan Debounce 300ms
   function handleSlugChange(val: string) {
@@ -159,7 +161,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
           <div>
             <span className="checkout-header__step">
               {checkoutStep === 1
-                ? "Langkah 1/3: Pilih Paket & Cek Slug"
+                ? "Langkah 1/3: Cek Tautan / Slug Undangan"
                 : checkoutStep === 2
                 ? "Langkah 2/3: Data Pemesan & Akun Klien"
                 : "Langkah 3/3: Konfirmasi & Pembayaran"}
@@ -177,38 +179,29 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
         </div>
 
         {/* ========================================================
-            STEP 1: PILIH 2 PAKET & CEK SLUG (ANTI NAIK TURUN)
+            STEP 1: RINGKASAN PAKET TERKUNCI & CEK SLUG (PRD FR-A3)
         ======================================================== */}
         {checkoutStep === 1 && (
           <div className="checkout-step-body">
             <div>
-              {/* Pilihan 2 Paket Resmi */}
-              <label className="checkout-section-label">Pilih Paket Resmi:</label>
-              <div className="checkout-packages-grid">
-                {/* Paket Basic */}
-                <div
-                  onClick={() => setSelectedPackage("basic")}
-                  className={`checkout-package-card ${
-                    selectedPackage === "basic" ? "checkout-package-card--selected" : ""
-                  }`}
-                >
-                  <p className="checkout-package-card__name">Paket Basic</p>
-                  <p className="checkout-package-card__price">{formatRupiah(hargaBasic)}</p>
-                  <p className="checkout-package-card__features">Tanpa Foto • Aktif 3 Bulan</p>
-                </div>
-
-                {/* Paket Premium */}
-                <div
-                  onClick={() => setSelectedPackage("premium")}
-                  className={`checkout-package-card ${
-                    selectedPackage === "premium" ? "checkout-package-card--selected" : ""
-                  }`}
-                >
-                  <span className="checkout-package-card__badge">Paling Diminati</span>
-                  <p className="checkout-package-card__name">Paket Premium</p>
-                  <p className="checkout-package-card__price">{formatRupiah(hargaPremium)}</p>
-                  <p className="checkout-package-card__features">30 Foto • Musik • 12 Bulan</p>
-                </div>
+              {/* Ringkasan Paket Terkunci Sesuai PRD Section 3 */}
+              <label className="checkout-section-label">Paket & Harga Desain (Terkunci):</label>
+              <div
+                className="checkout-package-card checkout-package-card--selected"
+                style={{ cursor: "default", marginBottom: "1.25rem" }}
+              >
+                <span className="checkout-package-card__badge">
+                  {selectedPackage === "premium" ? "Paket Premium Resmi" : "Paket Standar Resmi"}
+                </span>
+                <p className="checkout-package-card__name">
+                  {template.title} • {selectedPackage === "premium" ? "Paket Premium" : "Paket Standar"}
+                </p>
+                <p className="checkout-package-card__price">{formatRupiah(packagePrice)}</p>
+                <p className="checkout-package-card__features">
+                  {selectedPackage === "premium"
+                    ? "Maksimal 30 Foto (Cloudinary) • Musik Autoplay • Masa Aktif 12 Bulan"
+                    : "Tanpa Galeri Foto (0 Foto) • Form Acara Lengkap • Masa Aktif 6 Bulan"}
+                </p>
               </div>
 
               {/* Input Slug & Slot Status 24px */}

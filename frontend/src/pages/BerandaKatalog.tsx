@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Template } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
@@ -7,10 +7,103 @@ import CheckoutModal from "../components/CheckoutModal";
 import { formatRupiah } from "../utils/format";
 import "../styles/BerandaKatalog.css";
 
+const DEFAULT_MASTER_TEMPLATES: Template[] = [
+  {
+    id: 1,
+    slug: "jawa-keraton-royal",
+    title: "Jawa Keraton Royal",
+    category: "wedding",
+    package_type: "premium",
+    theme_style: "Adat Jawa",
+    thumbnail_url: "/assets/templates/jawa-keraton.webp",
+    demo_url: "/demo/jawa-keraton-royal",
+    price_basic: 79000,
+    price_standard: 99000,
+    price_special: 149000,
+    price: 149000,
+    is_active: true,
+  },
+  {
+    id: 2,
+    slug: "sunda-siger-luxury",
+    title: "Sunda Siger Luxury",
+    category: "wedding",
+    package_type: "premium",
+    theme_style: "Adat Sunda",
+    thumbnail_url: "/assets/templates/sunda-siger.webp",
+    demo_url: "/demo/sunda-siger-luxury",
+    price_basic: 79000,
+    price_standard: 99000,
+    price_special: 149000,
+    price: 149000,
+    is_active: true,
+  },
+  {
+    id: 3,
+    slug: "modern-minimalist-couture",
+    title: "Modern Minimalist Couture",
+    category: "wedding",
+    package_type: "standard",
+    theme_style: "Modern Minimalis",
+    thumbnail_url: "/assets/templates/modern-minimalist.webp",
+    demo_url: "/demo/modern-minimalist-couture",
+    price_basic: 79000,
+    price_standard: 79000,
+    price_special: 120000,
+    price: 79000,
+    is_active: true,
+  },
+  {
+    id: 4,
+    slug: "islamic-luxe-andalusia",
+    title: "Islamic Luxe Andalusia",
+    category: "wedding",
+    package_type: "standard",
+    theme_style: "Islamic Luxe",
+    thumbnail_url: "/assets/templates/islamic-luxe.webp",
+    demo_url: "/demo/islamic-luxe-andalusia",
+    price_basic: 79000,
+    price_standard: 79000,
+    price_special: 120000,
+    price: 79000,
+    is_active: true,
+  },
+  {
+    id: 5,
+    slug: "earthy-botanical-warm",
+    title: "Earthy Botanical Warm",
+    category: "wedding",
+    package_type: "premium",
+    theme_style: "Floral & Rustic",
+    thumbnail_url: "/assets/templates/earthy-botanical.webp",
+    demo_url: "/demo/earthy-botanical-warm",
+    price_basic: 79000,
+    price_standard: 99000,
+    price_special: 149000,
+    price: 149000,
+    is_active: true,
+  },
+  {
+    id: 6,
+    slug: "khitan-barokah-ceria",
+    title: "Khitan Barokah Ceria",
+    category: "khitan",
+    package_type: "standard",
+    theme_style: "Syukuran Khitan",
+    thumbnail_url: "/assets/templates/khitan-ceria.webp",
+    demo_url: "/demo/khitan-barokah-ceria",
+    price_basic: 79000,
+    price_standard: 79000,
+    price_special: 120000,
+    price: 79000,
+    is_active: true,
+  },
+];
+
 export default function BerandaKatalog() {
   const { user } = useAuth();
-  const [templateList, setTemplateList] = useState<Template[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const [templateList, setTemplateList] = useState<Template[]>(DEFAULT_MASTER_TEMPLATES);
   const [kategoriAktif, setKategoriAktif] = useState("Semua");
   const [keyword, setKeyword] = useState("");
   const [activeNav, setActiveNav] = useState<"katalog" | "paket" | "custom">(
@@ -22,6 +115,17 @@ export default function BerandaKatalog() {
     null,
   );
 
+  // Auto-open Checkout Modal jika datang dari Live Demo (?checkout=slug)
+  const checkoutSlug = searchParams.get("checkout");
+  useEffect(() => {
+    if (checkoutSlug && templateList.length > 0) {
+      const match = templateList.find((t) => t.slug === checkoutSlug);
+      if (match) {
+        setSelectedTemplate(match);
+      }
+    }
+  }, [checkoutSlug, templateList]);
+
   const kategoriPilihan = [
     { label: "Semua Acara", val: "Semua" },
     { label: "💍 Pernikahan", val: "wedding" },
@@ -31,20 +135,33 @@ export default function BerandaKatalog() {
   ];
 
   useEffect(() => {
-    setLoading(true);
+    let isMounted = true;
     const categoryParam = kategoriAktif === "Semua" ? undefined : kategoriAktif;
     api
       .ambilSemuaTemplates(categoryParam)
-      .then((data) => setTemplateList(data))
-      .catch((err) => console.error("Gagal memuat template:", err))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setTemplateList(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Gagal memuat template dari API, menggunakan fallback master:", err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [kategoriAktif]);
 
-  const filteredTemplates = templateList.filter(
-    (t) =>
-      t.title.toLowerCase().includes(keyword.toLowerCase()) ||
-      t.theme_style.toLowerCase().includes(keyword.toLowerCase()),
-  );
+  const filteredTemplates = templateList.filter((t) => {
+    const matchCategory =
+      kategoriAktif === "Semua" || t.category === kategoriAktif;
+    const matchKeyword =
+      !keyword ||
+      (t.title && t.title.toLowerCase().includes(keyword.toLowerCase())) ||
+      (t.theme_style && t.theme_style.toLowerCase().includes(keyword.toLowerCase()));
+    return matchCategory && matchKeyword;
+  });
 
   return (
     <div className="katalog-page">
@@ -154,13 +271,7 @@ export default function BerandaKatalog() {
           3. KATALOG CARD GRID
       ======================================================== */}
       <main id="katalog" className="katalog-grid-section">
-        {loading ? (
-          <div
-            style={{ textAlign: "center", padding: "4rem 0", color: "#9ca3af" }}
-          >
-            <p>Memuat master template dari server...</p>
-          </div>
-        ) : filteredTemplates.length === 0 ? (
+        {filteredTemplates.length === 0 ? (
           <div
             style={{ textAlign: "center", padding: "4rem 0", color: "#9ca3af" }}
           >
@@ -221,20 +332,25 @@ export default function BerandaKatalog() {
                   <div className="katalog-card__pricing">
                     <div>
                       <p className="katalog-card__price-sub">
-                        Mulai Paket Basic
+                        {item.package_type === "premium" ? "Paket Premium" : "Paket Standar"}
                       </p>
                       <p className="katalog-card__price-val">
-                        {formatRupiah(item.price_basic)}
+                        {formatRupiah(
+                          item.price ||
+                            (item.package_type === "premium"
+                              ? item.price_standard || 149000
+                              : item.price_basic || 79000),
+                        )}
                       </p>
                     </div>
                     <span
                       style={{
                         fontSize: "0.7rem",
                         fontWeight: 700,
-                        color: "#047857",
+                        color: item.package_type === "premium" ? "#6B1D2F" : "#047857",
                       }}
                     >
-                      Fitur Lengkap
+                      {item.package_type === "premium" ? "⭐ Kuota 30 Foto" : "✨ Tanpa Foto"}
                     </span>
                   </div>
 

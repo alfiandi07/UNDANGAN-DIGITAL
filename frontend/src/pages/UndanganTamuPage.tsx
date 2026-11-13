@@ -1,13 +1,24 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useParams, useSearchParams, useLocation, Link } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Invitation, Rsvp, Attendance } from "../lib/api";
+import { getDemoData, DEMO_INVITATIONS } from "../utils/demoData";
 import "../styles/UndanganTamu.css";
 
-export default function UndanganTamuPage() {
+interface UndanganTamuPageProps {
+  isDemo?: boolean;
+}
+
+export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPageProps) {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const guestParam = searchParams.get("to") || "";
+
+  const isDemoMode =
+    isDemo ||
+    location.pathname.startsWith("/demo") ||
+    Boolean(slug && DEMO_INVITATIONS[slug]);
 
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [rsvps, setRsvps] = useState<Rsvp[]>([]);
@@ -41,6 +52,16 @@ export default function UndanganTamuPage() {
       if (!slug) return;
       setLoading(true);
       setError("");
+
+      // Mode Demo: Gunakan data demo master langsung
+      if (isDemoMode) {
+        const demo = getDemoData(slug);
+        setInvitation(demo.invitation);
+        setRsvps(demo.rsvps);
+        setLoading(false);
+        return;
+      }
+
       try {
         const invData = await api.ambilDetailUndangan(slug);
         setInvitation(invData);
@@ -48,14 +69,21 @@ export default function UndanganTamuPage() {
         const rsvpData = await api.ambilDaftarRsvps(slug);
         setRsvps(rsvpData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Gagal memuat undangan");
+        // Jika API gagal / belum ada order di database tapi ada data demo, gunakan fallback demo
+        if (DEMO_INVITATIONS[slug]) {
+          const fallbackDemo = getDemoData(slug);
+          setInvitation(fallbackDemo.invitation);
+          setRsvps(fallbackDemo.rsvps);
+        } else {
+          setError(err instanceof Error ? err.message : "Gagal memuat undangan");
+        }
       } finally {
         setLoading(false);
       }
     }
 
     muatData();
-  }, [slug]);
+  }, [slug, isDemoMode]);
 
   // Update Countdown Timer
   useEffect(() => {
@@ -113,6 +141,27 @@ export default function UndanganTamuPage() {
 
     setSubmittingRsvp(true);
     setRsvpSuccess("");
+
+    if (isDemoMode) {
+      // Simulasi lokal untuk demo mode tanpa perlu panggil backend
+      setTimeout(() => {
+        const newDemoRsvp: Rsvp = {
+          id: Date.now(),
+          invitation_id: invitation?.id || 999,
+          guest_name: namaTamu,
+          attendance: kehadiran,
+          pax: kehadiran === "hadir" ? pax : 0,
+          message: pesanDoa,
+          created_at: new Date().toISOString(),
+        };
+        setRsvps((prev) => [newDemoRsvp, ...prev]);
+        setRsvpSuccess("✨ [DEMO] Terima kasih atas doa restu dan konfirmasi kehadiran Anda!");
+        setPesanDoa("");
+        setSubmittingRsvp(false);
+      }, 400);
+      return;
+    }
+
     try {
       const res = await api.kirimRsvp(slug, {
         guest_name: namaTamu,
@@ -218,7 +267,37 @@ export default function UndanganTamuPage() {
   const wanita = details.mempelai?.wanita;
 
   return (
-    <div className="guest-view-wrapper">
+    <div className={`guest-view-wrapper ${isDemoMode ? "guest-view-wrapper--demo" : ""}`}>
+      {/* ========================================================
+          LIVE DEMO FLOATING TOP BAR (PRD FR-A2)
+      ======================================================== */}
+      {isDemoMode && (
+        <header className="demo-top-bar">
+          <div className="demo-top-bar__info">
+            <span className="demo-top-bar__tag">👁️ Live Demo</span>
+            <span className="demo-top-bar__title">
+              {invitation.template_title || invitation.event_details?.title || "Desain Undangan"}
+            </span>
+            <span className="demo-top-bar__package">
+              {invitation.package_type === "premium" ? "⭐ Paket Premium" : "✨ Paket Standar"}
+            </span>
+          </div>
+
+          <div className="demo-top-bar__actions">
+            <Link
+              to={`/?checkout=${invitation.slug}`}
+              className="demo-top-bar__btn-order"
+              title="Pilih dan beli desain ini"
+            >
+              🛍️ Pesan Desain Ini
+            </Link>
+            <Link to="/" className="demo-top-bar__btn-back" title="Kembali ke Beranda Katalog">
+              ← Katalog
+            </Link>
+          </div>
+        </header>
+      )}
+
       <div className="guest-phone-container">
         {/* Audio Element */}
         {details.music_url && (

@@ -542,3 +542,108 @@
   border-top: 1px solid #f1ece4;
 }
 
+/* ========================================================
+   10. LIVE DEMO FLOATING BAR (PRD FR-A2)
+======================================================== */
+.demo-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(17, 24, 39, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.6rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.demo-top-bar__info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.demo-top-bar__tag {
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.demo-top-bar__title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #f3f4f6;
+}
+
+.demo-top-bar__package {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fcd34d;
+}
+
+.demo-top-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.demo-top-bar__btn-order {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.4);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.demo-top-bar__btn-order:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.6);
+}
+
+.demo-top-bar__btn-back {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.45rem 0.8rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.demo-top-bar__btn-back:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* Adjust top padding of guest-view-wrapper when in demo mode */
+.guest-view-wrapper--demo {
+  padding-top: 3.25rem;
+}
+
+

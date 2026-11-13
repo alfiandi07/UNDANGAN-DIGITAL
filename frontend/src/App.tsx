@@ -43,6 +43,9 @@ export default function App() {
             </Route>
           </Route>
 
+          {/* Halaman Live Demo (PRD FR-A2: Mobile-First Frame, Musik & Animasi) */}
+          <Route path="/demo/:slug" element={<UndanganTamuPage isDemo={true} />} />
+
           {/* Halaman Undangan Tamu (FR-D1: Guest View 100dvh) */}
           <Route path="/:slug" element={<UndanganTamuPage />} />
 
