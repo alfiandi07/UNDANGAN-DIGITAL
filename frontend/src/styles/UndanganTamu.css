@@ -1,0 +1,544 @@
+/* ==========================================================================
+   UNDANGAN TAMU STYLESHEET (Clean Architecture)
+   Fitur: Halaman Undangan Tamu Digital (Guest View)
+   - Mobile-First 100dvh Container
+   - Cover Sampul Geser (Slide-up)
+   - Countdown, Galeri, Amplop Digital, Live RSVP & Ucapan Doa
+   ========================================================================== */
+
+/* 1. WRAPPER & CONTAINER */
+.guest-view-wrapper {
+  min-height: 100vh;
+  background-color: #1c1917;
+  display: flex;
+  justify-content: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.guest-phone-container {
+  width: 100%;
+  max-width: 28rem;
+  background-color: #faf7f2;
+  min-height: 100vh;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 2. FLOATING MUSIC BUTTON */
+.guest-music-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 40;
+  width: 2.75rem;
+  height: 2.75rem;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #4a151e;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.guest-music-btn:hover {
+  transform: scale(1.1);
+}
+
+/* 3. COVER SAMPUL 100dvh (Slide-Up) */
+.guest-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  max-width: 28rem;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #421319 0%, #29080e 100%);
+  color: #fff9f2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.guest-cover--opened {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
+.guest-cover__header {
+  text-align: center;
+  padding-top: 1.5rem;
+}
+
+.guest-cover__subtitle {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: rgba(254, 240, 138, 0.85);
+  font-weight: 600;
+}
+
+.guest-cover__divider {
+  width: 2rem;
+  height: 2px;
+  background-color: rgba(254, 240, 138, 0.4);
+  margin: 0.5rem auto 0 auto;
+}
+
+.guest-cover__names {
+  text-align: center;
+  margin: auto 0;
+}
+
+.guest-cover__title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff3e3;
+}
+
+.guest-cover__ampersand {
+  font-family: Georgia, Cambria, serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.75rem;
+  color: #fde68a;
+  display: inline-block;
+  margin: 0.25rem 0;
+}
+
+.guest-cover__date {
+  font-size: 0.75rem;
+  color: rgba(254, 243, 199, 0.75);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
+
+.guest-cover__footer {
+  width: 100%;
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+.guest-cover__box {
+  background-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  margin-bottom: 1rem;
+}
+
+.guest-cover__to-label {
+  font-size: 0.7rem;
+  color: rgba(254, 243, 199, 0.75);
+  margin: 0 0 0.25rem 0;
+}
+
+.guest-cover__guest-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.guest-cover__open-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(90deg, #8c2738 0%, #5c1622 100%);
+  color: #ffffff;
+  border: 1px solid rgba(254, 240, 138, 0.2);
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.guest-cover__open-btn:active {
+  transform: scale(0.97);
+}
+
+/* 4. KONTEN UTAMA */
+.guest-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding-bottom: 4rem;
+}
+
+.guest-hero {
+  padding: 4rem 1.5rem 2.5rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(180deg, #f2e8da 0%, #faf7f2 100%);
+}
+
+.guest-hero__tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #8c6d3b;
+  font-weight: 800;
+}
+
+.guest-hero__title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #381118;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.guest-hero__quote {
+  font-size: 0.75rem;
+  color: #6e5d53;
+  line-height: 1.6;
+  font-style: italic;
+  max-width: 20rem;
+  margin: 0 auto;
+}
+
+/* Pasangan Mempelai */
+.guest-couple-section {
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.guest-couple-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid #ebe3d5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.guest-couple-name {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #381118;
+  margin: 0 0 0.5rem 0;
+}
+
+.guest-couple-parents {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Detail Acara (Akad & Resepsi) */
+.guest-events-section {
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.guest-event-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid #ebe3d5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.guest-event-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background-color: #fdf2e9;
+  color: #9a3412;
+  font-size: 0.65rem;
+  font-weight: 800;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.guest-event-title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #381118;
+  margin: 0 0 0.75rem 0;
+}
+
+.guest-event-info {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.guest-maps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #4a151e;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.guest-maps-btn:hover {
+  opacity: 0.9;
+}
+
+/* 5. COUNTDOWN TIMER */
+.guest-countdown-section {
+  padding: 1.5rem;
+  background-color: #f7f2ea;
+  border-radius: 1.5rem;
+  margin: 0 1.5rem;
+  text-align: center;
+}
+
+.guest-countdown-title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #381118;
+  margin: 0 0 1rem 0;
+}
+
+.guest-countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.guest-countdown-box {
+  background-color: #ffffff;
+  padding: 0.75rem 0.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.guest-countdown-num {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #4a151e;
+  margin: 0;
+}
+
+.guest-countdown-unit {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: #9ca3af;
+  font-weight: 700;
+  margin: 0.15rem 0 0 0;
+}
+
+/* 6. GALERI FOTO */
+.guest-gallery-section {
+  padding: 0 1.5rem;
+}
+
+.guest-section-header {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.guest-section-header__tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #8c6d3b;
+  font-weight: 800;
+}
+
+.guest-section-header__title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #381118;
+  margin: 0.25rem 0 0 0;
+}
+
+.guest-gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.guest-gallery-img {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* 7. AMPLOP DIGITAL */
+.guest-amplop-section {
+  padding: 0 1.5rem;
+}
+
+.guest-amplop-card {
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid #ebe3d5;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guest-copy-btn {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #d5c9b8;
+  border-radius: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background-color: #ffffff;
+  color: #4a151e;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.guest-copy-btn:hover {
+  background-color: #f7f3ec;
+}
+
+/* 8. RSVP & BUKU TAMU */
+.guest-rsvp-section {
+  padding: 0 1.5rem;
+}
+
+.guest-rsvp-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid #ebe3d5;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.guest-rsvp-form-group {
+  margin-bottom: 0.85rem;
+}
+
+.guest-rsvp-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.35rem;
+}
+
+.guest-rsvp-input,
+.guest-rsvp-select,
+.guest-rsvp-textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  font-size: 0.8rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.guest-rsvp-input:focus,
+.guest-rsvp-select:focus,
+.guest-rsvp-textarea:focus {
+  border-color: #4a151e;
+}
+
+.guest-rsvp-submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #4a151e;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.guest-rsvp-submit-btn:hover:not(:disabled) {
+  background-color: #360f15;
+}
+
+.guest-rsvp-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Buku Tamu List */
+.guest-guestbook-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guest-guestbook-item {
+  background: #fdf9f5;
+  border: 1px solid #f1ece4;
+  border-radius: 1rem;
+  padding: 0.85rem;
+}
+
+.guest-guestbook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.guest-guestbook-name {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #381118;
+}
+
+.guest-guestbook-status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.guest-guestbook-message {
+  font-size: 0.75rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 9. FOOTER TAMU */
+.guest-footer {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+  border-top: 1px solid #f1ece4;
+}
+

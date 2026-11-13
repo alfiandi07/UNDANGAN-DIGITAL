@@ -23,14 +23,109 @@ Berbeda dengan *marketplace* terbuka yang rumit, platform ini menggunakan model 
 
 ## 2. ARSITEKTUR TEKNIS & TECH STACK
 
+### 2.1. Tabel Tech Stack Utama
+
 | Komponen | Teknologi yang Digunakan | Fungsi & Alasan Pemilihan |
 | :--- | :--- | :--- |
 | **Backend & API** | Node.js + Express.js | Menangani *routing*, logika transaksi, *webhook* pembayaran, *middleware* kuota foto, dan *cron job* pembersih server. |
 | **Database** | MySQL | Menyimpan data pesanan, akun klien, RSVP tamu, serta detail acara menggunakan tipe kolom `JSON` agar fleksibel untuk berbagai jenis acara. |
-| **Frontend & UI** | HTML5, Tailwind CSS, JS/TS | Membangun halaman katalog responsif dan template undangan *Mobile-First* dengan animasi CSS murni & vektor SVG tajam. |
+| **Frontend & UI** | React + TypeScript + Tailwind CSS | Membangun halaman katalog responsif dan template undangan *Mobile-First* dengan animasi CSS murni & vektor SVG tajam. |
 | **Cloud Storage** | Cloudinary API | Menyimpan foto klien secara terpisah dari VPS, kompresi otomatis ke format `.webp`, dan mendukung penghapusan otomatis (*auto-cleanup*). |
 | **Payment Gateway** | Midtrans (Snap API) | Memproses pembayaran otomatis via QRIS, Virtual Account Bank, dan E-Wallet beserta notifikasi *Webhook* *real-time*. |
 | **Infrastruktur** | VPS Linux (1GB–2GB RAM) + PM2 | Menjalankan aplikasi Node.js dengan biaya operasional bulanan yang sangat rendah dan stabil. |
+
+---
+
+### 2.2. Standar Struktur Folder & Arsitektur Direktori (Clean Architecture)
+
+Untuk menjaga kualitas kode (*clean code*), kemudahan pemeliharaan (*maintainability*), dan pemisahan tanggung jawab yang jelas (*Separation of Concerns*), proyek ini menerapkan struktur direktori modular terpusat:
+
+#### A. Struktur Folder Frontend (`/frontend/src/`)
+Seluruh berkas desain visual dipusatkan di folder **`styles/`** agar tidak tercecer di folder komponen atau halaman.
+
+```text
+frontend/src/
+├── styles/                          # 🎨 RUMAH TERPUSAT SEMUA BERKAS CSS
+│   ├── index.css                    # Setup Tailwind v4 & style reset global
+│   ├── BerandaKatalog.css           # Styling etalase master template & landing page
+│   ├── CheckoutModal.css            # Styling pop-up checkout (terkunci 530px, anti naik-turun)
+│   ├── UndanganTamu.css             # Styling mobile-first 100dvh tamu, audio player & RSVP
+│   ├── EditorUndangan.css           # Styling form editor detail acara klien & uploader kuota
+│   ├── Auth.css                     # Styling halaman login & registrasi klien
+│   └── Dashboard.css                # Styling navbar header & layout admin
+│
+├── components/                      # 🧩 KOMPONEN REACT MODULAR REUSABLE
+│   ├── CheckoutModal.tsx            # Modal checkout, slug checker debounce 300ms, simulasi bayar
+│   └── ProtectedRoute.tsx           # Guard pembatas hak akses rute login/admin
+│
+├── pages/                           # 📄 HALAMAN UTAMA APLIKASI (JSX & STATE LOGIC MURNI)
+│   ├── BerandaKatalog.tsx           # Etalase katalog produk & filter acara
+│   ├── UndanganTamuPage.tsx         # Tampilan tamu undangan (100dvh cover, countdown, RSVP)
+│   ├── EditorUndanganPage.tsx       # Dashboard klien (mempelai, jadwal, galeri foto, WA generator)
+│   ├── LoginPage.tsx                # Halaman login klien & admin
+│   ├── RegisterPage.tsx             # Halaman pendaftaran klien baru
+│   ├── DashboardPage.tsx            # Layout navigasi dashboard
+│   ├── ProdukPage.tsx               # Panel manajemen template master admin
+│   ├── KeuanganPage.tsx             # Panel bagi hasil 3 pihak & biaya operasional
+│   ├── TransaksiPage.tsx            # Panel riwayat transaksi & pesanan
+│   └── PenggunaPage.tsx             # Panel manajemen user akun
+│
+├── utils/                           # 🛠️ FUNGSI PEMBANTU REUSABLE (HELPERS)
+│   └── format.ts                    # formatRupiah(), formatTanggalIndonesia(), sanitizeSlug()
+│
+├── context/                         # 🔐 MANAJEMEN STATE GLOBAL
+│   └── AuthContext.tsx              # Autentikasi sesi login, logout, & role user
+│
+├── lib/                             # 🌐 KOMUNIKASI API BACKEND (HTTP CLIENT)
+│   └── api.ts                       # Kumpulan pemanggilan endpoint fetch ke backend
+│
+├── App.tsx                          # Root Routing (BrowserRouter & Route definitions)
+└── main.tsx                         # Entry point React (ReactDOM render & index.css import)
+```
+
+#### B. Struktur Folder Backend (`/backend/`)
+Mengadopsi pola **Layered Architecture** (Routes $\rightarrow$ Controller $\rightarrow$ Repository $\rightarrow$ Database):
+
+```text
+backend/
+├── src/
+│   ├── routes/                      # 🚦 ROUTING ENDPOINTS (Mengarahkan URL ke controller)
+│   │   ├── template.js              # Route katalog template
+│   │   ├── order.js                 # Route order checkout & Midtrans webhook
+│   │   ├── pengguna.js              # Route autentikasi & profile
+│   │   └── finance.js               # Route kalkulator bagi hasil 3 pihak
+│   │
+│   ├── controller/                  # 🧠 LOGIKA BISNIS & VALIDASI REQUEST
+│   │   ├── template.js              # Validasi input template & slug checker
+│   │   ├── order.js                 # Handler checkout, kalkulasi harga, verifikasi webhook SHA-512
+│   │   ├── rsvp.js                  # Handler submit & pembacaan doa restu tamu
+│   │   └── finance.js               # Handler pembagian Net Profit tim bertiga
+│   │
+│   ├── repository/                  # 🗄️ QUERY DATABASE MySQL (DATA ACCESS LAYER)
+│   │   ├── template.js              # SQL Query tabel templates
+│   │   ├── order.js                 # SQL Query tabel orders & invitations
+│   │   └── pengguna.js              # SQL Query tabel pengguna
+│   │
+│   ├── models/                      # 🏷️ DEFINISI TIPE DATA TYPESCRIPT / INTERFACES
+│   │   ├── template.ts              # Model Template & PackageType
+│   │   ├── order.ts                 # Model Order, EventDetails, Invitation
+│   │   └── pengguna.ts              # Model Pengguna & Role
+│   │
+│   ├── middleware/                  # 🛡️ KEAMANAN & ERROR HANDLER
+│   │   ├── auth.js                  # JWT / sesi verifikasi pengguna
+│   │   └── error.js                 # Global exception handler
+│   │
+│   ├── db.ts                        # Pool koneksi database MySQL (mysql2/promise)
+│   └── index.ts                     # Entry point server Express.js (Port 3001)
+│
+├── database/                        # 🗃️ SKEMA & SEED SQL DATABASE
+│   ├── schema.sql                   # Skema DDL tabel MySQL
+│   └── seed.sql                     # Data awal master template & user admin
+│
+└── scripts/                         # ⚙️ OTOMATISASI LATAR BELAKANG (CRON JOBS)
+    ├── cron-cleanup.sh              # Skrip pembersih server jam 02.00 WIB (FR-E3)
+    └── cron-backup-db.sh            # Skrip backup harian database jam 03.00 WIB (NFR-6)
+```
 
 ---
 
