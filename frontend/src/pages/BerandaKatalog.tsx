@@ -16,15 +16,6 @@ export default function BerandaKatalog() {
   const [activeNav, setActiveNav] = useState<"katalog" | "paket" | "custom">(
     "katalog",
   );
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Modal Checkout Template Terpilih
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
@@ -57,27 +48,8 @@ export default function BerandaKatalog() {
 
   return (
     <div className="katalog-page">
-      {/* 4 Sudut Bunga Floral Watercolor Parallax */}
-      <div
-        className="katalog-floral-corner katalog-floral-corner--tl"
-        aria-hidden="true"
-        style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0)` }}
-      />
-      <div
-        className="katalog-floral-corner katalog-floral-corner--tr"
-        aria-hidden="true"
-        style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0) scaleX(-1)` }}
-      />
-      <div
-        className="katalog-floral-corner katalog-floral-corner--bl"
-        aria-hidden="true"
-        style={{ transform: `translate3d(0, ${-scrollY * 0.08}px, 0) scaleX(-1)` }}
-      />
-      <div
-        className="katalog-floral-corner katalog-floral-corner--br"
-        aria-hidden="true"
-        style={{ transform: `translate3d(0, ${-scrollY * 0.08}px, 0)` }}
-      />
+      {/* Full Fixed Floral Wallpaper Background (Full Sampai Bawah) */}
+      <div className="katalog-floral-bg" aria-hidden="true" />
 
       {/* ========================================================
           1. NAVBAR HEADER

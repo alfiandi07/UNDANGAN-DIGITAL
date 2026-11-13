@@ -10,7 +10,7 @@
 .katalog-page {
   position: relative;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #fbebed;
   color: #2d2424;
   overflow-x: hidden;
   font-family:
@@ -22,140 +22,18 @@
     sans-serif;
 }
 
-/* 1.1 FLORAL CORNERS (4 Sudut Bunga Rimbun & Jelas) */
-.katalog-floral-corner {
+/* 1.1 FULL FIXED FLORAL BACKGROUND (Full Sampai Bawah & Tidak Tabrakan) */
+.katalog-floral-bg {
   position: fixed;
-  pointer-events: none;
-  z-index: 1;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("/bg-wedding-floral.jpg");
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  will-change: transform;
-  transition: transform 0.1s ease-out;
-  opacity: 0.95;
-}
-
-/* Sudut Kiri Atas */
-.katalog-floral-corner--tl {
-  top: 0;
-  left: 0;
-  width: 360px;
-  height: 360px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: top left;
-  background-size: 600px auto;
-  border-bottom-right-radius: 50%;
-}
-
-/* Sudut Kanan Atas (Mirror) */
-.katalog-floral-corner--tr {
-  top: 0;
-  right: 0;
-  width: 360px;
-  height: 360px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: top left;
-  background-size: 600px auto;
-  border-bottom-left-radius: 50%;
-}
-
-/* Sudut Kiri Bawah (Mirror) */
-.katalog-floral-corner--bl {
-  bottom: 0;
-  left: 0;
-  width: 380px;
-  height: 380px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: bottom right;
-  background-size: 600px auto;
-  border-top-right-radius: 50%;
-}
-
-/* Sudut Kanan Bawah */
-.katalog-floral-corner--br {
-  bottom: 0;
-  right: 0;
-  width: 380px;
-  height: 380px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: bottom right;
-  background-size: 600px auto;
-  border-top-left-radius: 50%;
-}
-
-@media (max-width: 768px) {
-  .katalog-floral-corner {
-    width: 220px;
-    height: 220px;
-    background-size: 400px auto;
-    opacity: 0.85;
-  }
-}
-
-/* 1.1 FLORAL CORNERS (4 Sudut Bunga Rimbun & Jelas) */
-.katalog-floral-corner {
-  position: fixed;
   pointer-events: none;
-  z-index: 1;
-  background-repeat: no-repeat;
-  will-change: transform;
-  transition: transform 0.1s ease-out;
-  opacity: 0.95;
-}
-
-/* Sudut Kiri Atas */
-.katalog-floral-corner--tl {
-  top: 0;
-  left: 0;
-  width: 360px;
-  height: 360px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: top left;
-  background-size: 600px auto;
-  border-bottom-right-radius: 50%;
-}
-
-/* Sudut Kanan Atas (Mirror) */
-.katalog-floral-corner--tr {
-  top: 0;
-  right: 0;
-  width: 360px;
-  height: 360px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: top left;
-  background-size: 600px auto;
-  border-bottom-left-radius: 50%;
-}
-
-/* Sudut Kiri Bawah (Mirror) */
-.katalog-floral-corner--bl {
-  bottom: 0;
-  left: 0;
-  width: 380px;
-  height: 380px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: bottom right;
-  background-size: 600px auto;
-  border-top-right-radius: 50%;
-}
-
-/* Sudut Kanan Bawah */
-.katalog-floral-corner--br {
-  bottom: 0;
-  right: 0;
-  width: 380px;
-  height: 380px;
-  background-image: url("/bg-wedding-floral.jpg");
-  background-position: bottom right;
-  background-size: 600px auto;
-  border-top-left-radius: 50%;
-}
-
-@media (max-width: 768px) {
-  .katalog-floral-corner {
-    width: 220px;
-    height: 220px;
-    background-size: 400px auto;
-    opacity: 0.85;
-  }
+  z-index: 0;
 }
 
 /* 2. NAVBAR */
@@ -163,9 +41,10 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid #f0ebe1;
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(220, 200, 205, 0.5);
   padding: 0.85rem 1.5rem;
 }
 
