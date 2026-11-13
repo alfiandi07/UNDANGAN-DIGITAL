@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Template } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import CheckoutModal from "../components/CheckoutModal";
+import { formatRupiah } from "../utils/format";
+import "../styles/BerandaKatalog.css";
 
 export default function BerandaKatalog() {
   const { user } = useAuth();
@@ -11,24 +14,8 @@ export default function BerandaKatalog() {
   const [kategoriAktif, setKategoriAktif] = useState("Semua");
   const [keyword, setKeyword] = useState("");
 
-  // Modal Slug Checker & Checkout State (PRD Modul B)
+  // Modal Checkout Template Terpilih
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-  const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
-  const [selectedPackage, setSelectedPackage] = useState<api.PackageType>("standard");
-  const [slugInput, setSlugInput] = useState("");
-  const [slugChecking, setSlugChecking] = useState(false);
-  const [slugResult, setSlugResult] = useState<{ available: boolean; message: string } | null>(null);
-
-  // Form Pembeli
-  const [buyerName, setBuyerName] = useState("");
-  const [buyerWhatsapp, setBuyerWhatsapp] = useState("");
-  const [buyerEmail, setBuyerEmail] = useState("");
-  const [buyerPassword, setBuyerPassword] = useState("");
-  const [orderSubmitting, setOrderSubmitting] = useState(false);
-  const [orderError, setOrderError] = useState("");
-  const [createdOrderData, setCreatedOrderData] = useState<api.CreateOrderResponse | null>(null);
-  const [paySimulating, setPaySimulating] = useState(false);
-  const [paymentSuccessMsg, setPaymentSuccessMsg] = useState("");
 
   const kategoriPilihan = [
     { label: "Semua Acara", val: "Semua" },
@@ -47,105 +34,6 @@ export default function BerandaKatalog() {
       .finally(() => setLoading(false));
   }, [kategoriAktif]);
 
-  function handleBukaCheckout(item: Template) {
-    setSelectedTemplate(item);
-    setCheckoutStep(1);
-    setSelectedPackage("standard");
-    setSlugInput("");
-    setSlugResult(null);
-    setBuyerName(user?.nama ?? "");
-    setBuyerWhatsapp("");
-    setBuyerEmail(user?.email ?? "");
-    setBuyerPassword("");
-    setOrderError("");
-    setCreatedOrderData(null);
-    setPaymentSuccessMsg("");
-  }
-
-  function getSelectedPackagePrice(): number {
-    if (!selectedTemplate) return 0;
-    if (selectedPackage === "basic") return selectedTemplate.price_basic;
-    if (selectedPackage === "special") return selectedTemplate.price_special;
-    return selectedTemplate.price_standard;
-  }
-
-  async function handleBuatPesanan(e: React.FormEvent) {
-    e.preventDefault();
-    if (!selectedTemplate || !slugResult?.available) return;
-
-    setOrderSubmitting(true);
-    setOrderError("");
-    try {
-      const res = await api.buatOrder({
-        buyer_name: buyerName,
-        buyer_whatsapp: buyerWhatsapp,
-        buyer_email: buyerEmail,
-        password: buyerPassword,
-        template_id: selectedTemplate.id,
-        package_type: selectedPackage,
-        slug: slugInput,
-      });
-
-      setCreatedOrderData(res);
-      setCheckoutStep(3);
-    } catch (err) {
-      setOrderError(err instanceof Error ? err.message : "Gagal memproses pesanan");
-    } finally {
-      setOrderSubmitting(false);
-    }
-  }
-
-  async function handleBayarSimulasi() {
-    if (!createdOrderData) return;
-    setPaySimulating(true);
-    try {
-      const res = await api.simulasiBayarOrder(createdOrderData.order.order_id);
-      setPaymentSuccessMsg(res.message);
-      setCreatedOrderData((prev) =>
-        prev
-          ? {
-              ...prev,
-              order: { ...prev.order, payment_status: "paid" },
-              invitation: { ...prev.invitation, status: "active" },
-            }
-          : null
-      );
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Gagal simulasi bayar");
-    } finally {
-      setPaySimulating(false);
-    }
-  }
-
-  // Real-time Slug Checker
-  async function handleCekSlug(val: string) {
-    setSlugInput(val);
-    setSlugResult(null);
-
-    const clean = val.trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");
-    if (clean.length < 3) return;
-
-    setSlugChecking(true);
-    try {
-      const res = await api.cekKetersediaanSlug(clean);
-      setSlugResult({ available: res.available, message: res.message });
-    } catch (err) {
-      setSlugResult({
-        available: false,
-        message: err instanceof Error ? err.message : "Gagal memeriksa tautan",
-      });
-    } finally {
-      setSlugChecking(false);
-    }
-  }
-
-  const formatRupiah = (val: number) =>
-    new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(val);
-
   const filteredTemplates = templateList.filter(
     (t) =>
       t.title.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -153,53 +41,40 @@ export default function BerandaKatalog() {
   );
 
   return (
-    <div className="katalog-page-wrapper min-h-screen bg-[#FFFDF9] text-[#2D2424] font-sans">
+    <div className="katalog-page">
       {/* ========================================================
           1. NAVBAR HEADER
       ======================================================== */}
-      <header className="katalog-navbar sticky top-0 z-40 bg-[#FFFDF9]/90 backdrop-blur-md border-b border-[#F0EBE1] py-3.5 px-6 sm:px-12">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to="/" className="katalog-navbar__brand flex items-center gap-2">
-            <span className="text-xl font-serif font-black tracking-wider text-[#4A151E]">
-              asm.invitation
-            </span>
-            <span className="text-[10px] font-bold bg-[#EFE9DF] text-[#695A5A] px-2 py-0.5 rounded uppercase tracking-wider">
-              Studio
-            </span>
+      <header className="katalog-navbar">
+        <div className="katalog-navbar__container">
+          <Link to="/" className="katalog-navbar__brand">
+            <span className="katalog-navbar__brand-text">asm.invitation</span>
+            <span className="katalog-navbar__brand-badge">Studio</span>
           </Link>
 
-          <nav className="katalog-navbar__menu hidden md:flex items-center gap-8 text-sm font-medium text-[#5C4F4F]">
-            <a href="#katalog" className="text-[#4A151E] font-bold border-b-2 border-[#4A151E] pb-1">
+          <nav className="katalog-navbar__menu">
+            <a href="#katalog" className="katalog-navbar__link katalog-navbar__link--active">
               Katalog Master
             </a>
-            <a href="#paket" className="hover:text-[#4A151E] transition">
+            <a href="#paket" className="katalog-navbar__link">
               Paket Harga
             </a>
-            <a href="#custom" className="hover:text-[#4A151E] transition">
+            <a href="#custom" className="katalog-navbar__link">
               Desain Custom
             </a>
           </nav>
 
-          <div className="katalog-navbar__cta flex items-center gap-3">
+          <div className="katalog-navbar__actions">
             {user ? (
-              <Link
-                to="/dashboard"
-                className="text-xs font-bold px-4 py-2 bg-[#4A151E] hover:bg-[#380F16] text-[#FAF6F0] rounded-full shadow-sm transition"
-              >
+              <Link to="/dashboard" className="katalog-btn-cta">
                 Dashboard ({user.nama.split(" ")[0]})
               </Link>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="text-xs font-semibold px-3.5 py-2 border border-[#D5C9B8] rounded-full text-[#4A151E] hover:bg-[#F7F3EC] transition"
-                >
+                <Link to="/login" className="katalog-btn-login">
                   Masuk Klien
                 </Link>
-                <a
-                  href="#katalog"
-                  className="text-xs font-bold px-4 py-2 bg-[#4A151E] hover:bg-[#380F16] text-[#FAF6F0] rounded-full shadow-sm transition"
-                >
+                <a href="#katalog" className="katalog-btn-cta">
                   Pilih Template
                 </a>
               </>
@@ -211,53 +86,42 @@ export default function BerandaKatalog() {
       {/* ========================================================
           2. HERO SECTION
       ======================================================== */}
-      <section className="katalog-hero pt-14 pb-8 px-4 text-center">
-        <div className="max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5EFE6] border border-[#E8DEC8] text-[#7A6237] text-xs font-bold tracking-wide uppercase">
-            <span>✨</span> STUDIO KOLEKTIF 30 MASTER TEMPLATE MULTI-ACARA
-          </div>
-
-          <h1 className="katalog-hero__title font-serif text-3xl sm:text-5xl font-extrabold text-[#381118] tracking-tight leading-tight">
-            Katalog Eksklusif Undangan Digital Modern
-          </h1>
-
-          <p className="katalog-hero__desc text-sm sm:text-base text-[#6E5D53] max-w-2xl mx-auto leading-relaxed">
-            Pernikahan, Khitanan, Ulang Tahun, & Aqiqah dengan standar visual <em>Mobile-First (100dvh)</em>. Musik otomatis,
-            amplop digital, RSVP realtime, dan hitung mundur presisi.
-          </p>
+      <section className="katalog-hero">
+        <div className="katalog-hero__badge">
+          <span>✨</span> STUDIO KOLEKTIF MASTER TEMPLATE MULTI-ACARA
         </div>
 
-        {/* Search Bar & Badges */}
-        <div className="katalog-filter-bar max-w-2xl mx-auto mt-8 px-2 space-y-4">
-          <div className="katalog-search-box flex items-center gap-2 bg-white border border-[#E3D9C9] rounded-full p-1.5 shadow-sm focus-within:ring-2 focus-within:ring-[#4A151E]/20">
-            <span className="pl-3 text-gray-400">🔍</span>
+        <h1 className="katalog-hero__title">
+          Katalog Eksklusif Undangan Digital Modern
+        </h1>
+
+        <p className="katalog-hero__desc">
+          Pernikahan, Khitanan, Ulang Tahun, & Aqiqah dengan standar visual <em>Mobile-First (100dvh)</em>.
+          Musik otomatis, amplop digital, RSVP realtime, dan hitung mundur presisi.
+        </p>
+
+        {/* Search Bar */}
+        <div className="katalog-search-wrapper">
+          <div className="katalog-search-box">
+            <span>🔍</span>
             <input
               type="text"
               placeholder="Cari tema, adat, gaya, atau nama template..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="w-full bg-transparent text-sm outline-none text-gray-700 placeholder-gray-400"
+              className="katalog-search-input"
             />
-          </div>
-
-          <div className="katalog-features-badges flex flex-wrap justify-center gap-4 text-xs font-medium text-[#7D6B60]">
-            <span>📱 100% Mobile Ready</span>
-            <span>⚡ Aktif Instan via Midtrans</span>
-            <span>☁️ Kompresi Foto Cloudinary</span>
           </div>
         </div>
 
         {/* Category Filter Chips */}
-        <div className="katalog-category-chips flex flex-wrap justify-center gap-2 max-w-4xl mx-auto mt-6">
+        <div className="katalog-chips-container">
           {kategoriPilihan.map((kat) => (
             <button
               key={kat.val}
+              type="button"
               onClick={() => setKategoriAktif(kat.val)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                kategoriAktif === kat.val
-                  ? "bg-[#4A151E] text-[#FFF9F2] shadow-sm"
-                  : "bg-white border border-[#E3D9C9] text-[#69584F] hover:bg-[#F8F4ED]"
-              }`}
+              className={`katalog-chip ${kategoriAktif === kat.val ? "katalog-chip--active" : ""}`}
             >
               {kat.label}
             </button>
@@ -268,37 +132,28 @@ export default function BerandaKatalog() {
       {/* ========================================================
           3. KATALOG CARD GRID
       ======================================================== */}
-      <main id="katalog" className="katalog-grid-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="katalog" className="katalog-grid-section">
         {loading ? (
-          <div className="py-20 text-center text-gray-400">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
-            <p className="text-sm">Memuat master template dari server...</p>
+          <div style={{ textAlign: "center", padding: "4rem 0", color: "#9ca3af" }}>
+            <p>Memuat master template dari server...</p>
           </div>
         ) : filteredTemplates.length === 0 ? (
-          <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
-            <p className="text-lg font-bold">Template tidak ditemukan</p>
-            <p className="text-sm">Coba kata kunci lain atau pilih kategori acara berbeda.</p>
+          <div style={{ textAlign: "center", padding: "4rem 0", color: "#9ca3af" }}>
+            <p style={{ fontWeight: 700, fontSize: "1.1rem" }}>Template tidak ditemukan</p>
+            <p style={{ fontSize: "0.85rem" }}>Coba kata kunci lain atau pilih kategori acara berbeda.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="katalog-grid">
             {filteredTemplates.map((item) => (
-              <div
-                key={item.id}
-                className="template-card bg-white rounded-2xl border border-[#EBE3D5] shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between"
-              >
-                {/* Preview Mockup Container */}
-                <div className="template-card__preview relative h-64 bg-[#F7F2EA] flex items-center justify-center overflow-hidden border-b border-[#EBE3D5]">
-                  <span className="template-card__badge-exclusive absolute top-3 left-3 bg-[#4A151E] text-[#FFF9F2] text-[10px] font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
-                    MASTER TEMPLATE
-                  </span>
-                  <span className="template-card__badge-discount absolute top-3 right-3 bg-[#FFC554] text-[#422B00] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
-                    {item.category}
-                  </span>
+              <div key={item.id} className="katalog-card">
+                {/* Mockup Preview */}
+                <div className="katalog-card__preview">
+                  <span className="katalog-card__badge-tag">MASTER TEMPLATE</span>
+                  <span className="katalog-card__category-tag">{item.category}</span>
 
-                  {/* Smartphone Frame Mockup */}
-                  <div className="template-card__phone-mockup w-32 h-48 bg-white rounded-xl shadow-md border-4 border-gray-800 flex flex-col items-center justify-center p-2 text-center text-xs text-gray-400">
-                    <div className="w-8 h-1 bg-gray-700 rounded-full mb-auto" />
-                    <span className="text-3xl my-auto">
+                  <div className="katalog-card__phone-frame">
+                    <div className="katalog-card__phone-notch" />
+                    <span className="katalog-card__phone-icon">
                       {item.category === "wedding"
                         ? "💍"
                         : item.category === "khitan"
@@ -307,56 +162,48 @@ export default function BerandaKatalog() {
                         ? "🎂"
                         : "👶"}
                     </span>
-                    <p className="text-[9px] font-serif font-bold text-gray-700 line-clamp-1">{item.title}</p>
+                    <p className="katalog-card__phone-title">{item.title}</p>
                   </div>
 
-                  <div className="absolute bottom-2 inset-x-2 flex justify-center gap-2 text-[10px] text-gray-500 bg-white/80 backdrop-blur-xs py-1 rounded-md">
+                  <div className="katalog-card__features-bar">
                     <span>🎵 Autoplay</span>
                     <span>💌 Amplop</span>
                     <span>📍 Maps</span>
                   </div>
                 </div>
 
-                {/* Info Detail Produk */}
-                <div className="template-card__body p-5 space-y-3">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="template-card__category font-bold text-[#8C6D3B] uppercase tracking-wider text-[10px]">
-                      {item.theme_style}
-                    </span>
-                    <span className="template-card__rating font-bold text-[#2E2424] flex items-center gap-1">
-                      ⭐ 5.0 <span className="text-gray-400 font-normal">(Kurasi Studio)</span>
-                    </span>
+                {/* Card Body */}
+                <div className="katalog-card__body">
+                  <div className="katalog-card__meta">
+                    <span className="katalog-card__theme">{item.theme_style}</span>
+                    <span style={{ fontWeight: 700 }}>⭐ 5.0 (Kurasi Studio)</span>
                   </div>
 
-                  <h3 className="template-card__title font-serif text-lg font-bold text-[#3B171D]">
-                    {item.title}
-                  </h3>
+                  <h3 className="katalog-card__title">{item.title}</h3>
 
-                  <div className="template-card__price-wrapper pt-1 border-t border-gray-100 flex items-baseline justify-between">
+                  <div className="katalog-card__pricing">
                     <div>
-                      <p className="text-[10px] text-gray-400 uppercase font-bold">Mulai Paket Basic</p>
-                      <span className="template-card__price-current font-extrabold text-xl text-[#3B171D]">
-                        {formatRupiah(item.price_basic)}
-                      </span>
+                      <p className="katalog-card__price-sub">Mulai Paket Basic</p>
+                      <p className="katalog-card__price-val">{formatRupiah(item.price_basic)}</p>
                     </div>
-                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                      Kuota 15 Foto
+                    <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#047857" }}>
+                      Fitur Lengkap
                     </span>
                   </div>
 
-                  {/* Tombol Aksi */}
-                  <div className="template-card__actions grid grid-cols-2 gap-2 pt-2">
+                  <div className="katalog-card__buttons">
                     <a
                       href={item.demo_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="template-card__btn-demo text-center py-2 px-3 border border-[#D5C9B8] rounded-xl text-xs font-semibold text-[#4A151E] hover:bg-[#F9F5EE] transition cursor-pointer"
+                      className="katalog-card__btn-demo"
                     >
                       👁️ Live Demo
                     </a>
                     <button
-                      onClick={() => handleBukaCheckout(item)}
-                      className="template-card__btn-order py-2 px-3 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                      type="button"
+                      onClick={() => setSelectedTemplate(item)}
+                      className="katalog-card__btn-order"
                     >
                       🎁 Pesan Sekarang
                     </button>
@@ -369,341 +216,87 @@ export default function BerandaKatalog() {
       </main>
 
       {/* ========================================================
-          4. MODAL CHECKOUT & SLUG CHECKER (PRD MODUL B)
+          4. SECTION PAKET HARGA (#paket)
       ======================================================== */}
-      {selectedTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in duration-200 my-8">
-            {/* Header Modal */}
-            <div className="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
-              <div>
-                <span className="text-[10px] font-bold uppercase text-[#8C6D3B] tracking-wider">
-                  {checkoutStep === 1
-                    ? "Langkah 1/3: Pilih Paket & Cek Slug"
-                    : checkoutStep === 2
-                    ? "Langkah 2/3: Data Pemesan & Akun Klien"
-                    : "Langkah 3/3: Konfirmasi & Pembayaran"}
-                </span>
-                <h3 className="text-xl font-bold font-serif text-[#3B171D]">
-                  {selectedTemplate.title}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedTemplate(null)}
-                className="text-gray-400 hover:text-gray-600 text-lg cursor-pointer p-1"
-              >
-                ✕
-              </button>
-            </div>
+      <section id="paket" className="katalog-pricing-section">
+        <h2 className="katalog-section-title">Pilihan Paket Undangan Resmi</h2>
+        <p className="katalog-section-desc">
+          Transparan, tanpa biaya tersembunyi, dan aktif otomatis via sistem pembayaran Midtrans.
+        </p>
 
-            {/* STEP 1: PILIH PAKET & SLUG CHECKER */}
-            {checkoutStep === 1 && (
-              <div className="space-y-4">
-                {/* 3 Paket Resmi PRD */}
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-2">
-                    Pilih Paket Resmi:
-                  </label>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    {/* Basic */}
-                    <div
-                      onClick={() => setSelectedPackage("basic")}
-                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer transition ${
-                        selectedPackage === "basic"
-                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
-                          : "border-gray-200 hover:border-gray-300 bg-white"
-                      }`}
-                    >
-                      <p className="font-bold text-gray-800 text-xs">Basic</p>
-                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
-                        {formatRupiah(selectedTemplate.price_basic)}
-                      </p>
-                      <p className="text-[10px] text-gray-500">15 Foto • 3 Bln</p>
-                    </div>
+        <div className="katalog-pricing-grid">
+          {/* Paket Basic */}
+          <div className="pricing-table-card">
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 800, margin: "0 0 0.5rem 0", color: "#1f2937" }}>
+              Paket Basic
+            </h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: 900, color: "#4a151e", margin: "0 0 1rem 0" }}>
+              Rp 79.000
+            </p>
+            <ul style={{ fontSize: "0.8rem", color: "#4b5563", lineHeight: 1.8, paddingLeft: "1.2rem", margin: 0 }}>
+              <li>Tanpa Galeri Foto (0 Foto)</li>
+              <li>Masa Aktif 3 Bulan</li>
+              <li>Form Data Acara Lengkap (Akad/Resepsi)</li>
+              <li>Integrasi Google Maps</li>
+              <li>Amplop Digital & Nomor Rekening</li>
+            </ul>
+          </div>
 
-                    {/* Standard */}
-                    <div
-                      onClick={() => setSelectedPackage("standard")}
-                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer relative transition ${
-                        selectedPackage === "standard"
-                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
-                          : "border-gray-200 hover:border-gray-300 bg-white"
-                      }`}
-                    >
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#4A151E] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">
-                        Terpopuler
-                      </span>
-                      <p className="font-bold text-gray-800 text-xs">Standard</p>
-                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
-                        {formatRupiah(selectedTemplate.price_standard)}
-                      </p>
-                      <p className="text-[10px] text-gray-500">15 Foto • 6 Bln</p>
-                    </div>
-
-                    {/* Special */}
-                    <div
-                      onClick={() => setSelectedPackage("special")}
-                      className={`p-3 rounded-2xl border-2 text-center cursor-pointer transition ${
-                        selectedPackage === "special"
-                          ? "border-[#4A151E] bg-[#FDF9F5] shadow-xs"
-                          : "border-gray-200 hover:border-gray-300 bg-white"
-                      }`}
-                    >
-                      <p className="font-bold text-gray-800 text-xs">Special</p>
-                      <p className="text-[#4A151E] font-extrabold text-sm my-1">
-                        {formatRupiah(selectedTemplate.price_special)}
-                      </p>
-                      <p className="text-[10px] text-gray-500">30 Foto • 12 Bln</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Slug Input */}
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Tautan / Slug Undangan Anda:
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-[#4A151E]/20 bg-gray-50">
-                    <span className="text-xs text-gray-400 select-none">undang_an.digital/</span>
-                    <input
-                      type="text"
-                      placeholder="contoh: dimas-dinda"
-                      value={slugInput}
-                      onChange={(e) => handleCekSlug(e.target.value)}
-                      className="w-full bg-transparent text-sm font-semibold text-gray-800 outline-none pl-1"
-                    />
-                    {slugChecking && <span className="text-xs text-gray-400 animate-spin">⏳</span>}
-                  </div>
-                  <p className="text-[11px] text-gray-400 mt-1">
-                    Hanya gunakan huruf kecil, angka, dan strip (minimal 3 huruf).
-                  </p>
-                </div>
-
-                {slugResult && (
-                  <div
-                    className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
-                      slugResult.available
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                        : "bg-red-50 text-red-800 border border-red-200"
-                    }`}
-                  >
-                    <span>{slugResult.available ? "✅" : "❌"}</span>
-                    <span>{slugResult.message}</span>
-                  </div>
-                )}
-
-                <div className="pt-3 flex justify-between items-center border-t border-gray-100">
-                  <div className="text-xs">
-                    <span className="text-gray-400">Total Biaya: </span>
-                    <strong className="text-sm text-[#4A151E]">
-                      {formatRupiah(getSelectedPackagePrice())}
-                    </strong>
-                  </div>
-                  <button
-                    type="button"
-                    disabled={!slugResult?.available}
-                    onClick={() => setCheckoutStep(2)}
-                    className="px-5 py-2.5 text-xs font-bold rounded-xl transition shadow-xs bg-[#4A151E] hover:bg-[#360F15] text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    Lanjut Isi Data Pemesan →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: DATA PEMESAN & AKUN LOGIN */}
-            {checkoutStep === 2 && (
-              <form onSubmit={handleBuatPesanan} className="space-y-4">
-                {orderError && (
-                  <div className="bg-red-50 text-red-700 p-3 rounded-xl text-xs border border-red-200">
-                    {orderError}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Nama Lengkap Pemesan <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={buyerName}
-                    onChange={(e) => setBuyerName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
-                    placeholder="Contoh: Budi Santoso"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Nomor WhatsApp <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={buyerWhatsapp}
-                      onChange={(e) => setBuyerWhatsapp(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
-                      placeholder="081234567890"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Email Pembeli <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={buyerEmail}
-                      onChange={(e) => setBuyerEmail(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
-                      placeholder="budi@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Password Akun Klien <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    minLength={6}
-                    value={buyerPassword}
-                    onChange={(e) => setBuyerPassword(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4A151E] outline-none text-xs"
-                    placeholder="Minimal 6 karakter (untuk login dashboard)"
-                  />
-                  <p className="text-[11px] text-gray-400 mt-1">
-                    Password ini akan dipakai login ke Dashboard Klien untuk edit acara & upload foto.
-                  </p>
-                </div>
-
-                <div className="p-3 bg-[#FAF7F2] rounded-xl text-xs space-y-1 border border-[#EBE3D5]">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Tautan Undangan:</span>
-                    <strong className="font-mono text-[#4A151E]">/{slugInput}</strong>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Paket:</span>
-                    <span className="font-semibold uppercase">{selectedPackage}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-900 border-t border-gray-200 pt-1 font-bold">
-                    <span>Total Pembayaran:</span>
-                    <span className="text-[#4A151E]">{formatRupiah(getSelectedPackagePrice())}</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex justify-between items-center">
-                  <button
-                    type="button"
-                    onClick={() => setCheckoutStep(1)}
-                    className="px-4 py-2 text-xs font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition cursor-pointer"
-                  >
-                    ← Kembali
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={orderSubmitting}
-                    className="px-5 py-2.5 text-xs font-bold rounded-xl transition shadow-xs bg-[#4A151E] hover:bg-[#360F15] text-white disabled:opacity-50 cursor-pointer"
-                  >
-                    {orderSubmitting ? "Memproses Order..." : "Konfirmasi & Lanjut Bayar →"}
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* STEP 3: STATUS PEMESANAN & PEMBAYARAN MIDTRANS */}
-            {checkoutStep === 3 && createdOrderData && (
-              <div className="space-y-4 text-center py-2">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-2xl mx-auto">
-                  {createdOrderData.order.payment_status === "paid" ? "🎉" : "📋"}
-                </div>
-
-                <div>
-                  <h4 className="text-lg font-serif font-bold text-gray-900">
-                    {createdOrderData.order.payment_status === "paid"
-                      ? "Pembayaran Berhasil & Undangan Aktif!"
-                      : "Pesanan Berhasil Dibuat!"}
-                  </h4>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Nomor Pesanan:{" "}
-                    <strong className="font-mono text-gray-800">{createdOrderData.order.order_id}</strong>
-                  </p>
-                </div>
-
-                {paymentSuccessMsg && (
-                  <div className="bg-emerald-50 text-emerald-800 p-3 rounded-xl text-xs font-medium border border-emerald-200">
-                    {paymentSuccessMsg}
-                  </div>
-                )}
-
-                <div className="bg-[#FAF7F2] p-4 rounded-2xl text-xs text-left space-y-2 border border-[#EBE3D5]">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Pemesan:</span>
-                    <strong className="text-gray-800">{createdOrderData.order.buyer_name}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Tautan:</span>
-                    <strong className="font-mono text-indigo-700">undang_an.digital/{createdOrderData.invitation.slug}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Total:</span>
-                    <strong className="text-gray-900">{formatRupiah(createdOrderData.order.gross_amount)}</strong>
-                  </div>
-                  <div className="flex justify-between items-center border-t border-gray-200 pt-2">
-                    <span className="text-gray-500">Status Pembayaran:</span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                        createdOrderData.order.payment_status === "paid"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}
-                    >
-                      {createdOrderData.order.payment_status}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex flex-col gap-2">
-                  {createdOrderData.order.payment_status !== "paid" ? (
-                    <button
-                      type="button"
-                      disabled={paySimulating}
-                      onClick={handleBayarSimulasi}
-                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <span>⚡</span> {paySimulating ? "Memproses Aktivasi..." : "Bayar Sekarang (Simulasi Midtrans Lunas)"}
-                    </button>
-                  ) : (
-                    <Link
-                      to="/login"
-                      className="w-full py-3 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition shadow-xs text-center cursor-pointer block"
-                    >
-                      Masuk ke Dashboard Klien & Isi Acara →
-                    </Link>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedTemplate(null)}
-                    className="w-full py-2 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-xl transition cursor-pointer"
-                  >
-                    Kembali ke Katalog
-                  </button>
-                </div>
-              </div>
-            )}
+          {/* Paket Premium */}
+          <div className="pricing-table-card pricing-table-card--featured">
+            <span className="pricing-badge-popular">Paling Diminati</span>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 800, margin: "0 0 0.5rem 0", color: "#1f2937" }}>
+              Paket Premium
+            </h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: 900, color: "#4a151e", margin: "0 0 1rem 0" }}>
+              Rp 149.000
+            </p>
+            <ul style={{ fontSize: "0.8rem", color: "#4b5563", lineHeight: 1.8, paddingLeft: "1.2rem", margin: 0 }}>
+              <li><strong>Galeri Kuota 30 Foto</strong> (Cloudinary)</li>
+              <li><strong>Masa Aktif 12 Bulan Penuh</strong></li>
+              <li>Background Music Autoplay</li>
+              <li>Live Buku Tamu & Ucapan Doa</li>
+              <li>Hitung Mundur Presisi (Countdown)</li>
+              <li>Fitur Kisah Cinta (Love Story)</li>
+            </ul>
           </div>
         </div>
+      </section>
+
+      {/* ========================================================
+          5. SECTION DESAIN CUSTOM (#custom)
+      ======================================================== */}
+      <section id="custom" className="katalog-custom-section">
+        <h2 style={{ fontFamily: "Georgia, serif", fontSize: "1.75rem", fontWeight: 800, margin: "0 0 0.5rem 0" }}>
+          Punya Konsep Desain Impian Sendiri?
+        </h2>
+        <p style={{ fontSize: "0.9rem", color: "#f3e8e2", maxWidth: "36rem", margin: "0 auto", lineHeight: 1.6 }}>
+          Tim desainer studio asm.invitation siap membuatkan tema eksklusif sesuai adat, warna, dan konsep pernikahanmu.
+        </p>
+        <a
+          href="https://wa.me/6281234567890?text=Halo%20tim%20asm.invitation,%20saya%20tertarik%20konsultasi%20pembuatan%20undangan%20desain%20custom"
+          target="_blank"
+          rel="noreferrer"
+          className="katalog-custom-btn"
+        >
+          <span>💬</span> Konsultasi Desain Custom via WhatsApp
+        </a>
+      </section>
+
+      {/* ========================================================
+          6. MODAL CHECKOUT & SLUG CHECKER (PRD MODUL B)
+      ======================================================== */}
+      {selectedTemplate && (
+        <CheckoutModal
+          template={selectedTemplate}
+          onClose={() => setSelectedTemplate(null)}
+        />
       )}
 
       {/* ========================================================
-          5. FOOTER
+          7. FOOTER
       ======================================================== */}
-      <footer className="katalog-footer border-t border-[#EDE5D8] py-8 text-center text-xs text-gray-500">
+      <footer className="katalog-footer">
         <p>&copy; {new Date().getFullYear()} asm.invitation (undang_an.digital). Dibuat dengan cinta untuk hari istimewamu.</p>
       </footer>
     </div>

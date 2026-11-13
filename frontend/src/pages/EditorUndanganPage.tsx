@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useParams, Link } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Invitation, EventDetails } from "../lib/api";
+import "../styles/EditorUndangan.css";
 
 export default function EditorUndanganPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -223,39 +224,38 @@ export default function EditorUndanganPage() {
   const isQuotaFull = currentPhotosCount >= maxPhotosCount;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="editor-page-container">
       {/* Header Bar */}
-      <div className="bg-white p-6 rounded-2xl shadow-xs border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="editor-topbar">
         <div>
-          <div className="flex items-center gap-2">
-            <Link to="/dashboard/transaksi" className="text-xs text-gray-400 hover:text-gray-600">
+          <div className="editor-breadcrumbs">
+            <Link to="/dashboard/transaksi" className="editor-breadcrumb-link">
               ← Undangan Saya
             </Link>
-            <span className="text-xs text-gray-300">/</span>
-            <span className="text-xs font-mono font-bold text-indigo-700">/{slug}</span>
+            <span style={{ color: "#d1d5db" }}>/</span>
+            <span className="editor-breadcrumb-slug">/{slug}</span>
           </div>
-          <h2 className="text-2xl font-bold font-serif text-gray-900 mt-1">
-            Editor Detail Acara Undangan
-          </h2>
-          <p className="text-xs text-gray-500">
+          <h2 className="editor-title">Editor Detail Acara Undangan</h2>
+          <p className="editor-meta">
             Template: <strong>{invitation?.template_title}</strong> • Paket:{" "}
-            <span className="uppercase font-bold text-[#8C6D3B]">{invitation?.package_type}</span>
+            <span className="editor-meta-package">{invitation?.package_type}</span>
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="editor-topbar-actions">
           <a
             href={`/${slug}`}
             target="_blank"
             rel="noreferrer"
-            className="px-4 py-2 text-xs font-bold border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition cursor-pointer"
+            className="editor-btn-preview"
           >
             👁️ Pratinjau Web
           </a>
           <button
+            type="button"
             onClick={handleSimpan}
             disabled={saving}
-            className="px-5 py-2 text-xs font-bold bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl transition shadow-xs disabled:opacity-50 cursor-pointer"
+            className="editor-btn-save"
           >
             {saving ? "Menyimpan..." : "💾 Simpan Perubahan"}
           </button>
@@ -263,66 +263,51 @@ export default function EditorUndanganPage() {
       </div>
 
       {successMsg && (
-        <div className="bg-emerald-50 text-emerald-800 p-4 rounded-xl text-xs font-medium border border-emerald-200">
+        <div className="editor-alert-success">
           ✅ {successMsg}
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-xl text-xs font-medium border border-red-200">
+        <div className="editor-alert-error">
           ❌ {error}
         </div>
       )}
 
       {/* Tab Navigation */}
-      <div className="flex border-b border-gray-200 bg-white rounded-t-2xl px-4 pt-2 gap-2 overflow-x-auto text-xs font-bold">
+      <div className="editor-tabs-bar">
         <button
+          type="button"
           onClick={() => setActiveTab("mempelai")}
-          className={`py-3 px-4 border-b-2 cursor-pointer transition whitespace-nowrap ${
-            activeTab === "mempelai"
-              ? "border-[#4A151E] text-[#4A151E]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
-          }`}
+          className={`editor-tab-btn ${activeTab === "mempelai" ? "editor-tab-btn--active" : ""}`}
         >
           👫 Mempelai & Orang Tua
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab("acara")}
-          className={`py-3 px-4 border-b-2 cursor-pointer transition whitespace-nowrap ${
-            activeTab === "acara"
-              ? "border-[#4A151E] text-[#4A151E]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
-          }`}
+          className={`editor-tab-btn ${activeTab === "acara" ? "editor-tab-btn--active" : ""}`}
         >
           📅 Jadwal Akad & Resepsi
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab("galeri")}
-          className={`py-3 px-4 border-b-2 cursor-pointer transition whitespace-nowrap ${
-            activeTab === "galeri"
-              ? "border-[#4A151E] text-[#4A151E]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
-          }`}
+          className={`editor-tab-btn ${activeTab === "galeri" ? "editor-tab-btn--active" : ""}`}
         >
           📸 Galeri & Musik ({currentPhotosCount}/{maxPhotosCount})
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab("amplop")}
-          className={`py-3 px-4 border-b-2 cursor-pointer transition whitespace-nowrap ${
-            activeTab === "amplop"
-              ? "border-[#4A151E] text-[#4A151E]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
-          }`}
+          className={`editor-tab-btn ${activeTab === "amplop" ? "editor-tab-btn--active" : ""}`}
         >
           💌 Amplop Digital & Cerita
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab("tamu")}
-          className={`py-3 px-4 border-b-2 cursor-pointer transition whitespace-nowrap ${
-            activeTab === "tamu"
-              ? "border-[#4A151E] text-[#4A151E]"
-              : "border-transparent text-gray-500 hover:text-gray-800"
-          }`}
+          className={`editor-tab-btn ${activeTab === "tamu" ? "editor-tab-btn--active" : ""}`}
         >
           📲 Sebar Tautan WhatsApp (FR-C3)
         </button>
