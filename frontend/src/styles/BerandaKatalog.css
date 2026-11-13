@@ -9,9 +9,15 @@
 /* 1. PAGE WRAPPER */
 .katalog-page {
   min-height: 100vh;
-  background-color: #fffdf9;
+  background-color: #4f1010;
   color: #2d2424;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 /* 2. NAVBAR */
@@ -19,7 +25,7 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background-color: rgba(255, 253, 249, 0.92);
+  background-color: #4a151e;
   backdrop-filter: blur(12px);
   border-bottom: 1px solid #f0ebe1;
   padding: 0.85rem 1.5rem;
@@ -247,7 +253,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .katalog-card:hover {
@@ -536,4 +544,3 @@
   font-size: 0.75rem;
   color: #6b7280;
 }
-
