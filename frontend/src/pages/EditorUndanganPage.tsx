@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useParams, Link } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Invitation, EventDetails } from "../lib/api";
@@ -33,6 +33,9 @@ export default function EditorUndanganPage() {
 
   // State Foto Input
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadProgressMsg, setUploadProgressMsg] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // State Amplop Input
   const [newBank, setNewBank] = useState("BCA");
@@ -117,10 +120,54 @@ export default function EditorUndanganPage() {
     }
   }
 
-  // Foto Handlers (FR-C2 Kuota Limiter)
+  // Foto Handlers (FR-C2 Cloudinary Uploader & Kuota Limiter)
+  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !slug) return;
+
+    const max = invitation?.max_photos ?? 30;
+    const current = eventDetails.photos?.length ?? 0;
+
+    if (max === 0) {
+      alert("Paket Standar tidak menyertakan fitur galeri foto.");
+      e.target.value = "";
+      return;
+    }
+
+    if (current >= max) {
+      alert(`Kuota foto maksimal (${max} foto) sudah tercapai!`);
+      e.target.value = "";
+      return;
+    }
+
+    const file = files[0];
+    setUploadingPhoto(true);
+    setUploadProgressMsg("Mengunggah & mengompresi ke WebP Cloudinary...");
+
+    try {
+      const res = await api.uploadFotoCloudinary(slug, file);
+      setEventDetails((prev) => ({
+        ...prev,
+        photos: [...(prev.photos ?? []), res.photo_url],
+      }));
+      if (invitation) {
+        setInvitation({
+          ...invitation,
+          current_photos: res.current_photos,
+        });
+      }
+      setUploadProgressMsg("");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Gagal mengunggah foto");
+    } finally {
+      setUploadingPhoto(false);
+      e.target.value = "";
+    }
+  }
+
   function handleTambahFoto() {
     if (!newPhotoUrl.trim()) return;
-    const max = invitation?.max_photos ?? 15;
+    const max = invitation?.max_photos ?? 30;
     const current = eventDetails.photos?.length ?? 0;
 
     if (max === 0) {
@@ -140,11 +187,28 @@ export default function EditorUndanganPage() {
     setNewPhotoUrl("");
   }
 
-  function handleHapusFoto(idx: number) {
+  async function handleHapusFoto(idx: number, photoUrl?: string) {
+    if (!confirm("Hapus foto ini dari galeri?")) return;
+
+    if (slug && photoUrl && photoUrl.includes("cloudinary.com")) {
+      try {
+        await api.hapusFotoCloudinary(slug, photoUrl);
+      } catch (e) {
+        console.warn("Gagal menghapus dari Cloudinary, melanjutkan hapus lokal:", e);
+      }
+    }
+
     setEventDetails((prev) => ({
       ...prev,
       photos: (prev.photos ?? []).filter((_, i) => i !== idx),
     }));
+
+    if (invitation) {
+      setInvitation({
+        ...invitation,
+        current_photos: Math.max(0, (invitation.current_photos || 1) - 1),
+      });
+    }
   }
 
   // Amplop Handlers
@@ -710,28 +774,61 @@ export default function EditorUndanganPage() {
               </div>
             ) : (
               <>
-                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
-                  <label className="block text-xs font-bold text-gray-700">
-                    Tambah URL Foto Galeri (Cloudinary / WebP)
-                  </label>
-                  <div className="flex gap-2">
+                {/* Uploader Langsung ke Cloudinary */}
+                <div className="p-5 bg-sky-50/60 rounded-2xl border-2 border-dashed border-sky-300 space-y-3 text-center">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelected}
+                    accept="image/*"
+                    disabled={isQuotaFull || uploadingPhoto}
+                    className="hidden"
+                  />
+
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <span className="text-3xl">☁️</span>
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-800">
+                        Unggah Foto Galeri ke Cloudinary
+                      </h4>
+                      <p className="text-xs text-gray-500">
+                        Otomatis dikompresi ke format <strong>.WebP</strong> super ringan & tajam (Maks. 8 MB).
+                      </p>
+                    </div>
+
+                    {uploadingPhoto ? (
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-100 text-sky-800 rounded-xl text-xs font-bold animate-pulse">
+                        <span>⏳</span> {uploadProgressMsg || "Sedang mengunggah ke Cloudinary..."}
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={isQuotaFull}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-40 cursor-pointer"
+                      >
+                        <span>📁</span>
+                        {isQuotaFull ? "Kuota 30 Foto Penuh" : "Pilih Foto dari Galeri HP / PC"}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Input Alternatif URL Teks Manual */}
+                  <div className="pt-3 border-t border-sky-200/60 flex items-center gap-2 text-left">
+                    <span className="text-[11px] text-gray-500 whitespace-nowrap">Atau URL luar:</span>
                     <input
                       type="url"
-                      disabled={isQuotaFull}
+                      disabled={isQuotaFull || uploadingPhoto}
                       value={newPhotoUrl}
                       onChange={(e) => setNewPhotoUrl(e.target.value)}
-                      placeholder={
-                        isQuotaFull
-                          ? "Kuota foto telah penuh (maksimal tercapai)"
-                          : "https://res.cloudinary.com/... atau tautan gambar lainnya"
-                      }
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E] disabled:bg-gray-100"
+                      placeholder="https://... URL foto luar"
+                      className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white outline-none focus:ring-1 focus:ring-[#4A151E]"
                     />
                     <button
                       type="button"
-                      disabled={isQuotaFull || !newPhotoUrl.trim()}
+                      disabled={isQuotaFull || !newPhotoUrl.trim() || uploadingPhoto}
                       onClick={handleTambahFoto}
-                      className="px-4 py-2 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition disabled:opacity-40 cursor-pointer"
+                      className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-xs font-bold transition disabled:opacity-40 cursor-pointer"
                     >
                       + Tambah
                     </button>
@@ -749,9 +846,9 @@ export default function EditorUndanganPage() {
                         <img src={foto} alt="" className="w-full h-full object-cover" />
                         <button
                           type="button"
-                          onClick={() => handleHapusFoto(idx)}
-                          className="absolute top-1.5 right-1.5 bg-red-600/90 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer"
-                          title="Hapus foto ini"
+                          onClick={() => handleHapusFoto(idx, foto)}
+                          className="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer shadow-md"
+                          title="Hapus foto ini dari Cloudinary"
                         >
                           ✕
                         </button>

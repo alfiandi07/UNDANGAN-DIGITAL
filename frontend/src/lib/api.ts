@@ -318,6 +318,42 @@ export function simpanEventDetails(slug: string, eventDetails: EventDetails) {
   );
 }
 
+export async function uploadFotoCloudinary(slug: string, file: File) {
+  const formData = new FormData();
+  formData.append("photo", file);
+
+  const res = await fetch(`/api/client/invitations/${slug}/photo`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error || "Gagal mengunggah foto ke Cloudinary");
+  }
+  return json as {
+    success: boolean;
+    message: string;
+    photo_url: string;
+    current_photos: number;
+    max_photos: number;
+    invitation: Invitation;
+  };
+}
+
+export function hapusFotoCloudinary(slug: string, photoUrl: string) {
+  return request<{
+    success: boolean;
+    message: string;
+    current_photos: number;
+    max_photos: number;
+    invitation: Invitation;
+  }>(`/api/client/invitations/${slug}/photo`, {
+    method: "DELETE",
+    body: JSON.stringify({ photo_url: photoUrl }),
+  });
+}
+
 // ── Modul D: RSVP & Buku Tamu Realtime ───────────────────
 export type Attendance = "hadir" | "tidak_hadir" | "ragu";
 

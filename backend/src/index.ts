@@ -8,7 +8,14 @@ import { transaksiRouter } from "./routes/transaksi.js";
 import { templateRouter } from "./routes/template.js";
 import { checkSlug } from "./controller/template.js";
 import { orderRouter } from "./routes/order.js";
-import { midtransWebhook, getInvitationBySlug, saveEventDetails } from "./controller/order.js";
+import {
+  midtransWebhook,
+  getInvitationBySlug,
+  saveEventDetails,
+  uploadPhotoHandler,
+  deletePhotoHandler,
+} from "./controller/order.js";
+import { uploadImage } from "./middleware/upload.js";
 import { daftarRsvps, kirimRsvp } from "./controller/rsvp.js";
 import { financeRouter } from "./routes/finance.js";
 const app = express();
@@ -51,6 +58,12 @@ app.use("/api/orders", orderRouter); // PRD Modul B: Checkout & Orders
 app.post("/api/payment/webhook", midtransWebhook); // PRD FR-B2: Midtrans Webhook URL standard
 app.get("/api/invitations/:slug", getInvitationBySlug); // PRD Modul C & D
 app.put("/api/invitations/:slug", saveEventDetails); // PRD Modul C: Editor Acara & Photo Quota
+app.post(
+  "/api/client/invitations/:slug/photo",
+  uploadImage.single("photo"),
+  uploadPhotoHandler,
+); // PRD FR-C2 & Endpoint 7: Upload Foto Cloudinary
+app.delete("/api/client/invitations/:slug/photo", deletePhotoHandler);
 app.get("/api/invitations/:slug/rsvps", daftarRsvps); // PRD Modul D: Daftar Ucapan Doa
 app.post("/api/invitations/:slug/rsvps", kirimRsvp); // PRD Modul D: Submit RSVP & Ucapan Tamu
 app.use("/api/finance", financeRouter); // PRD Modul E: Laporan Finansial & Auto-Cleanup

@@ -10,8 +10,8 @@
 .katalog-page {
   position: relative;
   min-height: 100vh;
-  background-color: #fbebed;
-  color: #2d2424;
+  background-color: #ebebec;
+  color: #1e293b;
   overflow-x: hidden;
   font-family:
     system-ui,
@@ -22,13 +22,13 @@
     sans-serif;
 }
 
-/* 1.1 FULL FIXED FLORAL BACKGROUND (Full HD 1920x1080 - Super Tajam) */
+/* 1.1 FULL FIXED FLORAL BACKGROUND (Full HD 1920x1080 - Nuansa Biru Cerah) */
 .katalog-floral-bg {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("/bg-wedding-floral-hd.jpg");
+  background-image: url("/bg-wedding-floral-hd.jpg?v=1");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -41,10 +41,15 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(220, 200, 205, 0.5);
+  background: linear-gradient(
+    135deg,
+    rgba(242, 246, 248, 0.92) 0%,
+    rgba(56, 189, 248, 0.85) 50%,
+    rgba(14, 83, 115, 0.78) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   padding: 0.85rem 1.5rem;
 }
 
@@ -68,14 +73,14 @@
   font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: 0.05em;
-  color: #4a151e;
+  color: #110e0e;
 }
 
 .katalog-navbar__brand-badge {
   font-size: 0.625rem;
   font-weight: 800;
-  background-color: #efe9df;
-  color: #695a5a;
+  background-color: rgb(255, 255, 255);
+  color: #190b0b;
   padding: 0.15rem 0.5rem;
   border-radius: 0.25rem;
   text-transform: uppercase;
@@ -87,23 +92,23 @@
   align-items: center;
   gap: 2rem;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .katalog-navbar__link {
-  color: #5c4f4f;
+  color: #0f172a;
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .katalog-navbar__link:hover {
-  color: #4a151e;
+  color: #0284c7;
 }
 
 .katalog-navbar__link--active {
-  color: #4a151e;
+  color: #0c4a6e;
   font-weight: 800;
-  border-bottom: 2px solid #4a151e;
+  border-bottom: 2px solid #0c4a6e;
   padding-bottom: 0.25rem;
 }
 
@@ -117,31 +122,33 @@
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.5rem 1rem;
-  border: 1px solid #d5c9b8;
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 9999px;
-  color: #4a151e;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #0284c7;
   text-decoration: none;
-  transition: background-color 0.15s;
+  transition: all 0.15s;
 }
 
 .katalog-btn-login:hover {
-  background-color: #f7f3ec;
+  background-color: #ffffff;
+  color: #0369a1;
 }
 
 .katalog-btn-cta {
   font-size: 0.75rem;
   font-weight: 800;
   padding: 0.5rem 1.15rem;
-  background-color: #4a151e;
-  color: #faf6f0;
+  background-color: #0284c7;
+  color: #ffffff;
   border-radius: 9999px;
   text-decoration: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
   transition: background-color 0.15s;
 }
 
 .katalog-btn-cta:hover {
-  background-color: #380f16;
+  background-color: #0369a1;
 }
 
 /* 3. HERO SECTION */
@@ -158,9 +165,9 @@
   gap: 0.4rem;
   padding: 0.35rem 0.85rem;
   border-radius: 9999px;
-  background-color: #f5efe6;
-  border: 1px solid #e8dec8;
-  color: #7a6237;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+  color: #04080a;
   font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -240,7 +247,7 @@
 }
 
 .katalog-chip:hover {
-  background-color: #f8f4ed;
+  background-color: #f0f9ff;
 }
 
 .katalog-chip--active {
@@ -288,12 +295,12 @@
 .katalog-card__preview {
   position: relative;
   height: 16rem;
-  background-color: #f7f2ea;
+  background-color: #f0f9ff;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-bottom: 1px solid #ebe3d5;
+  border-bottom: 1px solid #e0f2fe;
 }
 
 .katalog-card__badge-tag {
@@ -510,8 +517,8 @@
 }
 
 .pricing-table-card--featured {
-  border-color: #4a151e;
-  background: #fdf9f5;
+  border-color: #0284c7;
+  background: #f0f9ff;
 }
 
 .pricing-badge-popular {

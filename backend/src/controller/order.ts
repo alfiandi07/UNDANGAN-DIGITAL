@@ -4,6 +4,7 @@ import crypto from "crypto";
 import * as repo from "../repository/order.js";
 import * as templateRepo from "../repository/template.js";
 import type { PackageType } from "../models/order.js";
+import { uploadToCloudinary } from "../lib/cloudinary.js";
 
 function hitungMasaAktif(packageType: PackageType): Date {
   const now = new Date();
@@ -396,5 +397,105 @@ export async function saveEventDetails(req: Request, res: Response) {
   } catch (err) {
     console.error("Save event error:", err);
     res.status(500).json({ error: "Gagal menyimpan detail acara" });
+  }
+}
+
+// POST /api/client/invitations/:slug/photo (PRD FR-C2 & Endpoint 7)
+export async function uploadPhotoHandler(req: Request, res: Response) {
+  try {
+    const slug = String(req.params.slug);
+    const file = req.file;
+
+    if (!file) {
+      res.status(400).json({ error: "File foto tidak ditemukan dalam permintaan" });
+      return;
+    }
+
+    const invitation = await repo.cariInvitationBySlug(slug);
+    if (!invitation) {
+      res.status(404).json({ error: "Undangan tidak ditemukan" });
+      return;
+    }
+
+    // 1. Cek Kuota Paket (Standar = 0 foto, Premium = maks 30 foto)
+    if (invitation.max_photos === 0) {
+      res.status(403).json({
+        error: "Paket Standar tidak mendukung galeri foto. Silakan upgrade ke Paket Premium.",
+      });
+      return;
+    }
+
+    const details = invitation.event_details || {};
+    const existingPhotos: string[] = Array.isArray(details.photos) ? details.photos : [];
+
+    if (existingPhotos.length >= invitation.max_photos) {
+      res.status(400).json({
+        error: `Kuota galeri foto telah penuh! Batas maksimal adalah ${invitation.max_photos} foto.`,
+      });
+      return;
+    }
+
+    // 2. Upload ke Cloudinary (Folder: asm-invitations/{slug})
+    const folder = `asm-invitations/${slug}`;
+    const result = await uploadToCloudinary(file.buffer, folder);
+
+    // 3. Tambahkan URL foto ke array event_details.photos
+    existingPhotos.push(result.secure_url);
+    details.photos = existingPhotos;
+
+    // 4. Update Database
+    const updated = await repo.updateEventDetails(slug, details, existingPhotos.length);
+
+    res.json({
+      success: true,
+      message: "Foto berhasil diunggah ke Cloudinary!",
+      photo_url: result.secure_url,
+      current_photos: existingPhotos.length,
+      max_photos: invitation.max_photos,
+      invitation: updated,
+    });
+  } catch (err) {
+    console.error("Upload photo error:", err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Gagal mengunggah foto ke Cloudinary",
+    });
+  }
+}
+
+// DELETE /api/client/invitations/:slug/photo
+export async function deletePhotoHandler(req: Request, res: Response) {
+  try {
+    const slug = String(req.params.slug);
+    const { photo_url } = req.body ?? {};
+
+    if (!photo_url) {
+      res.status(400).json({ error: "URL foto wajib dikirimkan" });
+      return;
+    }
+
+    const invitation = await repo.cariInvitationBySlug(slug);
+    if (!invitation) {
+      res.status(404).json({ error: "Undangan tidak ditemukan" });
+      return;
+    }
+
+    const details = invitation.event_details || {};
+    const existingPhotos: string[] = Array.isArray(details.photos) ? details.photos : [];
+
+    const updatedPhotos = existingPhotos.filter((p) => p !== photo_url);
+    details.photos = updatedPhotos;
+
+    const updated = await repo.updateEventDetails(slug, details, updatedPhotos.length);
+
+    res.json({
+      success: true,
+      message: "Foto berhasil dihapus dari galeri!",
+      current_photos: updatedPhotos.length,
+      max_photos: invitation.max_photos,
+      invitation: updated,
+    });
+  } catch (err) {
+    console.error("Delete photo error:", err);
+    res.status(500).json({ error: "Gagal menghapus foto" });
   }
 }

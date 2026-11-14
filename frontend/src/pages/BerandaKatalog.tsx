@@ -103,7 +103,9 @@ const DEFAULT_MASTER_TEMPLATES: Template[] = [
 export default function BerandaKatalog() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const [templateList, setTemplateList] = useState<Template[]>(DEFAULT_MASTER_TEMPLATES);
+  const [templateList, setTemplateList] = useState<Template[]>(
+    DEFAULT_MASTER_TEMPLATES,
+  );
   const [kategoriAktif, setKategoriAktif] = useState("Semua");
   const [keyword, setKeyword] = useState("");
   const [activeNav, setActiveNav] = useState<"katalog" | "paket" | "custom">(
@@ -128,10 +130,10 @@ export default function BerandaKatalog() {
 
   const kategoriPilihan = [
     { label: "Semua Acara", val: "Semua" },
-    { label: "💍 Pernikahan", val: "wedding" },
-    { label: "✂️ Khitanan", val: "khitan" },
-    { label: "🎂 Ulang Tahun", val: "birthday" },
-    { label: "👶 Aqiqah", val: "aqiqah" },
+    { label: "Pernikahan", val: "wedding" },
+    { label: "Khitanan", val: "khitan" },
+    { label: "Ulang Tahun", val: "birthday" },
+    { label: "Aqiqah", val: "aqiqah" },
   ];
 
   useEffect(() => {
@@ -145,7 +147,10 @@ export default function BerandaKatalog() {
         }
       })
       .catch((err) => {
-        console.warn("Gagal memuat template dari API, menggunakan fallback master:", err);
+        console.warn(
+          "Gagal memuat template dari API, menggunakan fallback master:",
+          err,
+        );
       });
 
     return () => {
@@ -159,7 +164,8 @@ export default function BerandaKatalog() {
     const matchKeyword =
       !keyword ||
       (t.title && t.title.toLowerCase().includes(keyword.toLowerCase())) ||
-      (t.theme_style && t.theme_style.toLowerCase().includes(keyword.toLowerCase()));
+      (t.theme_style &&
+        t.theme_style.toLowerCase().includes(keyword.toLowerCase()));
     return matchCategory && matchKeyword;
   });
 
@@ -200,7 +206,7 @@ export default function BerandaKatalog() {
               onClick={() => setActiveNav("custom")}
               className={`katalog-navbar__link ${activeNav === "custom" ? "katalog-navbar__link--active" : ""}`}
             >
-              Desain Custom
+              Kontak
             </a>
           </nav>
 
@@ -225,7 +231,7 @@ export default function BerandaKatalog() {
       ======================================================== */}
       <section className="katalog-hero">
         <div className="katalog-hero__badge">
-          <span>✨</span> PILIH TEMPLATE UNDANGAN ANDA
+          <span></span> PILIH TEMPLATE UNDANGAN ANDA
         </div>
 
         <h1 className="katalog-hero__title">
@@ -233,9 +239,9 @@ export default function BerandaKatalog() {
         </h1>
 
         <p className="katalog-hero__desc">
-          Pernikahan, Khitanan, Ulang Tahun, & Aqiqah dengan standar visual{" "}
-          <em>Mobile-First (100dvh)</em>. Musik otomatis, amplop digital, RSVP
-          realtime, dan hitung mundur presisi.
+          Pernikahan, Khitanan, Ulang Tahun, & Aqiqah{" "}
+          <em>Mobile-First (100dvh)</em>. musik, amplop digital, RSVP realtime,
+          dan hitung mundur presisi.
         </p>
 
         {/* Search Bar */}
@@ -244,7 +250,7 @@ export default function BerandaKatalog() {
             <span>🔍</span>
             <input
               type="text"
-              placeholder="Cari tema, adat, gaya, atau nama template..."
+              placeholder="Cari tema"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               className="katalog-search-input"
@@ -273,7 +279,11 @@ export default function BerandaKatalog() {
       <main id="katalog" className="katalog-grid-section">
         {filteredTemplates.length === 0 ? (
           <div
-            style={{ textAlign: "center", padding: "4rem 0", color: "#9ca3af" }}
+            style={{
+              textAlign: "center",
+              padding: "4rem 0",
+              color: "#010710ff",
+            }}
           >
             <p style={{ fontWeight: 700, fontSize: "1.1rem" }}>
               Template tidak ditemukan
@@ -288,9 +298,6 @@ export default function BerandaKatalog() {
               <div key={item.id} className="katalog-card">
                 {/* Mockup Preview */}
                 <div className="katalog-card__preview">
-                  <span className="katalog-card__badge-tag">
-                    MASTER TEMPLATE
-                  </span>
                   <span className="katalog-card__category-tag">
                     {item.category}
                   </span>
@@ -301,10 +308,10 @@ export default function BerandaKatalog() {
                       {item.category === "wedding"
                         ? "💍"
                         : item.category === "khitan"
-                          ? "✂️"
+                          ? ""
                           : item.category === "birthday"
-                            ? "🎂"
-                            : "👶"}
+                            ? ""
+                            : ""}
                     </span>
                     <p className="katalog-card__phone-title">{item.title}</p>
                   </div>
@@ -322,9 +329,6 @@ export default function BerandaKatalog() {
                     <span className="katalog-card__theme">
                       {item.theme_style}
                     </span>
-                    <span style={{ fontWeight: 700 }}>
-                      ⭐ 5.0 (Kurasi Studio)
-                    </span>
                   </div>
 
                   <h3 className="katalog-card__title">{item.title}</h3>
@@ -332,7 +336,9 @@ export default function BerandaKatalog() {
                   <div className="katalog-card__pricing">
                     <div>
                       <p className="katalog-card__price-sub">
-                        {item.package_type === "premium" ? "Paket Premium" : "Paket Standar"}
+                        {item.package_type === "premium"
+                          ? "Paket Premium"
+                          : "Paket Standar"}
                       </p>
                       <p className="katalog-card__price-val">
                         {formatRupiah(
@@ -347,10 +353,15 @@ export default function BerandaKatalog() {
                       style={{
                         fontSize: "0.7rem",
                         fontWeight: 700,
-                        color: item.package_type === "premium" ? "#6B1D2F" : "#047857",
+                        color:
+                          item.package_type === "premium"
+                            ? "#6B1D2F"
+                            : "#047857",
                       }}
                     >
-                      {item.package_type === "premium" ? "⭐ Kuota 30 Foto" : "✨ Tanpa Foto"}
+                      {item.package_type === "premium"
+                        ? "Kuota 30 Foto"
+                        : "Tanpa Foto"}
                     </span>
                   </div>
 
@@ -361,14 +372,14 @@ export default function BerandaKatalog() {
                       rel="noreferrer"
                       className="katalog-card__btn-demo"
                     >
-                      👁️ Live Demo
+                      Live Demo
                     </a>
                     <button
                       type="button"
                       onClick={() => setSelectedTemplate(item)}
                       className="katalog-card__btn-order"
                     >
-                      🎁 Pesan Sekarang
+                      Pesan Sekarang
                     </button>
                   </div>
                 </div>
@@ -461,7 +472,7 @@ export default function BerandaKatalog() {
               }}
             >
               <li>
-                <strong>Galeri Kuota 30 Foto</strong> (Cloudinary)
+                <strong>Galeri Kuota 30 Foto</strong>
               </li>
               <li>
                 <strong>Masa Aktif 12 Bulan Penuh</strong>
