@@ -231,6 +231,17 @@
   text-align: center;
 }
 
+.guest-couple-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 0.75rem auto;
+  display: block;
+  border: 3px solid #d4a373;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
 .guest-couple-name {
   font-family: Georgia, Cambria, serif;
   font-size: 1.35rem;

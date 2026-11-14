@@ -230,8 +230,8 @@ export type Order = {
 export type EventDetails = {
   title?: string;
   mempelai?: {
-    pria?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string };
-    wanita?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string };
+    pria?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string; foto?: string };
+    wanita?: { nama?: string; panggilan?: string; ayah?: string; ibu?: string; foto?: string };
   };
   akad?: { tanggal?: string; jam?: string; lokasi?: string; alamat?: string; maps_url?: string };
   resepsi?: { tanggal?: string; jam?: string; lokasi?: string; alamat?: string; maps_url?: string };

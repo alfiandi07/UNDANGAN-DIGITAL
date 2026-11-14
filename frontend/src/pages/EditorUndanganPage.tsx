@@ -63,12 +63,14 @@ export default function EditorUndanganPage() {
                 panggilan: data.event_details.mempelai?.pria?.panggilan ?? "",
                 ayah: data.event_details.mempelai?.pria?.ayah ?? "",
                 ibu: data.event_details.mempelai?.pria?.ibu ?? "",
+                foto: data.event_details.mempelai?.pria?.foto ?? "",
               },
               wanita: {
                 nama: data.event_details.mempelai?.wanita?.nama ?? "",
                 panggilan: data.event_details.mempelai?.wanita?.panggilan ?? "",
                 ayah: data.event_details.mempelai?.wanita?.ayah ?? "",
                 ibu: data.event_details.mempelai?.wanita?.ibu ?? "",
+                foto: data.event_details.mempelai?.wanita?.foto ?? "",
               },
             },
             akad: {
@@ -391,6 +393,60 @@ export default function EditorUndanganPage() {
               <h4 className="font-bold text-xs uppercase tracking-wider text-[#4A151E]">
                 🤵 Mempelai Pria
               </h4>
+
+              {/* Foto Profil Pria */}
+              <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-200">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-[#D4A373] flex items-center justify-center shrink-0">
+                  {eventDetails.mempelai?.pria?.foto ? (
+                    <img src={eventDetails.mempelai.pria.foto} alt="Pria" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl">🤵</span>
+                  )}
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-xs font-semibold text-gray-800">Foto Profil Mempelai Pria</p>
+                  <p className="text-[11px] text-gray-500">
+                    {eventDetails.mempelai?.pria?.foto
+                      ? "Foto profil aktif. Anda bisa mengganti foto dari tab Galeri atau masukkan URL baru."
+                      : "Belum ada foto profil. Anda bisa memilih dari tab Galeri atau masukkan tautan foto di bawah."}
+                  </p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="url"
+                      value={eventDetails.mempelai?.pria?.foto ?? ""}
+                      onChange={(e) =>
+                        setEventDetails((p) => ({
+                          ...p,
+                          mempelai: {
+                            ...p.mempelai,
+                            pria: { ...p.mempelai?.pria, foto: e.target.value },
+                          },
+                        }))
+                      }
+                      placeholder="https://... URL foto profil atau atur di tab Galeri"
+                      className="flex-1 px-2.5 py-1 text-xs border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-[#4A151E]"
+                    />
+                    {eventDetails.mempelai?.pria?.foto && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setEventDetails((p) => ({
+                            ...p,
+                            mempelai: {
+                              ...p.mempelai,
+                              pria: { ...p.mempelai?.pria, foto: "" },
+                            },
+                          }))
+                        }
+                        className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded font-medium cursor-pointer"
+                        title="Hapus foto profil"
+                      >
+                        Hapus
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -480,6 +536,60 @@ export default function EditorUndanganPage() {
               <h4 className="font-bold text-xs uppercase tracking-wider text-[#4A151E]">
                 👰 Mempelai Wanita
               </h4>
+
+              {/* Foto Profil Wanita */}
+              <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-200">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-[#D4A373] flex items-center justify-center shrink-0">
+                  {eventDetails.mempelai?.wanita?.foto ? (
+                    <img src={eventDetails.mempelai.wanita.foto} alt="Wanita" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl">👰</span>
+                  )}
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-xs font-semibold text-gray-800">Foto Profil Mempelai Wanita</p>
+                  <p className="text-[11px] text-gray-500">
+                    {eventDetails.mempelai?.wanita?.foto
+                      ? "Foto profil aktif. Anda bisa mengganti foto dari tab Galeri atau masukkan URL baru."
+                      : "Belum ada foto profil. Anda bisa memilih dari tab Galeri atau masukkan tautan foto di bawah."}
+                  </p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="url"
+                      value={eventDetails.mempelai?.wanita?.foto ?? ""}
+                      onChange={(e) =>
+                        setEventDetails((p) => ({
+                          ...p,
+                          mempelai: {
+                            ...p.mempelai,
+                            wanita: { ...p.mempelai?.wanita, foto: e.target.value },
+                          },
+                        }))
+                      }
+                      placeholder="https://... URL foto profil atau atur di tab Galeri"
+                      className="flex-1 px-2.5 py-1 text-xs border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-[#4A151E]"
+                    />
+                    {eventDetails.mempelai?.wanita?.foto && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setEventDetails((p) => ({
+                            ...p,
+                            mempelai: {
+                              ...p.mempelai,
+                              wanita: { ...p.mempelai?.wanita, foto: "" },
+                            },
+                          }))
+                        }
+                        className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded font-medium cursor-pointer"
+                        title="Hapus foto profil"
+                      >
+                        Hapus
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -838,25 +948,95 @@ export default function EditorUndanganPage() {
                 {/* Grid Pratinjau Foto */}
                 {eventDetails.photos && eventDetails.photos.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                    {eventDetails.photos.map((foto, idx) => (
-                      <div
-                        key={idx}
-                        className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-100 shadow-xs"
-                      >
-                        <img src={foto} alt="" className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => handleHapusFoto(idx, foto)}
-                          className="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer shadow-md"
-                          title="Hapus foto ini dari Cloudinary"
+                    {eventDetails.photos.map((foto, idx) => {
+                      const isPria = eventDetails.mempelai?.pria?.foto === foto;
+                      const isWanita = eventDetails.mempelai?.wanita?.foto === foto;
+                      return (
+                        <div
+                          key={idx}
+                          className={`relative group aspect-square rounded-xl overflow-hidden border bg-gray-100 shadow-xs transition ${
+                            isPria
+                              ? "border-blue-500 ring-2 ring-blue-300"
+                              : isWanita
+                              ? "border-pink-500 ring-2 ring-pink-300"
+                              : "border-gray-200"
+                          }`}
                         >
-                          ✕
-                        </button>
-                        <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
-                          #{idx + 1}
-                        </span>
-                      </div>
-                    ))}
+                          <img src={foto} alt="" className="w-full h-full object-cover" />
+
+                          {/* Badge Status Foto Profil */}
+                          <div className="absolute top-1.5 left-1.5 flex flex-col gap-1 pointer-events-none">
+                            {isPria && (
+                              <span className="bg-blue-600/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                                🤵 Profil Pria
+                              </span>
+                            )}
+                            {isWanita && (
+                              <span className="bg-pink-600/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                                👰 Profil Wanita
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Tombol Aksi Foto Profil (Hover / Aktif) */}
+                          <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/85 via-black/50 to-transparent flex items-center justify-between gap-1 opacity-0 group-hover:opacity-100 transition">
+                            <button
+                              type="button"
+                              title={isPria ? "Lepas dari foto profil pria" : "Jadikan foto profil pria"}
+                              onClick={() =>
+                                setEventDetails((p) => ({
+                                  ...p,
+                                  mempelai: {
+                                    ...p.mempelai,
+                                    pria: { ...p.mempelai?.pria, foto: isPria ? "" : foto },
+                                  },
+                                }))
+                              }
+                              className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition cursor-pointer ${
+                                isPria
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-white/90 hover:bg-white text-gray-800"
+                              }`}
+                            >
+                              🤵 {isPria ? "Lepas" : "Pria"}
+                            </button>
+
+                            <button
+                              type="button"
+                              title={isWanita ? "Lepas dari foto profil wanita" : "Jadikan foto profil wanita"}
+                              onClick={() =>
+                                setEventDetails((p) => ({
+                                  ...p,
+                                  mempelai: {
+                                    ...p.mempelai,
+                                    wanita: { ...p.mempelai?.wanita, foto: isWanita ? "" : foto },
+                                  },
+                                }))
+                              }
+                              className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition cursor-pointer ${
+                                isWanita
+                                  ? "bg-pink-500 text-white"
+                                  : "bg-white/90 hover:bg-white text-gray-800"
+                              }`}
+                            >
+                              👰 {isWanita ? "Lepas" : "Wanita"}
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleHapusFoto(idx, foto)}
+                            className="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer shadow-md"
+                            title="Hapus foto ini dari Cloudinary"
+                          >
+                            ✕
+                          </button>
+                          <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-mono group-hover:opacity-0 transition">
+                            #{idx + 1}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8 text-gray-400 border border-dashed rounded-2xl">
