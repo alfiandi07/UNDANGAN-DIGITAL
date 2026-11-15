@@ -19,12 +19,14 @@ export default function ProdukPage() {
     title: "",
     slug: "",
     category: "wedding",
+    package_type: "standard",
+    price: 99000,
     theme_style: "Modern Minimalis",
     thumbnail_url: "",
     demo_url: "",
-    price_basic: 79000,
+    price_basic: 99000,
     price_standard: 99000,
-    price_special: 120000,
+    price_special: 99000,
     is_active: true,
   });
   const [submitting, setSubmitting] = useState(false);
@@ -37,7 +39,9 @@ export default function ProdukPage() {
       const data = await api.ambilSemuaTemplatesAdmin();
       setTemplateList(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal memuat template undangan");
+      setError(
+        err instanceof Error ? err.message : "Gagal memuat template undangan",
+      );
     } finally {
       setLoading(false);
     }
@@ -76,13 +80,15 @@ export default function ProdukPage() {
     setFormData({
       title: "",
       slug: "",
-      category: "wedding",
+      category: "" as any,
+      package_type: "standard",
+      price: 99000,
       theme_style: "Modern Minimalis",
       thumbnail_url: "",
       demo_url: "",
-      price_basic: 79000,
+      price_basic: 99000,
       price_standard: 99000,
-      price_special: 120000,
+      price_special: 99000,
       is_active: true,
     });
     setFormError("");
@@ -91,16 +97,20 @@ export default function ProdukPage() {
 
   function handleBukaEdit(item: Template) {
     setEditId(item.id);
+    const tier = item.package_type || "standard";
+    const price = item.price || item.price_standard || 99000;
     setFormData({
       title: item.title,
       slug: item.slug,
       category: item.category,
+      package_type: tier,
+      price: price,
       theme_style: item.theme_style,
       thumbnail_url: item.thumbnail_url || "",
       demo_url: item.demo_url || `/demo/${item.slug}`,
-      price_basic: item.price_basic,
-      price_standard: item.price_standard,
-      price_special: item.price_special,
+      price_basic: item.price_basic || price,
+      price_standard: item.price_standard || price,
+      price_special: item.price_special || price,
       is_active: Boolean(item.is_active),
     });
     setFormError("");
@@ -110,17 +120,43 @@ export default function ProdukPage() {
   async function handleSimpan(e: FormEvent) {
     e.preventDefault();
     setFormError("");
+
+    // Validasi Wajib Kategori
+    if (!formData.category || String(formData.category).trim() === "") {
+      setFormError("Kategori wajib diisi");
+      return;
+    }
+
+    if (!formData.title || !formData.slug) {
+      setFormError("Judul dan slug template wajib diisi");
+      return;
+    }
+
+    if (!formData.price || formData.price <= 0) {
+      setFormError("Harga template wajib diisi dan harus lebih dari 0");
+      return;
+    }
+
     setSubmitting(true);
     try {
+      const payload = {
+        ...formData,
+        price_standard: formData.price,
+        price_basic: formData.price,
+        price_special: formData.price,
+      };
+
       if (editId) {
-        await api.ubahTemplate(editId, formData);
+        await api.ubahTemplate(editId, payload);
       } else {
-        await api.tambahTemplate(formData);
+        await api.tambahTemplate(payload);
       }
       setIsModalOpen(false);
       await muatData();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Gagal menyimpan template");
+      setFormError(
+        err instanceof Error ? err.message : "Gagal menyimpan template",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -141,7 +177,9 @@ export default function ProdukPage() {
       await api.ubahTemplate(item.id, { is_active: !item.is_active });
       await muatData();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Gagal mengubah status template");
+      alert(
+        err instanceof Error ? err.message : "Gagal mengubah status template",
+      );
     }
   }
 
@@ -180,7 +218,8 @@ export default function ProdukPage() {
             Kelola Master Template Undangan
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Studio Kolektif: Atur katalog template, upload gambar cover, harga 3 paket, dan tautan demo.
+            Studio Kolektif: Atur katalog template, upload gambar cover, harga 3
+            paket, dan tautan demo.
           </p>
         </div>
 
@@ -211,7 +250,8 @@ export default function ProdukPage() {
           <div className="p-12 text-center text-gray-400">
             <p className="text-base font-semibold">Belum ada master template</p>
             <p className="text-sm mt-1">
-              Klik tombol &ldquo;Tambah Template Baru&rdquo; untuk mendaftarkan template pertama Anda.
+              Klik tombol &ldquo;Tambah Template Baru&rdquo; untuk mendaftarkan
+              template pertama Anda.
             </p>
           </div>
         ) : (
@@ -221,8 +261,8 @@ export default function ProdukPage() {
                 <tr>
                   <th className="px-6 py-4">Preview</th>
                   <th className="px-6 py-4">Template & Slug</th>
-                  <th className="px-6 py-4">Kategori & Gaya</th>
-                  <th className="px-6 py-4">Harga 3 Paket (PRD)</th>
+                  <th className="px-6 py-4">Kategori & Paket</th>
+                  <th className="px-6 py-4">Harga Produk</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-center">Aksi</th>
                 </tr>
@@ -243,15 +283,21 @@ export default function ProdukPage() {
                             }}
                           />
                         ) : (
-                          <span className="text-xs text-gray-400 font-medium">Polos</span>
+                          <span className="text-xs text-gray-400 font-medium">
+                            Polos
+                          </span>
                         )}
                       </div>
                     </td>
 
                     {/* Judul & Slug */}
                     <td className="px-6 py-4">
-                      <p className="font-bold text-gray-900 text-base">{item.title}</p>
-                      <p className="text-xs text-indigo-600 font-mono mt-0.5">/{item.slug}</p>
+                      <p className="font-bold text-gray-900 text-base">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-indigo-600 font-mono mt-0.5">
+                        /{item.slug}
+                      </p>
                       {item.demo_url && (
                         <a
                           href={item.demo_url}
@@ -264,28 +310,39 @@ export default function ProdukPage() {
                       )}
                     </td>
 
-                    {/* Kategori & Gaya */}
+                    {/* Kategori & Paket */}
                     <td className="px-6 py-4">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 uppercase">
-                        {item.category}
-                      </span>
-                      <p className="text-xs text-gray-500 font-medium mt-1">{item.theme_style}</p>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200 uppercase">
+                          {item.category}
+                        </span>
+                        {item.package_type === "premium" ? (
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300">
+                            👑 PREMIUM
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                            ⚡ STANDAR
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 font-medium mt-1">
+                        {item.theme_style}
+                      </p>
                     </td>
 
-                    {/* 3 Paket Harga */}
-                    <td className="px-6 py-4 space-y-1">
-                      <div className="text-xs flex items-center gap-2">
-                        <span className="w-16 text-gray-400">Basic:</span>
-                        <strong className="text-gray-800">{formatRupiah(item.price_basic)}</strong>
-                      </div>
-                      <div className="text-xs flex items-center gap-2">
-                        <span className="w-16 text-gray-400">Standard:</span>
-                        <strong className="text-gray-800">{formatRupiah(item.price_standard)}</strong>
-                      </div>
-                      <div className="text-xs flex items-center gap-2">
-                        <span className="w-16 text-gray-400">Special:</span>
-                        <strong className="text-gray-800">{formatRupiah(item.price_special)}</strong>
-                      </div>
+                    {/* Harga Produk */}
+                    <td className="px-6 py-4">
+                      <p className="text-base font-extrabold text-[#4A151E]">
+                        {formatRupiah(
+                          item.price || item.price_standard || 99000,
+                        )}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        {item.package_type === "premium"
+                          ? "Maks. 30 Foto • 12 Bln"
+                          : "Tanpa Foto • 6 Bln"}
+                      </p>
                     </td>
 
                     {/* Status Aktif */}
@@ -369,7 +426,12 @@ export default function ProdukPage() {
                     type="text"
                     required
                     value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: generateSlug(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        slug: generateSlug(e.target.value),
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none font-mono text-sm"
                     placeholder="jawa-keraton-royal"
                   />
@@ -382,20 +444,32 @@ export default function ProdukPage() {
                     Kategori Acara <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.category}
+                    required
+                    value={formData.category || ""}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        category: e.target.value as DataTemplateInput["category"],
+                        category: e.target
+                          .value as DataTemplateInput["category"],
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white ${
+                      !formData.category
+                        ? "border-amber-400 bg-amber-50/20"
+                        : "border-gray-300"
+                    }`}
                   >
+                    <option value="">-- Pilih Kategori Acara (Wajib) --</option>
                     <option value="wedding">💍 Pernikahan (wedding)</option>
                     <option value="khitan">✂️ Khitanan (khitan)</option>
                     <option value="birthday">🎂 Ulang Tahun (birthday)</option>
                     <option value="aqiqah">👶 Aqiqah (aqiqah)</option>
                   </select>
+                  {!formData.category && (
+                    <p className="text-[11px] text-amber-600 mt-1 font-medium">
+                      ⚠️ Kategori wajib dipilih sebelum menyimpan.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -406,11 +480,101 @@ export default function ProdukPage() {
                     type="text"
                     required
                     value={formData.theme_style}
-                    onChange={(e) => setFormData({ ...formData, theme_style: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, theme_style: e.target.value })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
                     placeholder="Contoh: Adat Jawa, Modern, Islamic"
                   />
                 </div>
+              </div>
+
+              {/* Tipe Paket Desain (Standar vs Premium) */}
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">
+                  Tipe Paket Desain <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({ ...formData, package_type: "standard" })
+                    }
+                    className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
+                      formData.package_type === "standard"
+                        ? "border-[#4A151E] bg-[#4A151E]/5 ring-2 ring-[#4A151E]"
+                        : "border-gray-200 hover:border-gray-300 bg-white"
+                    }`}
+                  >
+                    <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                      ⚡ STANDAR
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      Desain clean & elegan • <strong>Tanpa galeri foto</strong>{" "}
+                      • Masa aktif 6 bulan
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({ ...formData, package_type: "premium" })
+                    }
+                    className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
+                      formData.package_type === "premium"
+                        ? "border-amber-600 bg-amber-50 ring-2 ring-amber-600"
+                        : "border-gray-200 hover:border-gray-300 bg-white"
+                    }`}
+                  >
+                    <span className="font-bold text-amber-900 text-sm flex items-center gap-1.5">
+                      👑 PREMIUM
+                    </span>
+                    <span className="text-xs text-amber-800 mt-1">
+                      Desain mewah • <strong>Galeri 30 foto</strong> • Musik
+                      autoplay • Masa aktif 12 bulan
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Input Harga Produk (Bebas Ditentukan Admin) */}
+              <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-gray-800 text-xs uppercase tracking-wider">
+                    Harga Produk Template (Rp){" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[11px] text-gray-500 font-medium">
+                    Ditentukan bebas oleh Admin
+                  </span>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm">
+                    Rp
+                  </span>
+                  <input
+                    type="number"
+                    required
+                    min="1000"
+                    step="1000"
+                    value={formData.price || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        price: Number(e.target.value),
+                        price_standard: Number(e.target.value),
+                        price_basic: Number(e.target.value),
+                        price_special: Number(e.target.value),
+                      })
+                    }
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-base font-bold text-gray-900 bg-white"
+                    placeholder="Contoh: 99000"
+                  />
+                </div>
+                <p className="text-[11px] text-gray-400">
+                  Harga nominal ini yang akan langsung ditagihkan kepada pembeli
+                  saat memesan template ini.
+                </p>
               </div>
 
               {/* URL Cover Image */}
@@ -421,12 +585,15 @@ export default function ProdukPage() {
                 <input
                   type="text"
                   value={formData.thumbnail_url}
-                  onChange={(e) => setFormData({ ...formData, thumbnail_url: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, thumbnail_url: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
                   placeholder="https://... atau /assets/templates/..."
                 />
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Masukkan tautan URL foto cover yang ingin ditampilkan di katalog.
+                  Masukkan tautan URL foto cover yang ingin ditampilkan di
+                  katalog.
                 </p>
               </div>
 
@@ -438,66 +605,12 @@ export default function ProdukPage() {
                 <input
                   type="text"
                   value={formData.demo_url}
-                  onChange={(e) => setFormData({ ...formData, demo_url: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, demo_url: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
                   placeholder="/demo/jawa-keraton-royal"
                 />
-              </div>
-
-              {/* 3 Tingkat Harga (PRD asm.invitation) */}
-              <div className="p-4 bg-gray-50 rounded-xl space-y-3 border border-gray-200">
-                <p className="font-bold text-gray-800 text-xs uppercase tracking-wider">
-                  3 Paket Harga Resmi (PRD)
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block font-medium text-gray-600 mb-1">
-                      Paket Basic (Rp)
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="1"
-                      value={formData.price_basic}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price_basic: Number(e.target.value) })
-                      }
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-gray-600 mb-1">
-                      Paket Standard (Rp)
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="1"
-                      value={formData.price_standard}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price_standard: Number(e.target.value) })
-                      }
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-gray-600 mb-1">
-                      Paket Special (Rp)
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="1"
-                      value={formData.price_special}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price_special: Number(e.target.value) })
-                      }
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white"
-                    />
-                  </div>
-                </div>
               </div>
 
               {/* Checkbox Status Aktif */}
@@ -506,10 +619,15 @@ export default function ProdukPage() {
                   type="checkbox"
                   id="is_active"
                   checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, is_active: e.target.checked })
+                  }
                   className="w-4 h-4 text-[#4A151E] rounded focus:ring-[#4A151E]"
                 />
-                <label htmlFor="is_active" className="text-gray-700 font-medium cursor-pointer">
+                <label
+                  htmlFor="is_active"
+                  className="text-gray-700 font-medium cursor-pointer"
+                >
                   Tampilkan template ini di Katalog publik (Aktif)
                 </label>
               </div>

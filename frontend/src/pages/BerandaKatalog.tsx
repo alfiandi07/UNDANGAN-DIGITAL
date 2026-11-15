@@ -338,7 +338,7 @@ export default function BerandaKatalog() {
                       <p className="katalog-card__price-sub">
                         {item.package_type === "premium"
                           ? "Paket Premium"
-                          : "Paket Standar"}
+                          : "Paket Basic"}
                       </p>
                       <p className="katalog-card__price-val">
                         {formatRupiah(

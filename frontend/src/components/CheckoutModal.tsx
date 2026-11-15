@@ -191,10 +191,10 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                 style={{ cursor: "default", marginBottom: "1.25rem" }}
               >
                 <span className="checkout-package-card__badge">
-                  {selectedPackage === "premium" ? "Paket Premium Resmi" : "Paket Standar Resmi"}
+                  {selectedPackage === "premium" ? "Paket Premium Resmi" : "Paket Basic Resmi"}
                 </span>
                 <p className="checkout-package-card__name">
-                  {template.title} • {selectedPackage === "premium" ? "Paket Premium" : "Paket Standar"}
+                  {template.title} • {selectedPackage === "premium" ? "Paket Premium" : "Paket Basic"}
                 </p>
                 <p className="checkout-package-card__price">{formatRupiah(packagePrice)}</p>
                 <p className="checkout-package-card__features">

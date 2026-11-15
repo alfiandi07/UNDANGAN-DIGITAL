@@ -53,19 +53,24 @@ export async function isSlugTersedia(slug: string): Promise<boolean> {
 
 export async function tambahTemplate(data: DataTemplate): Promise<Template> {
   const isActive = data.is_active ?? true;
+  const packageType = data.package_type || "standard";
+  const price = data.price || data.price_standard || 99000;
+
   const [res] = await pool.execute<ResultSetHeader>(
-    `INSERT INTO templates (slug, title, category, theme_style, thumbnail_url, demo_url, price_basic, price_standard, price_special, is_active)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO templates (slug, title, category, package_type, price, theme_style, thumbnail_url, demo_url, price_basic, price_standard, price_special, is_active)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.slug,
       data.title,
       data.category,
+      packageType,
+      price,
       data.theme_style,
       data.thumbnail_url || "",
       data.demo_url || `/demo/${data.slug}`,
-      data.price_basic || 79000,
-      data.price_standard || 99000,
-      data.price_special || 120000,
+      price,
+      price,
+      price,
       isActive,
     ]
   );
@@ -81,28 +86,29 @@ export async function ubahTemplate(id: number, data: Partial<DataTemplate>): Pro
   const slug = data.slug ?? existing.slug;
   const title = data.title ?? existing.title;
   const category = data.category ?? existing.category;
+  const package_type = data.package_type ?? existing.package_type ?? "standard";
+  const price = data.price ?? existing.price ?? existing.price_standard ?? 99000;
   const theme_style = data.theme_style ?? existing.theme_style;
   const thumbnail_url = data.thumbnail_url ?? existing.thumbnail_url;
   const demo_url = data.demo_url ?? existing.demo_url;
-  const price_basic = data.price_basic ?? existing.price_basic;
-  const price_standard = data.price_standard ?? existing.price_standard;
-  const price_special = data.price_special ?? existing.price_special;
   const is_active = data.is_active ?? existing.is_active;
 
   await pool.execute(
     `UPDATE templates 
-     SET slug = ?, title = ?, category = ?, theme_style = ?, thumbnail_url = ?, demo_url = ?, price_basic = ?, price_standard = ?, price_special = ?, is_active = ?
+     SET slug = ?, title = ?, category = ?, package_type = ?, price = ?, theme_style = ?, thumbnail_url = ?, demo_url = ?, price_basic = ?, price_standard = ?, price_special = ?, is_active = ?
      WHERE id = ?`,
     [
       slug,
       title,
       category,
+      package_type,
+      price,
       theme_style,
       thumbnail_url,
       demo_url,
-      price_basic,
-      price_standard,
-      price_special,
+      price,
+      price,
+      price,
       is_active,
       id,
     ]

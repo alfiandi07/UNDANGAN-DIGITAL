@@ -279,7 +279,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
               {invitation.template_title || invitation.event_details?.title || "Desain Undangan"}
             </span>
             <span className="demo-top-bar__package">
-              {invitation.package_type === "premium" ? "⭐ Paket Premium" : "✨ Paket Standar"}
+              {invitation.package_type === "premium" ? "⭐ Paket Premium" : "🍃 Paket Basic"}
             </span>
           </div>
 
