@@ -382,7 +382,15 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
           <section className="guest-couple-section">
             {/* Pria */}
             <div className="guest-couple-card">
-              <span style={{ fontSize: "2rem" }}>🤵</span>
+              {pria?.foto ? (
+                <img
+                  src={pria.foto}
+                  alt={pria?.nama || "Mempelai Pria"}
+                  className="guest-couple-avatar"
+                />
+              ) : (
+                <span style={{ fontSize: "2rem" }}>🤵</span>
+              )}
               <h3 className="guest-couple-name">{pria?.nama || "Dimas Pratama, S.Kom"}</h3>
               <p className="guest-couple-parents">
                 Putra tercinta dari: <br />
@@ -397,7 +405,15 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
 
             {/* Wanita */}
             <div className="guest-couple-card">
-              <span style={{ fontSize: "2rem" }}>👰</span>
+              {wanita?.foto ? (
+                <img
+                  src={wanita.foto}
+                  alt={wanita?.nama || "Mempelai Wanita"}
+                  className="guest-couple-avatar"
+                />
+              ) : (
+                <span style={{ fontSize: "2rem" }}>👰</span>
+              )}
               <h3 className="guest-couple-name">{wanita?.nama || "Adinda Putri Lestari, S.E"}</h3>
               <p className="guest-couple-parents">
                 Putri tercinta dari: <br />
