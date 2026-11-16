@@ -206,6 +206,24 @@ export function hapusTemplate(id: number) {
   });
 }
 
+export async function uploadTemplateZip(formData: FormData): Promise<{
+  success: boolean;
+  message: string;
+  demo_url: string;
+  template: Template;
+}> {
+  const res = await fetch("/api/templates/upload-zip", {
+    method: "POST",
+    body: formData,
+  });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    let rawError = body?.error ?? `Gagal mengunggah file template zip (${res.status})`;
+    throw new Error(rawError);
+  }
+  return body;
+}
+
 // ── Modul B: Order & Midtrans Checkout ───────────────────
 export type PackageType = "standard" | "premium" | "basic" | "special";
 export type PaymentStatus = "pending" | "paid" | "expired" | "failed";

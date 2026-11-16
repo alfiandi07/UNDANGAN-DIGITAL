@@ -9,6 +9,7 @@
     "cek": "tsc --noEmit"
   },
   "dependencies": {
+    "adm-zip": "^0.6.1",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",
     "dotenv": "^18.0.10",
@@ -17,6 +18,7 @@
     "mysql2": "^3.24.6"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
     "@types/express": "^5.0.6",
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.6",

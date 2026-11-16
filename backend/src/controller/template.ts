@@ -1,10 +1,18 @@
 import type { Request, Response } from "express";
 import * as repo from "../repository/template.js";
+import AdmZip from "adm-zip";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // GET /api/templates
 export async function daftar(req: Request, res: Response) {
   try {
-    const kategori = typeof req.query.category === "string" ? req.query.category : undefined;
+    const kategori =
+      typeof req.query.category === "string" ? req.query.category : undefined;
     const data = await repo.semuaTemplates(kategori);
     res.json(data);
   } catch (err) {
@@ -18,7 +26,9 @@ export async function daftarAdmin(_req: Request, res: Response) {
     const data = await repo.semuaTemplatesAdmin();
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: "Gagal mengambil data template untuk admin" });
+    res
+      .status(500)
+      .json({ error: "Gagal mengambil data template untuk admin" });
   }
 }
 
@@ -80,7 +90,8 @@ export async function ubah(req: Request, res: Response) {
 
     res.json(updated);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui template";
+    const msg =
+      err instanceof Error ? err.message : "Gagal memperbarui template";
     res.status(500).json({ error: msg });
   }
 }
@@ -127,10 +138,15 @@ export async function detail(req: Request, res: Response) {
 // POST /api/check-slug (PRD FR-A3)
 export async function checkSlug(req: Request, res: Response) {
   try {
-    const rawSlug = String(req.body?.slug ?? "").trim().toLowerCase();
-    
+    const rawSlug = String(req.body?.slug ?? "")
+      .trim()
+      .toLowerCase();
+
     // Normalisasi slug: hanya huruf kecil, angka, dan tanda strip (-)
-    const slug = rawSlug.replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const slug = rawSlug
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
 
     if (!slug || slug.length < 3) {
       res.status(400).json({
@@ -151,5 +167,136 @@ export async function checkSlug(req: Request, res: Response) {
     });
   } catch (err) {
     res.status(500).json({ error: "Gagal memeriksa ketersediaan tautan" });
+  }
+}
+
+// POST /api/templates/upload-zip (PRD: Zip Template Engine)
+export async function uploadZipHandler(req: Request, res: Response) {
+  try {
+    const file = req.file;
+    if (!file) {
+      res.status(400).json({ error: "File .zip template wajib diunggah!" });
+      return;
+    }
+
+    const {
+      title,
+      slug: rawSlug,
+      category,
+      package_type,
+      price,
+      theme_style,
+      thumbnail_url,
+    } = req.body ?? {};
+
+    if (!title) {
+      res.status(400).json({ error: "Judul template wajib diisi!" });
+      return;
+    }
+
+    // Normalisasi slug
+    const cleanSlug = String(rawSlug || title)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    if (!cleanSlug || cleanSlug.length < 3) {
+      res.status(400).json({ error: "Slug tidak valid atau kurang dari 3 karakter!" });
+      return;
+    }
+
+    // 1. Ekstrak file zip dengan AdmZip
+    const zip = new AdmZip(file.buffer);
+    const zipEntries = zip.getEntries();
+
+    // Verifikasi: apakah ada index.html di dalam zip?
+    const hasIndexHtml = zipEntries.some(
+      (entry) =>
+        entry.entryName.toLowerCase() === "index.html" ||
+        entry.entryName.toLowerCase().endsWith("/index.html")
+    );
+
+    if (!hasIndexHtml) {
+      res.status(400).json({
+        error:
+          "File .zip tidak valid! Di dalam file zip wajib terdapat file 'index.html' sebagai halaman utama desain.",
+      });
+      return;
+    }
+
+    // Target folder ekstraksi: backend/public/templates/[slug]
+    const targetDir = path.join(__dirname, "../../public/templates", cleanSlug);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    // Ekstrak seluruh isi file zip
+    zip.extractAllTo(targetDir, true);
+
+    // Cari letak index.html (bisa di root zip atau di dalam subfolder)
+    let demoPath = `/templates/${cleanSlug}/index.html`;
+    const rootIndex = zipEntries.find(
+      (e) => e.entryName.toLowerCase() === "index.html"
+    );
+    if (!rootIndex) {
+      const nestedIndex = zipEntries.find((e) =>
+        e.entryName.toLowerCase().endsWith("/index.html")
+      );
+      if (nestedIndex) {
+        demoPath = `/templates/${cleanSlug}/${nestedIndex.entryName}`;
+      }
+    }
+
+    const pkgType = package_type === "premium" ? "premium" : "standard";
+    const finalPrice = Number(price) || (pkgType === "premium" ? 149000 : 79000);
+
+    // Cek apakah template dengan slug ini sudah ada di database
+    const existing = await repo.cariTemplateBySlug(cleanSlug);
+    let result;
+
+    if (existing) {
+      result = await repo.ubahTemplate(existing.id, {
+        title: String(title).trim(),
+        category: category || existing.category,
+        package_type: pkgType,
+        price: finalPrice,
+        theme_style: String(theme_style || existing.theme_style).trim(),
+        thumbnail_url: String(thumbnail_url || existing.thumbnail_url).trim(),
+        demo_url: demoPath,
+        price_basic: finalPrice,
+        price_standard: finalPrice,
+        price_special: finalPrice,
+      });
+    } else {
+      result = await repo.tambahTemplate({
+        slug: cleanSlug,
+        title: String(title).trim(),
+        category: category || "wedding",
+        package_type: pkgType,
+        price: finalPrice,
+        theme_style: String(theme_style || "Custom ZIP").trim(),
+        thumbnail_url: String(thumbnail_url || "").trim(),
+        demo_url: demoPath,
+        price_basic: finalPrice,
+        price_standard: finalPrice,
+        price_special: finalPrice,
+        is_active: true,
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Template "${title}" berhasil diekstrak dan disimpan!`,
+      demo_url: demoPath,
+      template: result,
+    });
+  } catch (err) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : "Gagal memproses upload file zip template";
+    res.status(500).json({ error: msg });
   }
 }

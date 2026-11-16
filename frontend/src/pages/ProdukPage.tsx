@@ -31,6 +31,7 @@ export default function ProdukPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [zipFile, setZipFile] = useState<File | null>(null);
 
   async function muatData() {
     setLoading(true);
@@ -77,6 +78,7 @@ export default function ProdukPage() {
 
   function handleBukaTambah() {
     setEditId(null);
+    setZipFile(null);
     setFormData({
       title: "",
       slug: "",
@@ -97,6 +99,7 @@ export default function ProdukPage() {
 
   function handleBukaEdit(item: Template) {
     setEditId(item.id);
+    setZipFile(null);
     const tier = item.package_type || "standard";
     const price = item.price || item.price_standard || 99000;
     setFormData({
@@ -139,18 +142,33 @@ export default function ProdukPage() {
 
     setSubmitting(true);
     try {
-      const payload = {
-        ...formData,
-        price_standard: formData.price,
-        price_basic: formData.price,
-        price_special: formData.price,
-      };
+      if (zipFile) {
+        const payloadZip = new FormData();
+        payloadZip.append("file", zipFile);
+        payloadZip.append("title", formData.title.trim());
+        payloadZip.append("slug", formData.slug.trim());
+        payloadZip.append("category", formData.category);
+        payloadZip.append("package_type", formData.package_type || "standard");
+        payloadZip.append("price", String(formData.price || 99000));
+        payloadZip.append("theme_style", (formData.theme_style || "Custom ZIP").trim());
+        payloadZip.append("thumbnail_url", (formData.thumbnail_url || "").trim());
 
-      if (editId) {
-        await api.ubahTemplate(editId, payload);
+        await api.uploadTemplateZip(payloadZip);
       } else {
-        await api.tambahTemplate(payload);
+        const payload = {
+          ...formData,
+          price_standard: formData.price,
+          price_basic: formData.price,
+          price_special: formData.price,
+        };
+
+        if (editId) {
+          await api.ubahTemplate(editId, payload);
+        } else {
+          await api.tambahTemplate(payload);
+        }
       }
+      setZipFile(null);
       setIsModalOpen(false);
       await muatData();
     } catch (err) {
@@ -597,6 +615,30 @@ export default function ProdukPage() {
                 </p>
               </div>
 
+              {/* Upload File ZIP Template */}
+              <div className="p-3.5 bg-amber-50/60 border border-amber-200/80 rounded-xl space-y-1.5">
+                <label className="block font-bold text-gray-800 text-xs">
+                  📦 Upload Berkas Template (.ZIP){" "}
+                  <span className="text-gray-400 font-normal">
+                    (Opsional jika URL demo diisi manual)
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  accept=".zip"
+                  onChange={(e) => setZipFile(e.target.files?.[0] || null)}
+                  className="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#4A151E] file:text-white file:font-semibold hover:file:opacity-90 cursor-pointer border border-gray-200 rounded-lg p-1 bg-white"
+                />
+                <p className="text-[11px] text-gray-500">
+                  Wajib format <strong>.zip</strong> yang berisi <code>index.html</code>, berkas CSS/JS/assets. Sistem akan otomatis mengekstrak &amp; memperbarui tautan live demo.
+                </p>
+                {zipFile && (
+                  <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                    ✓ Berkas terpilih: {zipFile.name} ({(zipFile.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                )}
+              </div>
+
               {/* URL Demo */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">
@@ -636,7 +678,10 @@ export default function ProdukPage() {
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setZipFile(null);
+                    setIsModalOpen(false);
+                  }}
                   className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition cursor-pointer"
                 >
                   Batal

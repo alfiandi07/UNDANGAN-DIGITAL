@@ -1,5 +1,7 @@
 import "dotenv/config"; // WAJIB baris pertama: isi .env dibaca sebelum db.ts
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import { pool } from "./db.js";
 import { produkRouter } from "./routes/produk.js";
 import { authRouter, penggunaRouter } from "./routes/pengguna.js";
@@ -20,7 +22,14 @@ import { daftarRsvps, kirimRsvp } from "./controller/rsvp.js";
 import { financeRouter } from "./routes/finance.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(express.json());
+
+// Sajikan folder static template hasil ekstrak ZIP (PRD: Zip Template Engine)
+app.use("/templates", express.static(path.join(__dirname, "../public/templates")));
 app.get(
   "/api/cek",
 
