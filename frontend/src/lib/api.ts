@@ -4,6 +4,7 @@ export type Pengguna = {
   nama: string;
   email: string;
   peran: "admin" | "user";
+  is_verified?: boolean;
 };
 
 export type Produk = {
@@ -53,9 +54,23 @@ export function login(email: string, password: string) {
 }
 
 export function daftar(nama: string, email: string, password: string) {
-  return request<Pengguna>("/api/auth/daftar", {
+  return request<Pengguna & { message?: string; needs_verification?: boolean }>("/api/auth/daftar", {
     method: "POST",
     body: JSON.stringify({ nama, email, password }),
+  });
+}
+
+export function verifikasiOtp(email: string, otp: string) {
+  return request<{ success: boolean; message: string; user?: Pengguna }>("/api/auth/verify-otp", {
+    method: "POST",
+    body: JSON.stringify({ email, otp }),
+  });
+}
+
+export function kirimUlangOtp(email: string) {
+  return request<{ success: boolean; message: string }>("/api/auth/resend-otp", {
+    method: "POST",
+    body: JSON.stringify({ email }),
   });
 }
 

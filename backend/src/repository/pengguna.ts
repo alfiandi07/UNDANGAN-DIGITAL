@@ -2,16 +2,20 @@ import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { pool } from "../db.js";
 import type { Pengguna, Peran } from "../models/pengguna.js";
 
-type BarisPengguna = RowDataPacket & Pengguna & { password: string };
+type BarisPengguna = RowDataPacket & Pengguna & {
+  password: string;
+  verification_otp?: string | null;
+  otp_expires_at?: Date | null;
+};
 
 // Mengambil seluruh pengguna (Admin tim inti + Klien pembeli yang memesan)
 export async function semuaPengguna(): Promise<Pengguna[]> {
   const [adminRows] = await pool.execute<RowDataPacket[]>(
-    "SELECT id, name as nama, email, 'admin' as peran FROM admins ORDER BY id ASC"
+    "SELECT id, name as nama, email, 'admin' as peran, is_verified FROM admins ORDER BY id ASC"
   );
 
   const [orderRows] = await pool.execute<RowDataPacket[]>(
-    `SELECT MIN(id) as id, buyer_name as nama, buyer_email as email, 'user' as peran
+    `SELECT MIN(id) as id, buyer_name as nama, buyer_email as email, 'user' as peran, MAX(is_verified) as is_verified
      FROM orders 
      GROUP BY buyer_email, buyer_name
      ORDER BY id DESC`
@@ -20,11 +24,11 @@ export async function semuaPengguna(): Promise<Pengguna[]> {
   const list: Pengguna[] = [];
 
   for (const r of adminRows) {
-    list.push({ id: r.id, nama: r.nama, email: r.email, peran: "admin" });
+    list.push({ id: r.id, nama: r.nama, email: r.email, peran: "admin", is_verified: Boolean(r.is_verified) });
   }
 
   for (const r of orderRows) {
-    list.push({ id: r.id, nama: r.nama, email: r.email, peran: "user" });
+    list.push({ id: r.id, nama: r.nama, email: r.email, peran: "user", is_verified: Boolean(r.is_verified) });
   }
 
   return list;
@@ -38,7 +42,7 @@ export async function cariPenggunaByEmail(
 
   // 1. Cek tabel admins
   const [adminRows] = await pool.execute<RowDataPacket[]>(
-    "SELECT id, name as nama, email, password_hash as password, 'admin' as peran FROM admins WHERE LOWER(email) = ?",
+    "SELECT id, name as nama, email, password_hash as password, 'admin' as peran, is_verified, NULL as verification_otp, NULL as otp_expires_at FROM admins WHERE LOWER(email) = ?",
     [cleanEmail]
   );
 
@@ -48,7 +52,7 @@ export async function cariPenggunaByEmail(
 
   // 2. Cek tabel orders (pembeli)
   const [orderRows] = await pool.execute<RowDataPacket[]>(
-    `SELECT id, buyer_name as nama, buyer_email as email, password_hash as password, 'user' as peran 
+    `SELECT id, buyer_name as nama, buyer_email as email, password_hash as password, 'user' as peran, is_verified, verification_otp, otp_expires_at 
      FROM orders 
      WHERE LOWER(buyer_email) = ? 
      ORDER BY id DESC LIMIT 1`,
@@ -66,22 +70,76 @@ export async function tambahPengguna(
   nama: string,
   email: string,
   hash: string,
-  peran: Peran
+  peran: Peran,
+  otp?: string,
+  otpExpires?: Date
 ): Promise<Pengguna> {
   if (peran === "admin") {
     const [hasil] = await pool.execute<ResultSetHeader>(
-      "INSERT INTO admins (name, email, password_hash) VALUES (?, ?, ?)",
+      "INSERT INTO admins (name, email, password_hash, is_verified) VALUES (?, ?, ?, TRUE)",
       [nama, email, hash]
     );
-    return { id: hasil.insertId, nama, email, peran: "admin" };
+    return { id: hasil.insertId, nama, email, peran: "admin", is_verified: true };
   } else {
     const orderId = `REG-${Date.now()}`;
     const [hasil] = await pool.execute<ResultSetHeader>(
       `INSERT INTO orders 
-       (order_id, buyer_name, buyer_whatsapp, buyer_email, password_hash, template_id, package_type, gross_amount, payment_status)
-       VALUES (?, ?, '-', ?, ?, 1, 'basic', 0, 'pending')`,
-      [orderId, nama, email, hash]
+       (order_id, buyer_name, buyer_whatsapp, buyer_email, password_hash, template_id, package_type, gross_amount, payment_status, is_verified, verification_otp, otp_expires_at)
+       VALUES (?, ?, '-', ?, ?, 1, 'basic', 0, 'pending', FALSE, ?, ?)`,
+      [orderId, nama, email, hash, otp || null, otpExpires || null]
     );
-    return { id: hasil.insertId, nama, email, peran: "user" };
+    return { id: hasil.insertId, nama, email, peran: "user", is_verified: false };
   }
+}
+
+// Verifikasi kode OTP user
+export async function verifikasiOtp(email: string, otp: string): Promise<boolean> {
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanOtp = otp.trim();
+
+  const [rows] = await pool.execute<RowDataPacket[]>(
+    `SELECT id, verification_otp, otp_expires_at 
+     FROM orders 
+     WHERE LOWER(buyer_email) = ? 
+     ORDER BY id DESC LIMIT 1`,
+    [cleanEmail]
+  );
+
+  if (rows.length === 0) return false;
+
+  const user = rows[0];
+  if (!user.verification_otp || user.verification_otp !== cleanOtp) {
+    return false;
+  }
+
+  if (user.otp_expires_at && new Date() > new Date(user.otp_expires_at)) {
+    return false; // OTP kedaluwarsa
+  }
+
+  // Sukses verifikasi
+  await pool.execute(
+    `UPDATE orders 
+     SET is_verified = TRUE, verification_otp = NULL, otp_expires_at = NULL 
+     WHERE LOWER(buyer_email) = ?`,
+    [cleanEmail]
+  );
+
+  return true;
+}
+
+// Simpan kode OTP baru (Resend OTP)
+export async function simpanOtpBaru(
+  email: string,
+  otp: string,
+  otpExpires: Date
+): Promise<boolean> {
+  const cleanEmail = email.trim().toLowerCase();
+  const [result] = await pool.execute<ResultSetHeader>(
+    `UPDATE orders 
+     SET verification_otp = ?, otp_expires_at = ? 
+     WHERE LOWER(buyer_email) = ?`,
+    [otp, otpExpires, cleanEmail]
+  );
+
+  return result.affectedRows > 0;
 }

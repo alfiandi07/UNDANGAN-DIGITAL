@@ -13,6 +13,7 @@ type AuthContextType = {
   loading: boolean;
   login: (email: string, password: string) => Promise<Pengguna>;
   daftar: (nama: string, email: string, password: string) => Promise<Pengguna>;
+  simpanUser: (pengguna: Pengguna) => void;
   logout: () => void;
 };
 
@@ -50,13 +51,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return pengguna;
   }
 
+  function simpanUser(pengguna: Pengguna) {
+    setUser(pengguna);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pengguna));
+  }
+
   function logout() {
     setUser(null);
     localStorage.removeItem(STORAGE_KEY);
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, daftar, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, daftar, simpanUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

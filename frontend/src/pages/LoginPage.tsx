@@ -39,7 +39,18 @@ export default function LoginPage() {
             <p className="auth-subtitle">Masuk ke Dashboard Undangan Anda</p>
           </div>
 
-          {error && <div className="auth-error-banner">{error}</div>}
+          {error && (
+            <div className="auth-error-banner">
+              {error}
+              {error.toLowerCase().includes("verifikasi") && (
+                <div className="mt-2 pt-2 border-t border-red-200">
+                  <Link to="/daftar" className="text-xs font-bold text-[#4A151E] underline">
+                    Buka halaman aktivasi OTP →
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field-group">

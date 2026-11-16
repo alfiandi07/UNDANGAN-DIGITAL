@@ -187,11 +187,24 @@ Sistem menerapkan model produk di mana **setiap template adalah produk mandiri y
 * **FR-D4 (Viral Loop Footer):** Setiap bagian bawah undangan memuat tautan aktif *"Created with 🤍 by asm.invitation"* yang mengarahkan tamu ke halaman katalog utama.
 
 ### 4.5. Modul E: Panel Admin Tim Inti & Otomatisasi Bagi Hasil
-* **FR-E1 (Manajemen 30 Template):** Halaman khusus admin untuk mendaftarkan rute template baru, mengunggah *thumbnail*, dan mengatur kategori tanpa sistem vendor eksternal.
+* **FR-E1 (Manajemen 30 Template):** Halaman khusus admin untuk mendaftarkan rute template baru, mengunggah *thumbnail*, dan mengatur kategori tanpa sistem vendor eksternal. Termasuk fitur unggah mandiri berkas desain `.zip` yang diekstrak otomatis menjadi halaman demo interaktif.
 * **FR-E2 (Automated Net Profit Calculator):** Halaman keuangan internal (`/admin/finance`) yang menghitung pembagian komisi tim bertiga secara *real-time* menggunakan rumus:
   $$\text{Net Profit} = \text{Total Omset Lunas (Midtrans)} - (\text{Biaya VPS \& Domain} + \text{Biaya MDR} + \text{Kas Marketing})$$
   $$\text{Bagian Per Anggota Tim} = \frac{\text{Net Profit}}{3}$$
 * **FR-E3 (Nightly Auto-Cleanup Cron Job):** Skrip `node-cron` yang berjalan setiap pukul 02:00 WIB untuk mencari undangan yang sudah melewati masa tenggang *expired* (H+7 atau H+14), menghapus seluruh fotonya dari Cloudinary via API, dan mengosongkan daftar foto di database.
+* **FR-E4 (Manajemen Akun Pengguna oleh Admin):** Halaman khusus admin (`/dashboard/pengguna`) untuk memantau seluruh pengguna terdaftar (tim admin & klien pembeli). Admin memiliki hak akses penuh untuk:
+  1. **Mengubah Data Pengguna (Edit):** Memperbarui nama, email, dan peran (*admin* / *user*).
+  2. **Menghapus Akun Pengguna (Delete):** Menghapus akun dari sistem dengan konfirmasi keamanan.
+
+### 4.6. Modul F: Autentikasi & Verifikasi Email Asli (Anti-Fake Account)
+* **FR-F1 (Blokir Email Sementara / Disposable Email):** Backend otomatis menyaring domain email saat pendaftaran dan menolak email palsu/sementara (*10minutemail, tempmail, mailinator, guerrillamail, dsb.*) menggunakan daftar blacklist domain disposable.
+* **FR-F2 (Validasi DNS MX Record Domain):** Backend memeriksa keberadaan *Mail Exchange* (MX Record) domain email sebelum memproses pendaftaran untuk memastikan domain benar-benar memiliki server email aktif.
+* **FR-F3 (Verifikasi Akun via Kode OTP / Tautan Email):** 
+  * Pengguna baru disimpan dengan status `is_verified = FALSE`.
+  * Sistem men-generate 6 digit kode OTP unik dengan masa kedaluwarsa 10–15 menit.
+  * Sistem mengirimkan email otomatis ke alamat user via penyedia email transaksional (Resend / SMTP).
+  * Pengguna wajib memasukkan kode OTP ke halaman aktivasi agar akun berubah menjadi `is_verified = TRUE`.
+* **FR-F4 (Proteksi Akun Belum Terverifikasi):** Pengguna dengan status `is_verified = FALSE` dicegah dari melakukan pembuatan undangan atau checkout transaksi sebelum emailnya terverifikasi.
 
 ---
 
@@ -295,6 +308,7 @@ CREATE TABLE operational_costs (
 | Method | Endpoint URL | Deskripsi Tugas |
 | :--- | :--- | :--- |
 | `GET` | `/api/templates` | Mengambil daftar katalog template beserta filter kategori. |
+| `POST` | `/api/templates/upload-zip` | Mengunggah & mengekstrak berkas template `.zip` ke `/templates/:slug/` serta mendaftarkan URL demo. |
 | `POST` | `/api/check-slug` | Mengecek apakah URL `undang_an.digital/:slug` masih tersedia. |
 | `POST` | `/api/orders/checkout` | Membuat transaksi baru & memanggil token Snap Midtrans. |
 | `POST` | `/api/payment/webhook` | Menerima notifikasi lunas dari Midtrans, set kuota $15/30$ foto & masa aktif. |
@@ -303,6 +317,11 @@ CREATE TABLE operational_costs (
 | `GET` | `/:slug` | Mengecek `expires_at` $\rightarrow$ Merender undangan ke tamu atau halaman *Expired*. |
 | `POST` | `/api/invitation/:slug/rsvp` | Menyimpan ucapan doa & konfirmasi kehadiran tamu. |
 | `GET` | `/api/admin/profit-summary` | Menghitung otomatis Omset $-$ Biaya Operasional dan membagi $3$ (*Net Profit*). |
+| `GET` | `/api/pengguna` | Mengambil seluruh daftar pengguna (tim admin & pembeli). |
+| `PUT` | `/api/pengguna/:id` | Mengubah informasi pengguna (nama, email, peran) oleh Admin. |
+| `DELETE` | `/api/pengguna/:id` | Menghapus akun pengguna dari database oleh Admin. |
+| `POST` | `/api/auth/verify-otp` | Memvalidasi 6 digit kode OTP verifikasi email user. |
+| `POST` | `/api/auth/resend-otp` | Mengirim ulang kode OTP aktivasi akun ke email pengguna. |
 
 ---
 

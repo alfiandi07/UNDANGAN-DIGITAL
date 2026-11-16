@@ -9,9 +9,18 @@ authRouter.post(
 
 authRouter.post(
   "/daftar",
-
   pengguna.daftar,
 ); // POST /api/auth/daftar
+
+authRouter.post(
+  "/verify-otp",
+  pengguna.verifikasiOtpHandler,
+); // POST /api/auth/verify-otp
+
+authRouter.post(
+  "/resend-otp",
+  pengguna.kirimUlangOtpHandler,
+); // POST /api/auth/resend-otp
 
 export const penggunaRouter = Router();
 penggunaRouter.get(
