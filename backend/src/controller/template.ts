@@ -213,7 +213,7 @@ export async function uploadZipHandler(req: Request, res: Response) {
 
     // Verifikasi: apakah ada index.html di dalam zip?
     const hasIndexHtml = zipEntries.some(
-      (entry) =>
+      (entry: any) =>
         entry.entryName.toLowerCase() === "index.html" ||
         entry.entryName.toLowerCase().endsWith("/index.html")
     );
@@ -238,10 +238,10 @@ export async function uploadZipHandler(req: Request, res: Response) {
     // Cari letak index.html (bisa di root zip atau di dalam subfolder)
     let demoPath = `/templates/${cleanSlug}/index.html`;
     const rootIndex = zipEntries.find(
-      (e) => e.entryName.toLowerCase() === "index.html"
+      (e: any) => e.entryName.toLowerCase() === "index.html"
     );
     if (!rootIndex) {
-      const nestedIndex = zipEntries.find((e) =>
+      const nestedIndex = zipEntries.find((e: any) =>
         e.entryName.toLowerCase().endsWith("/index.html")
       );
       if (nestedIndex) {
