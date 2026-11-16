@@ -10,28 +10,52 @@ type BarisPengguna = RowDataPacket & Pengguna & {
 
 // Mengambil seluruh pengguna (Admin tim inti + Klien pembeli yang memesan)
 export async function semuaPengguna(): Promise<Pengguna[]> {
-  const [adminRows] = await pool.execute<RowDataPacket[]>(
-    "SELECT id, name as nama, email, 'admin' as peran, is_verified FROM admins ORDER BY id ASC"
-  );
+  try {
+    const [adminRows] = await pool.execute<RowDataPacket[]>(
+      "SELECT id, name as nama, email, 'admin' as peran, is_verified FROM admins ORDER BY id ASC"
+    );
 
-  const [orderRows] = await pool.execute<RowDataPacket[]>(
-    `SELECT MIN(id) as id, buyer_name as nama, buyer_email as email, 'user' as peran, MAX(is_verified) as is_verified
-     FROM orders 
-     GROUP BY buyer_email, buyer_name
-     ORDER BY id DESC`
-  );
+    const [orderRows] = await pool.execute<RowDataPacket[]>(
+      `SELECT MIN(id) as id, buyer_name as nama, buyer_email as email, 'user' as peran, MAX(is_verified) as is_verified
+       FROM orders 
+       GROUP BY buyer_email, buyer_name
+       ORDER BY id DESC`
+    );
 
-  const list: Pengguna[] = [];
+    const list: Pengguna[] = [];
 
-  for (const r of adminRows) {
-    list.push({ id: r.id, nama: r.nama, email: r.email, peran: "admin", is_verified: Boolean(r.is_verified) });
+    for (const r of adminRows) {
+      list.push({ id: r.id, nama: r.nama, email: r.email, peran: "admin", is_verified: Boolean(r.is_verified) });
+    }
+
+    for (const r of orderRows) {
+      list.push({ id: r.id, nama: r.nama, email: r.email, peran: "user", is_verified: Boolean(r.is_verified) });
+    }
+
+    return list;
+  } catch (err: any) {
+    // Fallback jika kolom is_verified belum dibuat di database server
+    if (err?.code === "ER_BAD_FIELD_ERROR" || String(err?.message).includes("is_verified")) {
+      const [adminRows] = await pool.execute<RowDataPacket[]>(
+        "SELECT id, name as nama, email, 'admin' as peran FROM admins ORDER BY id ASC"
+      );
+      const [orderRows] = await pool.execute<RowDataPacket[]>(
+        `SELECT MIN(id) as id, buyer_name as nama, buyer_email as email, 'user' as peran
+         FROM orders 
+         GROUP BY buyer_email, buyer_name
+         ORDER BY id DESC`
+      );
+      const list: Pengguna[] = [];
+      for (const r of adminRows) {
+        list.push({ id: r.id, nama: r.nama, email: r.email, peran: "admin", is_verified: true });
+      }
+      for (const r of orderRows) {
+        list.push({ id: r.id, nama: r.nama, email: r.email, peran: "user", is_verified: true });
+      }
+      return list;
+    }
+    throw err;
   }
-
-  for (const r of orderRows) {
-    list.push({ id: r.id, nama: r.nama, email: r.email, peran: "user", is_verified: Boolean(r.is_verified) });
-  }
-
-  return list;
 }
 
 // Dipakai saat login: cek admin dulu di tabel admins, jika tidak ada, cek pembeli di orders
@@ -40,30 +64,58 @@ export async function cariPenggunaByEmail(
 ): Promise<BarisPengguna | null> {
   const cleanEmail = email.trim().toLowerCase();
 
-  // 1. Cek tabel admins
-  const [adminRows] = await pool.execute<RowDataPacket[]>(
-    "SELECT id, name as nama, email, password_hash as password, 'admin' as peran, is_verified, NULL as verification_otp, NULL as otp_expires_at FROM admins WHERE LOWER(email) = ?",
-    [cleanEmail]
-  );
+  try {
+    // 1. Cek tabel admins
+    const [adminRows] = await pool.execute<RowDataPacket[]>(
+      "SELECT id, name as nama, email, password_hash as password, 'admin' as peran, is_verified, NULL as verification_otp, NULL as otp_expires_at FROM admins WHERE LOWER(email) = ?",
+      [cleanEmail]
+    );
 
-  if (adminRows.length > 0) {
-    return adminRows[0] as BarisPengguna;
+    if (adminRows.length > 0) {
+      return adminRows[0] as BarisPengguna;
+    }
+
+    // 2. Cek tabel orders (pembeli)
+    const [orderRows] = await pool.execute<RowDataPacket[]>(
+      `SELECT id, buyer_name as nama, buyer_email as email, password_hash as password, 'user' as peran, is_verified, verification_otp, otp_expires_at 
+       FROM orders 
+       WHERE LOWER(buyer_email) = ? 
+       ORDER BY id DESC LIMIT 1`,
+      [cleanEmail]
+    );
+
+    if (orderRows.length > 0) {
+      return orderRows[0] as BarisPengguna;
+    }
+
+    return null;
+  } catch (err: any) {
+    // Fallback jika is_verified belum ada di database
+    if (err?.code === "ER_BAD_FIELD_ERROR" || String(err?.message).includes("is_verified")) {
+      const [adminRows] = await pool.execute<RowDataPacket[]>(
+        "SELECT id, name as nama, email, password_hash as password, 'admin' as peran FROM admins WHERE LOWER(email) = ?",
+        [cleanEmail]
+      );
+      if (adminRows.length > 0) {
+        const u = adminRows[0] as BarisPengguna;
+        u.is_verified = true;
+        return u;
+      }
+      const [orderRows] = await pool.execute<RowDataPacket[]>(
+        `SELECT id, buyer_name as nama, buyer_email as email, password_hash as password, 'user' as peran 
+         FROM orders 
+         WHERE LOWER(buyer_email) = ? 
+         ORDER BY id DESC LIMIT 1`,
+        [cleanEmail]
+      );
+      if (orderRows.length > 0) {
+        const u = orderRows[0] as BarisPengguna;
+        u.is_verified = true;
+        return u;
+      }
+    }
+    throw err;
   }
-
-  // 2. Cek tabel orders (pembeli)
-  const [orderRows] = await pool.execute<RowDataPacket[]>(
-    `SELECT id, buyer_name as nama, buyer_email as email, password_hash as password, 'user' as peran, is_verified, verification_otp, otp_expires_at 
-     FROM orders 
-     WHERE LOWER(buyer_email) = ? 
-     ORDER BY id DESC LIMIT 1`,
-    [cleanEmail]
-  );
-
-  if (orderRows.length > 0) {
-    return orderRows[0] as BarisPengguna;
-  }
-
-  return null;
 }
 
 export async function tambahPengguna(
