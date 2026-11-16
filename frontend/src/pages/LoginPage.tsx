@@ -1,16 +1,27 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Auth.css";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Jika sudah login, langsung arahkan ke dashboard
+  useEffect(() => {
+    if (user) {
+      if (user.peran === "admin") {
+        navigate("/dashboard/produk", { replace: true });
+      } else {
+        navigate("/dashboard/katalog", { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

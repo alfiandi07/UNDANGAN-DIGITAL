@@ -143,3 +143,38 @@ export async function simpanOtpBaru(
 
   return result.affectedRows > 0;
 }
+
+// Menghapus pengguna (Admin atau Klien User)
+export async function hapusPengguna(id: number, peran: Peran): Promise<boolean> {
+  if (peran === "admin") {
+    // Cegah menghapus jika tersisa hanya 1 admin
+    const [countRows] = await pool.execute<RowDataPacket[]>(
+      "SELECT COUNT(*) as total FROM admins"
+    );
+    const total = Number(countRows[0]?.total || 0);
+    if (total <= 1) {
+      throw new Error("Tidak dapat menghapus admin terakhir pada sistem");
+    }
+
+    const [result] = await pool.execute<ResultSetHeader>(
+      "DELETE FROM admins WHERE id = ?",
+      [id]
+    );
+    return result.affectedRows > 0;
+  } else {
+    // Cari email pembeli berdasarkan ID
+    const [orderRows] = await pool.execute<RowDataPacket[]>(
+      "SELECT buyer_email FROM orders WHERE id = ?",
+      [id]
+    );
+    if (orderRows.length === 0) return false;
+    const email = orderRows[0].buyer_email;
+
+    // Hapus data akun & pesanan (otomatis cascade ke invitations dan rsvps)
+    const [result] = await pool.execute<ResultSetHeader>(
+      "DELETE FROM orders WHERE LOWER(buyer_email) = ?",
+      [email.toLowerCase()]
+    );
+    return result.affectedRows > 0;
+  }
+}

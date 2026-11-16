@@ -148,3 +148,27 @@ export async function kirimUlangOtpHandler(req: Request, res: Response) {
     message: "Kode OTP baru telah berhasil dikirim ke email Anda.",
   });
 }
+
+// DELETE /api/pengguna/:id
+export async function hapusPenggunaHandler(req: Request, res: Response) {
+  try {
+    const id = Number(req.params.id);
+    const peran = String(req.query.peran || "user") as Peran;
+
+    if (!id || isNaN(id)) {
+      res.status(400).json({ error: "ID pengguna tidak valid" });
+      return;
+    }
+
+    const sukses = await repo.hapusPengguna(id, peran);
+    if (!sukses) {
+      res.status(404).json({ error: "Pengguna tidak ditemukan atau sudah dihapus" });
+      return;
+    }
+
+    res.json({ success: true, message: "Pengguna berhasil dihapus" });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Gagal menghapus pengguna";
+    res.status(500).json({ error: msg });
+  }
+}

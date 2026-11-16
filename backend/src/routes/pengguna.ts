@@ -25,6 +25,10 @@ authRouter.post(
 export const penggunaRouter = Router();
 penggunaRouter.get(
   "/",
-
   pengguna.daftarPengguna,
 ); // GET /api/pengguna
+
+penggunaRouter.delete(
+  "/:id",
+  pengguna.hapusPenggunaHandler,
+); // DELETE /api/pengguna/:id

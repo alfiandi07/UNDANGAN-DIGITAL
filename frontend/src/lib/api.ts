@@ -108,6 +108,12 @@ export function ambilSemuaPengguna() {
   return request<Pengguna[]>("/api/pengguna");
 }
 
+export function hapusPengguna(id: number, peran: "admin" | "user") {
+  return request<{ message: string }>(`/api/pengguna/${id}?peran=${peran}`, {
+    method: "DELETE",
+  });
+}
+
 // ── Transaksi ──────────────────────────────────────────
 export type Transaksi = {
   id: number;
