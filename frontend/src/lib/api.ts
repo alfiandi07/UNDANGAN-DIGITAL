@@ -104,8 +104,29 @@ export function hapusProduk(id: number) {
 }
 
 // ── Pengguna ───────────────────────────────────────────
+export type DataUbahPengguna = {
+  nama: string;
+  email: string;
+  peran: "admin" | "user";
+  password?: string;
+};
+
 export function ambilSemuaPengguna() {
   return request<Pengguna[]>("/api/pengguna");
+}
+
+export function ubahPengguna(
+  id: number,
+  peranLama: "admin" | "user",
+  data: DataUbahPengguna
+) {
+  return request<{ success: boolean; message: string; data: Pengguna }>(
+    `/api/pengguna/${id}?peran=${peranLama}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }
+  );
 }
 
 export function hapusPengguna(id: number, peran: "admin" | "user") {

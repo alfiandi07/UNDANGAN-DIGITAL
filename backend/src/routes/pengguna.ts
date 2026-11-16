@@ -28,6 +28,11 @@ penggunaRouter.get(
   pengguna.daftarPengguna,
 ); // GET /api/pengguna
 
+penggunaRouter.put(
+  "/:id",
+  pengguna.ubahPenggunaHandler,
+); // PUT /api/pengguna/:id
+
 penggunaRouter.delete(
   "/:id",
   pengguna.hapusPenggunaHandler,

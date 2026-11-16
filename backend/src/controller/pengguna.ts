@@ -172,3 +172,57 @@ export async function hapusPenggunaHandler(req: Request, res: Response) {
     res.status(500).json({ error: msg });
   }
 }
+
+// PUT /api/pengguna/:id
+export async function ubahPenggunaHandler(req: Request, res: Response) {
+  try {
+    const id = Number(req.params.id);
+    const peranLama = String(req.query.peran || "user") as Peran;
+    const { nama, email, peran, password } = req.body ?? {};
+
+    if (!id || isNaN(id)) {
+      res.status(400).json({ error: "ID pengguna tidak valid" });
+      return;
+    }
+
+    if (!nama || !email) {
+      res.status(400).json({ error: "Nama dan email wajib diisi" });
+      return;
+    }
+
+    if (!String(email).includes("@")) {
+      res.status(400).json({ error: "Format email tidak valid" });
+      return;
+    }
+
+    let passwordHash: string | undefined = undefined;
+    if (password && String(password).trim().length > 0) {
+      if (String(password).length < 6) {
+        res.status(400).json({ error: "Password baru minimal 6 karakter" });
+        return;
+      }
+      passwordHash = await bcrypt.hash(String(password), 10);
+    }
+
+    const updated = await repo.ubahPengguna(id, peranLama, {
+      nama: String(nama),
+      email: String(email),
+      peran: (peran === "admin" ? "admin" : "user") as Peran,
+      passwordHash,
+    });
+
+    if (!updated) {
+      res.status(404).json({ error: "Pengguna tidak ditemukan" });
+      return;
+    }
+
+    res.json({
+      success: true,
+      message: "Data pengguna berhasil diperbarui",
+      data: updated,
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Gagal memperbarui pengguna";
+    res.status(500).json({ error: msg });
+  }
+}

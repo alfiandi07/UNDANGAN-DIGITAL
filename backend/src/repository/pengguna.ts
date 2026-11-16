@@ -230,3 +230,107 @@ export async function hapusPengguna(id: number, peran: Peran): Promise<boolean> 
     return result.affectedRows > 0;
   }
 }
+
+// Mengubah data pengguna (Nama, Email, Peran, Password Baru)
+export async function ubahPengguna(
+  id: number,
+  peranLama: Peran,
+  data: {
+    nama: string;
+    email: string;
+    peran: Peran;
+    passwordHash?: string;
+  }
+): Promise<Pengguna | null> {
+  const cleanNama = data.nama.trim();
+  const cleanEmail = data.email.trim().toLowerCase();
+
+  if (peranLama === "admin") {
+    // 1. Cek jika admin ingin diubah menjadi user (downgrade)
+    if (data.peran === "user") {
+      const [countRows] = await pool.execute<RowDataPacket[]>(
+        "SELECT COUNT(*) as total FROM admins"
+      );
+      const total = Number(countRows[0]?.total || 0);
+      if (total <= 1) {
+        throw new Error("Tidak dapat mengubah role admin terakhir menjadi user.");
+      }
+
+      // Ambil password lama jika password baru tidak diberikan
+      let hash = data.passwordHash;
+      if (!hash) {
+        const [adm] = await pool.execute<RowDataPacket[]>(
+          "SELECT password_hash FROM admins WHERE id = ?",
+          [id]
+        );
+        hash = String(adm[0]?.password_hash || "");
+      }
+      const finalHash = hash || "";
+
+      // Hapus dari admins dan buatkan di orders
+      await pool.execute("DELETE FROM admins WHERE id = ?", [id]);
+      const orderId = `REG-${Date.now()}`;
+      const [ins] = await pool.execute<ResultSetHeader>(
+        `INSERT INTO orders 
+         (order_id, buyer_name, buyer_whatsapp, buyer_email, password_hash, template_id, package_type, gross_amount, payment_status, is_verified)
+         VALUES (?, ?, '-', ?, ?, 1, 'basic', 0, 'pending', TRUE)`,
+        [orderId, cleanNama, cleanEmail, finalHash]
+      );
+      return { id: ins.insertId, nama: cleanNama, email: cleanEmail, peran: "user", is_verified: true };
+    }
+
+    // Tetap admin -> Update data admins
+    if (data.passwordHash) {
+      await pool.execute(
+        "UPDATE admins SET name = ?, email = ?, password_hash = ? WHERE id = ?",
+        [cleanNama, cleanEmail, data.passwordHash, id]
+      );
+    } else {
+      await pool.execute(
+        "UPDATE admins SET name = ?, email = ? WHERE id = ?",
+        [cleanNama, cleanEmail, id]
+      );
+    }
+    return { id, nama: cleanNama, email: cleanEmail, peran: "admin", is_verified: true };
+  } else {
+    // Akun asal: User
+    // 2. Cek jika user ingin dinaikkan menjadi admin (promote)
+    if (data.peran === "admin") {
+      let hash = data.passwordHash;
+      if (!hash) {
+        const [ord] = await pool.execute<RowDataPacket[]>(
+          "SELECT password_hash FROM orders WHERE id = ?",
+          [id]
+        );
+        hash = String(ord[0]?.password_hash || "");
+      }
+      const finalHash = hash || "";
+
+      // Masukkan ke tabel admins
+      const [ins] = await pool.execute<ResultSetHeader>(
+        "INSERT INTO admins (name, email, password_hash) VALUES (?, ?, ?)",
+        [cleanNama, cleanEmail, finalHash]
+      );
+      // Update juga nama & email di orders agar data pesanan tetap sinkron
+      await pool.execute(
+        "UPDATE orders SET buyer_name = ?, buyer_email = ? WHERE id = ?",
+        [cleanNama, cleanEmail, id]
+      );
+      return { id: ins.insertId, nama: cleanNama, email: cleanEmail, peran: "admin", is_verified: true };
+    }
+
+    // Tetap user -> Update data orders
+    if (data.passwordHash) {
+      await pool.execute(
+        "UPDATE orders SET buyer_name = ?, buyer_email = ?, password_hash = ? WHERE id = ?",
+        [cleanNama, cleanEmail, data.passwordHash, id]
+      );
+    } else {
+      await pool.execute(
+        "UPDATE orders SET buyer_name = ?, buyer_email = ? WHERE id = ?",
+        [cleanNama, cleanEmail, id]
+      );
+    }
+    return { id, nama: cleanNama, email: cleanEmail, peran: "user", is_verified: true };
+  }
+}
