@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import * as api from "../lib/api";
 import type { Template, DataTemplateInput } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import "./ProdukPage.css";
 
 export default function ProdukPage() {
   const { user } = useAuth();
@@ -150,8 +151,14 @@ export default function ProdukPage() {
         payloadZip.append("category", formData.category);
         payloadZip.append("package_type", formData.package_type || "standard");
         payloadZip.append("price", String(formData.price || 99000));
-        payloadZip.append("theme_style", (formData.theme_style || "Custom ZIP").trim());
-        payloadZip.append("thumbnail_url", (formData.thumbnail_url || "").trim());
+        payloadZip.append(
+          "theme_style",
+          (formData.theme_style || "Custom ZIP").trim(),
+        );
+        payloadZip.append(
+          "thumbnail_url",
+          (formData.thumbnail_url || "").trim(),
+        );
 
         await api.uploadTemplateZip(payloadZip);
       } else {
@@ -244,7 +251,7 @@ export default function ProdukPage() {
         {isAdmin && (
           <button
             onClick={handleBukaTambah}
-            className="inline-flex items-center gap-2 bg-[#4A151E] hover:bg-[#381118] text-white font-medium px-4 py-2.5 rounded-xl shadow-xs transition cursor-pointer text-sm"
+            className="btn-primary-action"
           >
             <span>➕</span> Tambah Template Baru
           </button>
@@ -258,7 +265,7 @@ export default function ProdukPage() {
       )}
 
       {/* Tabel Template */}
-      <div className="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+      <div className="produk-card">
         {loading ? (
           <div className="p-12 text-center text-gray-500">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
@@ -275,21 +282,21 @@ export default function ProdukPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-gray-600">
-              <thead className="bg-[#FAF7F2] text-xs uppercase text-gray-700 border-b border-gray-200">
+              <thead className="produk-table-header">
                 <tr>
-                  <th className="px-6 py-4">Preview</th>
-                  <th className="px-6 py-4">Template & Slug</th>
-                  <th className="px-6 py-4">Kategori & Paket</th>
-                  <th className="px-6 py-4">Harga Produk</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-center">Aksi</th>
+                  <th className="produk-table-th">Preview</th>
+                  <th className="produk-table-th">Template & Slug</th>
+                  <th className="produk-table-th">Kategori & Paket</th>
+                  <th className="produk-table-th">Harga Produk</th>
+                  <th className="produk-table-th">Status</th>
+                  <th className="produk-table-th text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {templateList.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50/80 transition">
+                  <tr key={item.id} className="produk-table-row">
                     {/* Thumbnail */}
-                    <td className="px-6 py-4">
+                    <td className="produk-table-td">
                       <div className="w-14 h-20 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 flex items-center justify-center">
                         {item.thumbnail_url ? (
                           <img
@@ -309,7 +316,7 @@ export default function ProdukPage() {
                     </td>
 
                     {/* Judul & Slug */}
-                    <td className="px-6 py-4">
+                    <td className="produk-table-td">
                       <p className="font-bold text-gray-900 text-base">
                         {item.title}
                       </p>
@@ -329,17 +336,17 @@ export default function ProdukPage() {
                     </td>
 
                     {/* Kategori & Paket */}
-                    <td className="px-6 py-4">
+                    <td className="produk-table-td">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200 uppercase">
+                        <span className="badge-category">
                           {item.category}
                         </span>
                         {item.package_type === "premium" ? (
-                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300">
+                          <span className="badge-tier-premium">
                             👑 PREMIUM
                           </span>
                         ) : (
-                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                          <span className="badge-tier-standard">
                             ⚡ STANDAR
                           </span>
                         )}
@@ -350,7 +357,7 @@ export default function ProdukPage() {
                     </td>
 
                     {/* Harga Produk */}
-                    <td className="px-6 py-4">
+                    <td className="produk-table-td">
                       <p className="text-base font-extrabold text-[#4A151E]">
                         {formatRupiah(
                           item.price || item.price_standard || 99000,
@@ -364,7 +371,7 @@ export default function ProdukPage() {
                     </td>
 
                     {/* Status Aktif */}
-                    <td className="px-6 py-4">
+                    <td className="produk-table-td">
                       <button
                         onClick={() => handleToggleStatus(item)}
                         className={`px-3 py-1 text-xs font-semibold rounded-full border cursor-pointer transition ${
@@ -379,17 +386,17 @@ export default function ProdukPage() {
                     </td>
 
                     {/* Aksi */}
-                    <td className="px-6 py-4 text-center">
+                    <td className="produk-table-td text-center">
                       <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => handleBukaEdit(item)}
-                          className="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition cursor-pointer"
+                          className="btn-action-edit"
                         >
                           ✏️ Edit
                         </button>
                         <button
                           onClick={() => handleHapus(item.id, item.title)}
-                          className="px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition cursor-pointer"
+                          className="btn-action-delete"
                         >
                           🗑️ Hapus
                         </button>
@@ -405,8 +412,8 @@ export default function ProdukPage() {
 
       {/* Modal Admin: Tambah / Edit Template */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative my-8">
+        <div className="modal-overlay">
+          <div className="modal-dialog">
             <h3 className="text-xl font-bold text-gray-900 font-serif mb-1">
               {editId ? "Edit Master Template" : "Tambah Master Template Baru"}
             </h3>
@@ -423,7 +430,7 @@ export default function ProdukPage() {
             <form onSubmit={handleSimpan} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">
+                  <label className="form-field-label">
                     Judul Template <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -431,13 +438,13 @@ export default function ProdukPage() {
                     required
                     value={formData.title}
                     onChange={(e) => handleJudulChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
+                    className="form-field-input"
                     placeholder="Contoh: Jawa Keraton Royal"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">
+                  <label className="form-field-label">
                     Slug Tautan <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -450,7 +457,7 @@ export default function ProdukPage() {
                         slug: generateSlug(e.target.value),
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none font-mono text-sm"
+                    className="form-field-input-mono"
                     placeholder="jawa-keraton-royal"
                   />
                 </div>
@@ -458,7 +465,7 @@ export default function ProdukPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">
+                  <label className="form-field-label">
                     Kategori Acara <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -471,27 +478,27 @@ export default function ProdukPage() {
                           .value as DataTemplateInput["category"],
                       })
                     }
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white ${
+                    className={`form-field-input ${
                       !formData.category
                         ? "border-amber-400 bg-amber-50/20"
-                        : "border-gray-300"
+                        : ""
                     }`}
                   >
                     <option value="">-- Pilih Kategori Acara (Wajib) --</option>
-                    <option value="wedding">💍 Pernikahan (wedding)</option>
-                    <option value="khitan">✂️ Khitanan (khitan)</option>
-                    <option value="birthday">🎂 Ulang Tahun (birthday)</option>
-                    <option value="aqiqah">👶 Aqiqah (aqiqah)</option>
+                    <option value="wedding">Pernikahan (wedding)</option>
+                    <option value="khitan">Khitanan (khitan)</option>
+                    <option value="birthday">Ulang Tahun (birthday)</option>
+                    <option value="aqiqah">Aqiqah (aqiqah)</option>
                   </select>
                   {!formData.category && (
                     <p className="text-[11px] text-amber-600 mt-1 font-medium">
-                      ⚠️ Kategori wajib dipilih sebelum menyimpan.
+                      Kategori wajib dipilih sebelum menyimpan.
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">
+                  <label className="form-field-label">
                     Gaya / Tema Adat
                   </label>
                   <input
@@ -501,7 +508,7 @@ export default function ProdukPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, theme_style: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
+                    className="form-field-input"
                     placeholder="Contoh: Adat Jawa, Modern, Islamic"
                   />
                 </div>
@@ -509,7 +516,7 @@ export default function ProdukPage() {
 
               {/* Tipe Paket Desain (Standar vs Premium) */}
               <div>
-                <label className="block font-bold text-gray-700 mb-1">
+                <label className="form-field-label">
                   Tipe Paket Desain <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -589,7 +596,7 @@ export default function ProdukPage() {
                     placeholder="Contoh: 99000"
                   />
                 </div>
-                <p className="text-[11px] text-gray-400">
+                <p className="form-field-hint">
                   Harga nominal ini yang akan langsung ditagihkan kepada pembeli
                   saat memesan template ini.
                 </p>
@@ -597,7 +604,7 @@ export default function ProdukPage() {
 
               {/* URL Cover Image */}
               <div>
-                <label className="block font-bold text-gray-700 mb-1">
+                <label className="form-field-label">
                   URL Gambar Cover (Thumbnail)
                 </label>
                 <input
@@ -606,17 +613,17 @@ export default function ProdukPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, thumbnail_url: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
+                  className="form-field-input"
                   placeholder="https://... atau /assets/templates/..."
                 />
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="form-field-hint">
                   Masukkan tautan URL foto cover yang ingin ditampilkan di
                   katalog.
                 </p>
               </div>
 
               {/* Upload File ZIP Template */}
-              <div className="p-3.5 bg-amber-50/60 border border-amber-200/80 rounded-xl space-y-1.5">
+              <div className="zip-upload-container">
                 <label className="block font-bold text-gray-800 text-xs">
                   📦 Upload Berkas Template (.ZIP){" "}
                   <span className="text-gray-400 font-normal">
@@ -630,18 +637,42 @@ export default function ProdukPage() {
                   className="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#4A151E] file:text-white file:font-semibold hover:file:opacity-90 cursor-pointer border border-gray-200 rounded-lg p-1 bg-white"
                 />
                 <p className="text-[11px] text-gray-500">
-                  Wajib format <strong>.zip</strong> yang berisi <code>index.html</code>, berkas CSS/JS/assets. Sistem akan otomatis mengekstrak &amp; memperbarui tautan live demo.
+                  Wajib format <strong>.zip</strong> yang berisi{" "}
+                  <code>index.html</code>, berkas CSS/JS/assets. Sistem akan
+                  otomatis mengekstrak &amp; memperbarui tautan live demo.
                 </p>
                 {zipFile && (
                   <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
-                    ✓ Berkas terpilih: {zipFile.name} ({(zipFile.size / 1024 / 1024).toFixed(2)} MB)
+                    ✓ Berkas terpilih: {zipFile.name} (
+                    {(zipFile.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
                 )}
+
+                {/* Panduan Struktur Folder ZIP (Bisa Diklik Buka/Tutup) */}
+                <details className="mt-2 text-xs border-t border-amber-200/60 pt-2">
+                  <summary className="cursor-pointer text-[#4A151E] hover:underline font-semibold flex items-center gap-1 select-none">
+                    <span>📁 Lihat Panduan Struktur Folder .ZIP</span>
+                  </summary>
+                  <div className="mt-2 p-3 bg-gray-900 text-gray-200 rounded-lg text-[11px] font-mono border border-gray-700">
+                    <pre className="text-emerald-400">
+{`nama-template.zip
+├── index.html       ⭐ (Wajib ada di root zip)
+├── style.css        (Style CSS desain)
+├── script.js        (Script interaksi / countdown)
+└── assets/          (Folder gambar, musik, audio)
+    ├── background.jpg
+    └── music.mp3`}
+                    </pre>
+                    <p className="mt-2 text-[10px] text-amber-300 font-sans leading-tight">
+                      * <strong>Penting:</strong> Path berkas di dalam <code>index.html</code> wajib relatif, contoh: <code>./style.css</code> atau <code>assets/bg.jpg</code> (jangan diawali tanda <code>/</code>).
+                    </p>
+                  </div>
+                </details>
               </div>
 
               {/* URL Demo */}
               <div>
-                <label className="block font-bold text-gray-700 mb-1">
+                <label className="form-field-label">
                   URL Live Demo
                 </label>
                 <input
@@ -650,7 +681,7 @@ export default function ProdukPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, demo_url: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
+                  className="form-field-input"
                   placeholder="/demo/jawa-keraton-royal"
                 />
               </div>
@@ -682,14 +713,14 @@ export default function ProdukPage() {
                     setZipFile(null);
                     setIsModalOpen(false);
                   }}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition cursor-pointer"
+                  className="btn-form-cancel"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2 text-sm font-bold text-white bg-[#4A151E] hover:bg-[#381118] rounded-xl transition disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="btn-form-submit"
                 >
                   {submitting ? "Menyimpan..." : "Simpan Template"}
                 </button>
