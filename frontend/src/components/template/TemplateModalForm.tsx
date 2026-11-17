@@ -1,6 +1,7 @@
 import type { FormEvent, Dispatch, SetStateAction } from "react";
 import type { DataTemplateInput } from "../../lib/api";
 import TemplateZipGuide from "./TemplateZipGuide";
+import "../../styles/TemplateModalForm.css";
 
 interface TemplateModalFormProps {
   isOpen: boolean;
@@ -34,17 +35,16 @@ export default function TemplateModalForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4">
-      {/* Container Modal dengan batas tinggi layar & flex layout */}
-      <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden border border-gray-100">
+    <div className="template-modal-overlay">
+      <div className="template-modal-container">
         
-        {/* 1. Sticky Header (Selalu menempel di atas) */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+        {/* 1. Header (Sticky) */}
+        <div className="template-modal-header">
           <div>
-            <h3 className="text-lg font-bold text-gray-900 font-serif">
+            <h3 className="template-modal-title">
               {editId ? "✏️ Edit Master Template" : "➕ Tambah Master Template Baru"}
             </h3>
-            <p className="text-[11px] text-gray-500">
+            <p className="template-modal-subtitle">
               {editId
                 ? `Mengubah template: ${formData.title || formData.slug}`
                 : "Isi data template undangan yang akan ditampilkan di katalog."}
@@ -53,18 +53,18 @@ export default function TemplateModalForm({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer text-sm font-bold"
+            className="template-modal-close-btn"
             title="Tutup Form (Esc)"
           >
             ✕
           </button>
         </div>
 
-        {/* 2. Form & Scrollable Body */}
+        {/* 2. Scrollable Body */}
         <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="px-6 py-4 overflow-y-auto space-y-4 text-xs flex-1">
+          <div className="template-modal-body">
             {formError && (
-              <div className="bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200">
+              <div className="template-modal-error-banner">
                 {formError}
               </div>
             )}
@@ -157,16 +157,16 @@ export default function TemplateModalForm({
               <label className="form-field-label">
                 Tipe Paket Desain <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="tier-selection-grid">
                 <button
                   type="button"
                   onClick={() =>
                     setFormData({ ...formData, package_type: "standard" })
                   }
-                  className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
+                  className={`tier-card-btn ${
                     formData.package_type === "standard"
-                      ? "border-[#4A151E] bg-[#4A151E]/5 ring-2 ring-[#4A151E]"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
+                      ? "tier-card-btn--standard-active"
+                      : ""
                   }`}
                 >
                   <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
@@ -183,10 +183,10 @@ export default function TemplateModalForm({
                   onClick={() =>
                     setFormData({ ...formData, package_type: "premium" })
                   }
-                  className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
+                  className={`tier-card-btn ${
                     formData.package_type === "premium"
-                      ? "border-amber-600 bg-amber-50 ring-2 ring-amber-600"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
+                      ? "tier-card-btn--premium-active"
+                      : ""
                   }`}
                 >
                   <span className="font-bold text-amber-900 text-sm flex items-center gap-1.5">
@@ -200,9 +200,9 @@ export default function TemplateModalForm({
               </div>
             </div>
 
-            {/* Input Harga Produk Template */}
-            <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200">
-              <div className="flex items-center justify-between">
+            {/* Box Input Harga Template */}
+            <div className="price-input-box">
+              <div className="price-input-header">
                 <label className="block font-bold text-gray-800 text-xs uppercase tracking-wider">
                   Harga Produk Template (Rp){" "}
                   <span className="text-red-500">*</span>
@@ -211,8 +211,8 @@ export default function TemplateModalForm({
                   Ditentukan bebas oleh Admin
                 </span>
               </div>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm">
+              <div className="price-input-wrapper">
+                <span className="price-input-prefix">
                   Rp
                 </span>
                 <input
@@ -230,7 +230,7 @@ export default function TemplateModalForm({
                       price_special: Number(e.target.value),
                     })
                   }
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-base font-bold text-gray-900 bg-white"
+                  className="price-input-field"
                   placeholder="Contoh: 99000"
                 />
               </div>
@@ -323,8 +323,8 @@ export default function TemplateModalForm({
             </div>
           </div>
 
-          {/* 3. Sticky Footer (Selalu menempel di bawah, tidak akan pernah kepotong) */}
-          <div className="px-6 py-3.5 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3 shrink-0">
+          {/* 3. Footer (Sticky) */}
+          <div className="template-modal-footer">
             <button
               type="button"
               onClick={onClose}

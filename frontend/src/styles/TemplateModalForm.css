@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   TemplateModalForm Stylesheet (Sticky Header & Footer + Scrollable Body)
+   ============================================================================ */
+
+/* 1. Backdrop Overlay */
+.template-modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3;
+}
+
+@media (min-width: 640px) {
+  .template-modal-overlay {
+    @apply p-4;
+  }
+}
+
+/* 2. Container Modal */
+.template-modal-container {
+  @apply bg-white rounded-2xl max-w-xl w-full shadow-2xl relative flex flex-col overflow-hidden border border-gray-100;
+  max-height: 92vh;
+}
+
+/* 3. Sticky Header */
+.template-modal-header {
+  @apply px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0;
+}
+
+.template-modal-title {
+  @apply text-lg font-bold text-gray-900 font-serif;
+}
+
+.template-modal-subtitle {
+  @apply text-[11px] text-gray-500 mt-0.5;
+}
+
+.template-modal-close-btn {
+  @apply w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer text-sm font-bold;
+}
+
+/* 4. Scrollable Form Body */
+.template-modal-body {
+  @apply px-6 py-4 overflow-y-auto space-y-4 text-xs flex-1;
+}
+
+.template-modal-error-banner {
+  @apply bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200;
+}
+
+/* 5. Sticky Footer */
+.template-modal-footer {
+  @apply px-6 py-3.5 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3 shrink-0;
+}
+
+/* 6. Pilihan Paket Desain (Standar vs Premium) */
+.tier-selection-grid {
+  @apply grid grid-cols-1 gap-3;
+}
+
+@media (min-width: 640px) {
+  .tier-selection-grid {
+    @apply grid-cols-2;
+  }
+}
+
+.tier-card-btn {
+  @apply p-3 rounded-xl border text-left transition flex flex-col cursor-pointer bg-white border-gray-200 hover:border-gray-300;
+}
+
+.tier-card-btn--standard-active {
+  @apply border-[#4A151E] bg-[#4A151E]/5 ring-2 ring-[#4A151E];
+}
+
+.tier-card-btn--premium-active {
+  @apply border-amber-600 bg-amber-50 ring-2 ring-amber-600;
+}
+
+/* 7. Box Input Harga (Rp) */
+.price-input-box {
+  @apply p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200;
+}
+
+.price-input-header {
+  @apply flex items-center justify-between;
+}
+
+.price-input-wrapper {
+  @apply relative;
+}
+
+.price-input-prefix {
+  @apply absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm;
+}
+
+.price-input-field {
+  @apply w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-base font-bold text-gray-900 bg-white;
+}
