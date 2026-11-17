@@ -6,7 +6,7 @@
 
 /* 1. Backdrop Overlay */
 .template-modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3;
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3;
 }
 
 @media (min-width: 640px) {
@@ -15,13 +15,13 @@
   }
 }
 
-/* 2. Container Modal */
+/* 2. Container Modal (Tinggi dibatasi 88vh agar tidak pernah meluber dari layar) */
 .template-modal-container {
   @apply bg-white rounded-2xl max-w-xl w-full shadow-2xl relative flex flex-col overflow-hidden border border-gray-100;
-  max-height: 92vh;
+  max-height: 88vh;
 }
 
-/* 3. Sticky Header */
+/* 3. Sticky Header (Selalu mengunci di bagian atas) */
 .template-modal-header {
   @apply px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0;
 }
@@ -38,21 +38,50 @@
   @apply w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer text-sm font-bold;
 }
 
-/* 4. Scrollable Form Body */
+/* 4. Form Wrapper dengan min-h-0 (KUNCI agar flexbox tidak memanjat keluar layar) */
+.template-modal-form {
+  @apply flex flex-col flex-1 min-h-0 overflow-hidden;
+}
+
+/* 5. Scrollable Form Body (Hanya area ini yang memiliki scrollbar) */
 .template-modal-body {
-  @apply px-6 py-4 overflow-y-auto space-y-4 text-xs flex-1;
+  @apply px-6 py-4 overflow-y-auto space-y-4 text-xs flex-1 min-h-0;
+}
+
+/* Scrollbar styling agar terlihat rapi dan jelas bisa di-scroll */
+.template-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.template-modal-body::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 9999px;
+}
+.template-modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.template-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .template-modal-error-banner {
   @apply bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200;
 }
 
-/* 5. Sticky Footer */
+/* 6. Sticky Footer (Selalu mengunci di bawah, tombol Batal & Simpan selalu tampil) */
 .template-modal-footer {
   @apply px-6 py-3.5 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3 shrink-0;
 }
 
-/* 6. Pilihan Paket Desain (Standar vs Premium) */
+.btn-form-submit {
+  @apply px-5 py-2 text-sm font-bold text-white bg-[#4A151E] hover:bg-[#381118] rounded-xl transition disabled:opacity-50 cursor-pointer shadow-xs;
+}
+
+.btn-form-cancel {
+  @apply px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition cursor-pointer;
+}
+
+/* 7. Pilihan Paket Desain (Standar vs Premium) */
 .tier-selection-grid {
   @apply grid grid-cols-1 gap-3;
 }
@@ -75,7 +104,7 @@
   @apply border-amber-600 bg-amber-50 ring-2 ring-amber-600;
 }
 
-/* 7. Box Input Harga (Rp) */
+/* 8. Box Input Harga (Rp) */
 .price-input-box {
   @apply p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200;
 }

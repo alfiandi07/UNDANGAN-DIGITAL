@@ -61,7 +61,7 @@ export default function TemplateModalForm({
         </div>
 
         {/* 2. Scrollable Body */}
-        <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
+        <form onSubmit={onSubmit} className="template-modal-form">
           <div className="template-modal-body">
             {formError && (
               <div className="template-modal-error-banner">
