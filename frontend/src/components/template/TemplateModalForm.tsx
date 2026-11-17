@@ -34,278 +34,297 @@ export default function TemplateModalForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <h3 className="text-lg font-bold text-gray-900 font-serif mb-1">
-          {editId ? "Edit Master Template" : "Tambah Master Template Baru"}
-        </h3>
-        <p className="text-xs text-gray-500 mb-4">
-          Kelola desain template undangan, tipe paket standar/premium, harga,
-          dan berkas arsip .ZIP live demo.
-        </p>
-
-        {formError && (
-          <div className="bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200 mb-4">
-            {formError}
-          </div>
-        )}
-
-        <form onSubmit={onSubmit} className="space-y-4 text-xs">
-          {/* Judul & Slug */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="form-field-label">
-                Judul Template <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.title}
-                onChange={(e) => onJudulChange(e.target.value)}
-                className="form-field-input"
-                placeholder="Contoh: Jawa Keraton Royal"
-              />
-            </div>
-
-            <div>
-              <label className="form-field-label">
-                Slug Tautan <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.slug}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    slug: generateSlug(e.target.value),
-                  })
-                }
-                className="form-field-input-mono"
-                placeholder="jawa-keraton-royal"
-              />
-            </div>
-          </div>
-
-          {/* Kategori Acara & Gaya Tema */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="form-field-label">
-                Kategori Acara <span className="text-red-500">*</span>
-              </label>
-              <select
-                required
-                value={formData.category || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    category: e.target.value as DataTemplateInput["category"],
-                  })
-                }
-                className={`form-field-input ${
-                  !formData.category ? "border-amber-400 bg-amber-50/20" : ""
-                }`}
-              >
-                <option value="">-- Pilih Kategori Acara (Wajib) --</option>
-                <option value="wedding">Pernikahan (wedding)</option>
-                <option value="khitan">Khitanan (khitan)</option>
-                <option value="birthday">Ulang Tahun (birthday)</option>
-                <option value="aqiqah">Aqiqah (aqiqah)</option>
-              </select>
-              {!formData.category && (
-                <p className="text-[11px] text-amber-600 mt-1 font-medium">
-                  Kategori wajib dipilih sebelum menyimpan.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="form-field-label">Gaya / Tema Adat</label>
-              <input
-                type="text"
-                required
-                value={formData.theme_style}
-                onChange={(e) =>
-                  setFormData({ ...formData, theme_style: e.target.value })
-                }
-                className="form-field-input"
-                placeholder="Contoh: Adat Jawa, Modern, Islamic"
-              />
-            </div>
-          </div>
-
-          {/* Tipe Paket Desain (Standar vs Premium) */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4">
+      {/* Container Modal dengan batas tinggi layar & flex layout */}
+      <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden border border-gray-100">
+        
+        {/* 1. Sticky Header (Selalu menempel di atas) */}
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
           <div>
-            <label className="form-field-label">
-              Tipe Paket Desain <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() =>
-                  setFormData({ ...formData, package_type: "standard" })
-                }
-                className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
-                  formData.package_type === "standard"
-                    ? "border-[#4A151E] bg-[#4A151E]/5 ring-2 ring-[#4A151E]"
-                    : "border-gray-200 hover:border-gray-300 bg-white"
-                }`}
-              >
-                <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
-                  ⚡ STANDAR
-                </span>
-                <span className="text-xs text-gray-500 mt-1">
-                  Desain clean & elegan • <strong>Tanpa galeri foto</strong> •
-                  Masa aktif 6 bulan
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setFormData({ ...formData, package_type: "premium" })
-                }
-                className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
-                  formData.package_type === "premium"
-                    ? "border-amber-600 bg-amber-50 ring-2 ring-amber-600"
-                    : "border-gray-200 hover:border-gray-300 bg-white"
-                }`}
-              >
-                <span className="font-bold text-amber-900 text-sm flex items-center gap-1.5">
-                  👑 PREMIUM
-                </span>
-                <span className="text-xs text-amber-800 mt-1">
-                  Desain mewah • <strong>Galeri 30 foto</strong> • Musik
-                  autoplay • Masa aktif 12 bulan
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Input Harga Produk Template */}
-          <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <label className="block font-bold text-gray-800 text-xs uppercase tracking-wider">
-                Harga Produk Template (Rp){" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <span className="text-[11px] text-gray-500 font-medium">
-                Ditentukan bebas oleh Admin
-              </span>
-            </div>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm">
-                Rp
-              </span>
-              <input
-                type="number"
-                required
-                min="1000"
-                step="1000"
-                value={formData.price || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    price: Number(e.target.value),
-                    price_standard: Number(e.target.value),
-                    price_basic: Number(e.target.value),
-                    price_special: Number(e.target.value),
-                  })
-                }
-                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-base font-bold text-gray-900 bg-white"
-                placeholder="Contoh: 99000"
-              />
-            </div>
-            <p className="form-field-hint">
-              Harga nominal ini yang akan langsung ditagihkan kepada pembeli
-              saat memesan template ini.
-            </p>
-          </div>
-
-          {/* URL Cover Image */}
-          <div>
-            <label className="form-field-label">
-              URL Gambar Cover (Thumbnail)
-            </label>
-            <input
-              type="text"
-              value={formData.thumbnail_url}
-              onChange={(e) =>
-                setFormData({ ...formData, thumbnail_url: e.target.value })
-              }
-              className="form-field-input"
-              placeholder="https://... atau /assets/templates/..."
-            />
-            <p className="form-field-hint">
-              Masukkan tautan URL foto cover yang ingin ditampilkan di katalog.
-            </p>
-          </div>
-
-          {/* Upload File ZIP Template */}
-          <div className="zip-upload-container">
-            <label className="block font-bold text-gray-800 text-xs">
-              📦 Upload Berkas Template (.ZIP){" "}
-              <span className="text-gray-400 font-normal">
-                (Opsional jika URL demo diisi manual)
-              </span>
-            </label>
-            <input
-              type="file"
-              accept=".zip"
-              onChange={(e) => setZipFile(e.target.files?.[0] || null)}
-              className="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#4A151E] file:text-white file:font-semibold hover:file:opacity-90 cursor-pointer border border-gray-200 rounded-lg p-1 bg-white"
-            />
+            <h3 className="text-lg font-bold text-gray-900 font-serif">
+              {editId ? "✏️ Edit Master Template" : "➕ Tambah Master Template Baru"}
+            </h3>
             <p className="text-[11px] text-gray-500">
-              Wajib format <strong>.zip</strong> yang berisi{" "}
-              <code>index.html</code>, berkas CSS/JS/assets. Sistem akan
-              otomatis mengekstrak &amp; memperbarui tautan live demo.
+              {editId
+                ? `Mengubah template: ${formData.title || formData.slug}`
+                : "Isi data template undangan yang akan ditampilkan di katalog."}
             </p>
-            {zipFile && (
-              <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
-                ✓ Berkas terpilih: {zipFile.name} (
-                {(zipFile.size / 1024 / 1024).toFixed(2)} MB)
-              </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer text-sm font-bold"
+            title="Tutup Form (Esc)"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* 2. Form & Scrollable Body */}
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="px-6 py-4 overflow-y-auto space-y-4 text-xs flex-1">
+            {formError && (
+              <div className="bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200">
+                {formError}
+              </div>
             )}
 
-            {/* Panduan Struktur Folder ZIP */}
-            <TemplateZipGuide />
+            {/* Judul & Slug */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="form-field-label">
+                  Judul Template <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => onJudulChange(e.target.value)}
+                  className="form-field-input"
+                  placeholder="Contoh: Jawa Keraton Royal"
+                />
+              </div>
+
+              <div>
+                <label className="form-field-label">
+                  Slug Tautan <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.slug}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      slug: generateSlug(e.target.value),
+                    })
+                  }
+                  className="form-field-input-mono"
+                  placeholder="jawa-keraton-royal"
+                />
+              </div>
+            </div>
+
+            {/* Kategori Acara & Gaya Tema */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="form-field-label">
+                  Kategori Acara <span className="text-red-500">*</span>
+                </label>
+                <select
+                  required
+                  value={formData.category || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      category: e.target.value as DataTemplateInput["category"],
+                    })
+                  }
+                  className={`form-field-input ${
+                    !formData.category ? "border-amber-400 bg-amber-50/20" : ""
+                  }`}
+                >
+                  <option value="">-- Pilih Kategori Acara (Wajib) --</option>
+                  <option value="wedding">Pernikahan (wedding)</option>
+                  <option value="khitan">Khitanan (khitan)</option>
+                  <option value="birthday">Ulang Tahun (birthday)</option>
+                  <option value="aqiqah">Aqiqah (aqiqah)</option>
+                </select>
+                {!formData.category && (
+                  <p className="text-[11px] text-amber-600 mt-1 font-medium">
+                    Kategori wajib dipilih sebelum menyimpan.
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="form-field-label">Gaya / Tema Adat</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.theme_style}
+                  onChange={(e) =>
+                    setFormData({ ...formData, theme_style: e.target.value })
+                  }
+                  className="form-field-input"
+                  placeholder="Contoh: Adat Jawa, Modern, Islamic"
+                />
+              </div>
+            </div>
+
+            {/* Tipe Paket Desain (Standar vs Premium) */}
+            <div>
+              <label className="form-field-label">
+                Tipe Paket Desain <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({ ...formData, package_type: "standard" })
+                  }
+                  className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
+                    formData.package_type === "standard"
+                      ? "border-[#4A151E] bg-[#4A151E]/5 ring-2 ring-[#4A151E]"
+                      : "border-gray-200 hover:border-gray-300 bg-white"
+                  }`}
+                >
+                  <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                    ⚡ STANDAR
+                  </span>
+                  <span className="text-xs text-gray-500 mt-1">
+                    Desain clean & elegan • <strong>Tanpa galeri foto</strong> •
+                    Masa aktif 6 bulan
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({ ...formData, package_type: "premium" })
+                  }
+                  className={`p-3 rounded-xl border text-left transition flex flex-col cursor-pointer ${
+                    formData.package_type === "premium"
+                      ? "border-amber-600 bg-amber-50 ring-2 ring-amber-600"
+                      : "border-gray-200 hover:border-gray-300 bg-white"
+                  }`}
+                >
+                  <span className="font-bold text-amber-900 text-sm flex items-center gap-1.5">
+                    👑 PREMIUM
+                  </span>
+                  <span className="text-xs text-amber-800 mt-1">
+                    Desain mewah • <strong>Galeri 30 foto</strong> • Musik
+                    autoplay • Masa aktif 12 bulan
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Input Harga Produk Template */}
+            <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200">
+              <div className="flex items-center justify-between">
+                <label className="block font-bold text-gray-800 text-xs uppercase tracking-wider">
+                  Harga Produk Template (Rp){" "}
+                  <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[11px] text-gray-500 font-medium">
+                  Ditentukan bebas oleh Admin
+                </span>
+              </div>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm">
+                  Rp
+                </span>
+                <input
+                  type="number"
+                  required
+                  min="1000"
+                  step="1000"
+                  value={formData.price || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      price: Number(e.target.value),
+                      price_standard: Number(e.target.value),
+                      price_basic: Number(e.target.value),
+                      price_special: Number(e.target.value),
+                    })
+                  }
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-base font-bold text-gray-900 bg-white"
+                  placeholder="Contoh: 99000"
+                />
+              </div>
+              <p className="form-field-hint">
+                Harga nominal ini yang akan langsung ditagihkan kepada pembeli
+                saat memesan template ini.
+              </p>
+            </div>
+
+            {/* URL Cover Image */}
+            <div>
+              <label className="form-field-label">
+                URL Gambar Cover (Thumbnail)
+              </label>
+              <input
+                type="text"
+                value={formData.thumbnail_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, thumbnail_url: e.target.value })
+                }
+                className="form-field-input"
+                placeholder="https://... atau /assets/templates/..."
+              />
+              <p className="form-field-hint">
+                Masukkan tautan URL foto cover yang ingin ditampilkan di katalog.
+              </p>
+            </div>
+
+            {/* Upload File ZIP Template */}
+            <div className="zip-upload-container">
+              <label className="block font-bold text-gray-800 text-xs">
+                📦 Upload Berkas Template (.ZIP){" "}
+                <span className="text-gray-400 font-normal">
+                  (Opsional jika URL demo diisi manual)
+                </span>
+              </label>
+              <input
+                type="file"
+                accept=".zip"
+                onChange={(e) => setZipFile(e.target.files?.[0] || null)}
+                className="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#4A151E] file:text-white file:font-semibold hover:file:opacity-90 cursor-pointer border border-gray-200 rounded-lg p-1 bg-white"
+              />
+              <p className="text-[11px] text-gray-500">
+                Wajib format <strong>.zip</strong> yang berisi{" "}
+                <code>index.html</code>, berkas CSS/JS/assets. Sistem akan
+                otomatis mengekstrak &amp; memperbarui tautan live demo.
+              </p>
+              {zipFile && (
+                <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                  ✓ Berkas terpilih: {zipFile.name} (
+                  {(zipFile.size / 1024 / 1024).toFixed(2)} MB)
+                </p>
+              )}
+
+              {/* Panduan Struktur Folder ZIP */}
+              <TemplateZipGuide />
+            </div>
+
+            {/* URL Demo */}
+            <div>
+              <label className="form-field-label">URL Live Demo</label>
+              <input
+                type="text"
+                value={formData.demo_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, demo_url: e.target.value })
+                }
+                className="form-field-input"
+                placeholder="/demo/jawa-keraton-royal"
+              />
+            </div>
+
+            {/* Checkbox Status Aktif */}
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="is_active"
+                checked={formData.is_active}
+                onChange={(e) =>
+                  setFormData({ ...formData, is_active: e.target.checked })
+                }
+                className="w-4 h-4 text-[#4A151E] rounded focus:ring-[#4A151E]"
+              />
+              <label
+                htmlFor="is_active"
+                className="text-gray-700 font-medium cursor-pointer"
+              >
+                Tampilkan template ini di Katalog publik (Aktif)
+              </label>
+            </div>
           </div>
 
-          {/* URL Demo */}
-          <div>
-            <label className="form-field-label">URL Live Demo</label>
-            <input
-              type="text"
-              value={formData.demo_url}
-              onChange={(e) =>
-                setFormData({ ...formData, demo_url: e.target.value })
-              }
-              className="form-field-input"
-              placeholder="/demo/jawa-keraton-royal"
-            />
-          </div>
-
-          {/* Checkbox Status Aktif */}
-          <div className="flex items-center gap-2 pt-1">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={formData.is_active}
-              onChange={(e) =>
-                setFormData({ ...formData, is_active: e.target.checked })
-              }
-              className="w-4 h-4 text-[#4A151E] rounded focus:ring-[#4A151E]"
-            />
-            <label
-              htmlFor="is_active"
-              className="text-gray-700 font-medium cursor-pointer"
-            >
-              Tampilkan template ini di Katalog publik (Aktif)
-            </label>
-          </div>
-
-          {/* Tombol Simpan / Batal */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+          {/* 3. Sticky Footer (Selalu menempel di bawah, tidak akan pernah kepotong) */}
+          <div className="px-6 py-3.5 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
