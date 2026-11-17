@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   TransaksiPage Stylesheet (Ocean Blue Theme for Buyer & Admin)
+   ============================================================================ */
+
+/* 1. Page Container dengan Nuansa Biru Laut */
+.transaksi-page-container {
+  @apply space-y-6 rounded-2xl p-4 transition-all;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
+  border: 1px solid #bae6fd;
+}
+
+@media (min-width: 640px) {
+  .transaksi-page-container {
+    @apply p-6;
+  }
+}
+
+/* 2. Header Banner */
+.transaksi-header-card {
+  @apply bg-white/95 p-6 rounded-2xl shadow-xs border border-sky-200 flex flex-col justify-between items-start gap-4 backdrop-blur-xs;
+}
+
+@media (min-width: 640px) {
+  .transaksi-header-card {
+    @apply flex-row items-center;
+  }
+}
+
+.transaksi-header-title {
+  @apply text-2xl font-bold font-serif text-gray-900;
+}
+
+.transaksi-header-subtitle {
+  @apply text-xs text-gray-500 mt-1;
+}
+
+@media (min-width: 640px) {
+  .transaksi-header-subtitle {
+    @apply text-sm;
+  }
+}
+
+.transaksi-btn-pesan-baru {
+  @apply px-4 py-2 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer;
+}
+
+/* 3. Kartu Undangan Pembeli */
+.invitation-section-title {
+  @apply text-sm font-bold uppercase tracking-wider text-sky-900 flex items-center gap-1.5;
+}
+
+.invitation-grid {
+  @apply grid grid-cols-1 gap-4;
+}
+
+@media (min-width: 768px) {
+  .invitation-grid {
+    @apply grid-cols-2;
+  }
+}
+
+.invitation-card {
+  @apply bg-white/95 p-5 rounded-2xl border border-sky-200 shadow-xs space-y-3 transition hover:shadow-md;
+}
+
+.invitation-package-tag {
+  @apply text-[10px] font-bold uppercase text-[#8C6D3B] tracking-wider;
+}
+
+.invitation-card-title {
+  @apply text-lg font-serif font-bold text-[#3B171D];
+}
+
+.invitation-info-box {
+  @apply p-3 bg-sky-50/70 rounded-xl text-xs space-y-1.5 border border-sky-100;
+}
+
+.invitation-btn-preview {
+  @apply flex-1 py-2 text-center text-xs font-bold border border-sky-200 rounded-xl text-[#4A151E] bg-white hover:bg-sky-50 transition;
+}
+
+.invitation-btn-edit {
+  @apply flex-1 py-2 text-center text-xs font-bold bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl transition shadow-xs cursor-pointer;
+}
+
+/* 4. Tabel Pesanan (Admin & Pembeli) */
+.transaksi-table-card {
+  @apply bg-white/95 rounded-2xl shadow-xs border border-sky-200 overflow-hidden backdrop-blur-xs;
+}
+
+.transaksi-table-header-box {
+  @apply p-4 border-b border-sky-100 bg-sky-50/60 flex items-center justify-between;
+}
+
+.transaksi-table-title {
+  @apply text-sm font-bold text-sky-950;
+}
+
+.transaksi-table {
+  @apply w-full text-left text-xs text-gray-600;
+}
+
+.transaksi-th {
+  @apply px-6 py-4 bg-sky-100/70 text-[11px] uppercase text-sky-900 font-bold border-b border-sky-200;
+}
+
+.transaksi-td {
+  @apply px-6 py-4;
+}
+
+.transaksi-row {
+  @apply hover:bg-sky-50/60 transition;
+}
+
+/* 5. Status Badges */
+.badge-status-active {
+  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-emerald-100 text-emerald-800;
+}
+
+.badge-status-draft {
+  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-amber-100 text-amber-800;
+}
+
+.badge-payment-paid {
+  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-emerald-100 text-emerald-700;
+}
+
+.badge-payment-pending {
+  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-amber-100 text-amber-700;
+}
+
+.badge-payment-failed {
+  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-red-100 text-red-700;
+}
+
+.btn-bayar-simulasi {
+  @apply px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50;
+}
