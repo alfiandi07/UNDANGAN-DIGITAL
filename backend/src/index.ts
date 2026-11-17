@@ -30,6 +30,8 @@ app.use(express.json());
 
 // Sajikan folder static template hasil ekstrak ZIP (PRD: Zip Template Engine)
 app.use("/templates", express.static(path.join(__dirname, "../public/templates")));
+// Sajikan folder static gambar cover template
+app.use("/covers", express.static(path.join(__dirname, "../public/covers")));
 app.get(
   "/api/cek",
 

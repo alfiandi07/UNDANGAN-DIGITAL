@@ -1,4 +1,5 @@
-import type { FormEvent, Dispatch, SetStateAction } from "react";
+import { useState, useRef, type FormEvent, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
+import * as api from "../../lib/api";
 import type { DataTemplateInput } from "../../lib/api";
 import TemplateZipGuide from "./TemplateZipGuide";
 import "../../styles/TemplateModalForm.css";
@@ -32,6 +33,32 @@ export default function TemplateModalForm({
   onJudulChange,
   generateSlug,
 }: TemplateModalFormProps) {
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handlePilihCover(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Harap pilih berkas foto gambar (JPG, PNG, atau WEBP)");
+      return;
+    }
+
+    setUploadingCover(true);
+    try {
+      const fd = new FormData();
+      fd.append("cover", file);
+      const res = await api.uploadCoverTemplate(fd);
+      setFormData((prev) => ({ ...prev, thumbnail_url: res.url }));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Gagal mengunggah foto cover");
+    } finally {
+      setUploadingCover(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -240,23 +267,86 @@ export default function TemplateModalForm({
               </p>
             </div>
 
-            {/* URL Cover Image */}
-            <div>
+            {/* Foto Cover Thumbnail (Upload Gambar Asli) */}
+            <div className="cover-upload-section">
               <label className="form-field-label">
-                URL Gambar Cover (Thumbnail)
+                Foto Cover Template (Thumbnail)
               </label>
+
+              {/* Hidden file input */}
               <input
-                type="text"
-                value={formData.thumbnail_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, thumbnail_url: e.target.value })
-                }
-                className="form-field-input"
-                placeholder="https://... atau /assets/templates/..."
+                ref={fileInputRef}
+                type="file"
+                accept="image/png, image/jpeg, image/webp"
+                className="hidden"
+                onChange={handlePilihCover}
               />
-              <p className="form-field-hint">
-                Masukkan tautan URL foto cover yang ingin ditampilkan di katalog.
-              </p>
+
+              {formData.thumbnail_url ? (
+                /* Card Preview jika foto sudah ada / terpilih */
+                <div className="cover-preview-card">
+                  <img
+                    src={formData.thumbnail_url}
+                    alt="Preview Cover"
+                    className="cover-preview-img"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
+                  <div className="cover-preview-info">
+                    <span className="cover-preview-badge">
+                      {uploadingCover ? "Mengunggah..." : "✓ Foto Terpasang"}
+                    </span>
+                    <span
+                      className="cover-preview-url"
+                      title={formData.thumbnail_url}
+                    >
+                      {formData.thumbnail_url}
+                    </span>
+                    <div className="cover-preview-actions">
+                      <button
+                        type="button"
+                        disabled={uploadingCover}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="btn-cover-replace"
+                      >
+                        {uploadingCover ? "Mengunggah..." : "🔄 Ganti Foto"}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={uploadingCover}
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            thumbnail_url: "",
+                          }))
+                        }
+                        className="btn-cover-remove"
+                      >
+                        🗑️ Hapus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Kotak Upload jika belum ada foto */
+                <div
+                  onClick={() =>
+                    !uploadingCover && fileInputRef.current?.click()
+                  }
+                  className="cover-upload-box"
+                >
+                  <span className="cover-upload-icon">🖼️</span>
+                  <p className="cover-upload-text">
+                    {uploadingCover
+                      ? "Sedang mengunggah foto..."
+                      : "Klik untuk memilih foto cover dari komputer/HP"}
+                  </p>
+                  <p className="cover-upload-hint">
+                    Format: JPG, PNG, WEBP (Maksimal 8 MB)
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Upload File ZIP Template */}

@@ -300,3 +300,40 @@ export async function uploadZipHandler(req: Request, res: Response) {
     res.status(500).json({ error: msg });
   }
 }
+
+// POST /api/templates/upload-cover
+export async function uploadCoverHandler(req: Request, res: Response) {
+  try {
+    const file = req.file;
+    if (!file) {
+      res.status(400).json({ error: "Berkas gambar cover wajib diunggah" });
+      return;
+    }
+
+    const targetDir = path.join(__dirname, "../../public/covers");
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const ext = path.extname(file.originalname) || ".jpg";
+    const cleanExt = ext.startsWith(".") ? ext : `.${ext}`;
+    const filename = `cover-${Date.now()}-${Math.floor(Math.random() * 10000)}${cleanExt}`;
+    const filePath = path.join(targetDir, filename);
+
+    fs.writeFileSync(filePath, file.buffer);
+
+    const publicUrl = `/covers/${filename}`;
+
+    res.status(201).json({
+      success: true,
+      message: "Foto cover template berhasil diunggah",
+      url: publicUrl,
+    });
+  } catch (err) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : "Gagal mengunggah foto cover template";
+    res.status(500).json({ error: msg });
+  }
+}

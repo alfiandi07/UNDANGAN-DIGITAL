@@ -266,6 +266,23 @@ export async function uploadTemplateZip(formData: FormData): Promise<{
   return body;
 }
 
+export async function uploadCoverTemplate(formData: FormData): Promise<{
+  success: boolean;
+  message: string;
+  url: string;
+}> {
+  const res = await fetch("/api/templates/upload-cover", {
+    method: "POST",
+    body: formData,
+  });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    let rawError = body?.error ?? `Gagal mengunggah foto cover (${res.status})`;
+    throw new Error(rawError);
+  }
+  return body;
+}
+
 // ── Modul B: Order & Midtrans Checkout ───────────────────
 export type PackageType = "standard" | "premium" | "basic" | "special";
 export type PaymentStatus = "pending" | "paid" | "expired" | "failed";
