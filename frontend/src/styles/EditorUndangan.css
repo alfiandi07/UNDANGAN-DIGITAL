@@ -53,6 +53,10 @@
   color: #4b5563;
 }
 
+.editor-breadcrumb-separator {
+  color: #d1d5db;
+}
+
 .editor-breadcrumb-slug {
   font-family: monospace;
   font-weight: 700;

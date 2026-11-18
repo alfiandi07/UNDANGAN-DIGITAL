@@ -97,6 +97,10 @@
   color: #4b5563;
 }
 
+.dashboard-user-greeting strong {
+  color: #111827;
+}
+
 .dashboard-role-badge {
   font-size: 0.65rem;
   padding: 0.2rem 0.6rem;

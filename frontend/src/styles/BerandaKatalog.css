@@ -535,6 +535,28 @@
   text-transform: uppercase;
 }
 
+.pricing-plan-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.pricing-plan-price {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #4a151e;
+  margin: 0 0 1rem 0;
+}
+
+.pricing-plan-list {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.8;
+  padding-left: 1.2rem;
+  margin: 0;
+}
+
 /* 6. SECTION DESAIN CUSTOM (#custom) */
 .katalog-custom-section {
   position: relative;
@@ -546,6 +568,49 @@
   color: #ffffff;
   border-radius: 1.5rem;
   text-align: center;
+}
+
+.katalog-custom-title {
+  font-family: Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+}
+
+.katalog-custom-desc {
+  font-size: 0.9rem;
+  color: #f3e8e2;
+  max-width: 36rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.katalog-empty-state {
+  text-align: center;
+  padding: 4rem 0;
+  color: #6b7280;
+}
+
+.katalog-empty-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.katalog-empty-desc {
+  font-size: 0.85rem;
+}
+
+.katalog-card__quota-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.katalog-card__quota-badge--premium {
+  color: #6B1D2F;
+}
+
+.katalog-card__quota-badge--basic {
+  color: #047857;
 }
 
 .katalog-custom-btn {

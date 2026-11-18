@@ -67,7 +67,7 @@ export default function DashboardPage() {
             </button>
 
             <span className="dashboard-user-greeting">
-              Halo, <strong style={{ color: "#111827" }}>{user?.nama}</strong>
+              Halo, <strong>{user?.nama}</strong>
             </span>
             <span
               className={`dashboard-role-badge ${

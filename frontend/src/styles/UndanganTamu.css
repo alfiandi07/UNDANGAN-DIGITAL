@@ -537,6 +537,164 @@
   text-transform: uppercase;
 }
 
+.guest-guestbook-status--hadir {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.guest-guestbook-status--tidak-hadir {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.guest-guestbook-status--ragu {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.guest-loading-wrapper {
+  align-items: center;
+  justify-content: center;
+}
+
+.guest-loading-box {
+  text-align: center;
+  color: #e5e7eb;
+}
+
+.guest-loading-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.guest-loading-desc {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.guest-error-wrapper {
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.guest-error-box {
+  text-align: center;
+  color: #ffffff;
+  max-width: 24rem;
+}
+
+.guest-error-icon {
+  font-size: 3rem;
+  display: block;
+}
+
+.guest-error-title {
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.guest-error-desc {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-bottom: 1.5rem;
+}
+
+.guest-error-btn {
+  display: inline-block;
+  padding: 0.65rem 1.25rem;
+  background-color: #ffffff;
+  color: #1c1917;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.guest-quote-source {
+  display: block;
+  margin-top: 0.25rem;
+  font-style: normal;
+}
+
+.guest-avatar-emoji {
+  font-size: 2rem;
+}
+
+.guest-mempelai-ampersand {
+  text-align: center;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: #8c6d3b;
+}
+
+.guest-events-title {
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: #381118;
+  margin: 0;
+}
+
+.guest-bank-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #8c6d3b;
+  text-transform: uppercase;
+}
+
+.guest-bank-rek {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0.25rem 0;
+  color: #111827;
+}
+
+.guest-bank-holder {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.guest-rsvp-success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  padding: 0.65rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.guest-guestbook-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #4b5563;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem 0;
+}
+
+.guest-footer-text {
+  margin: 0 0 0.5rem 0;
+}
+
+.guest-footer-brand {
+  color: #381118;
+}
+
+.guest-footer-btn {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8c6d3b;
+  text-decoration: underline;
+}
+
 .guest-guestbook-message {
   font-size: 0.75rem;
   color: #4b5563;

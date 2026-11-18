@@ -298,7 +298,7 @@ export default function EditorUndanganPage() {
             <Link to="/dashboard/transaksi" className="editor-breadcrumb-link">
               ← Undangan Saya
             </Link>
-            <span style={{ color: "#d1d5db" }}>/</span>
+            <span className="editor-breadcrumb-separator">/</span>
             <span className="editor-breadcrumb-slug">/{slug}</span>
           </div>
           <h2 className="editor-title">Editor Detail Acara Undangan</h2>

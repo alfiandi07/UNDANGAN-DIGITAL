@@ -187,8 +187,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
               {/* Ringkasan Paket Terkunci Sesuai PRD Section 3 */}
               <label className="checkout-section-label">Paket & Harga Desain (Terkunci):</label>
               <div
-                className="checkout-package-card checkout-package-card--selected"
-                style={{ cursor: "default", marginBottom: "1.25rem" }}
+                className="checkout-package-card checkout-package-card--selected checkout-package-card--static"
               >
                 <span className="checkout-package-card__badge">
                   {selectedPackage === "premium" ? "Paket Premium Resmi" : "Paket Basic Resmi"}
@@ -224,9 +223,9 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                     onChange={(e) => handleSlugChange(e.target.value)}
                     className="checkout-slug-field"
                   />
-                  {slugChecking && <span style={{ fontSize: "0.75rem" }}>⏳</span>}
+                  {slugChecking && <span className="checkout-slug-icon--loading">⏳</span>}
                   {!slugChecking && slugResult && (
-                    <span style={{ fontSize: "0.85rem" }}>{slugResult.available ? "✅" : "❌"}</span>
+                    <span className="checkout-slug-icon">{slugResult.available ? "✅" : "❌"}</span>
                   )}
                 </div>
 
@@ -285,7 +284,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
 
               <div className="checkout-form-row">
                 <label className="checkout-section-label">
-                  Nama Lengkap Pemesan <span style={{ color: "#ef4444" }}>*</span>
+                  Nama Lengkap Pemesan <span className="checkout-req-star">*</span>
                 </label>
                 <input
                   type="text"
@@ -300,7 +299,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
               <div className="checkout-form-grid">
                 <div className="checkout-form-row">
                   <label className="checkout-section-label">
-                    Nomor WhatsApp <span style={{ color: "#ef4444" }}>*</span>
+                    Nomor WhatsApp <span className="checkout-req-star">*</span>
                   </label>
                   <input
                     type="tel"
@@ -314,7 +313,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
 
                 <div className="checkout-form-row">
                   <label className="checkout-section-label">
-                    Email Pembeli <span style={{ color: "#ef4444" }}>*</span>
+                    Email Pembeli <span className="checkout-req-star">*</span>
                   </label>
                   <input
                     type="email"
@@ -329,7 +328,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
 
               <div className="checkout-form-row">
                 <label className="checkout-section-label">
-                  Password Akun Klien <span style={{ color: "#ef4444" }}>*</span>
+                  Password Akun Klien <span className="checkout-req-star">*</span>
                 </label>
                 <input
                   type="password"
@@ -348,17 +347,17 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
               <div className="checkout-summary-box">
                 <div className="checkout-summary-row">
                   <span>Tautan Undangan:</span>
-                  <strong style={{ fontFamily: "monospace", color: "#4a151e" }}>
+                  <strong className="checkout-summary-code">
                     /{slugInput}
                   </strong>
                 </div>
                 <div className="checkout-summary-row">
                   <span>Paket Pilihan:</span>
-                  <strong style={{ textTransform: "uppercase" }}>{selectedPackage}</strong>
+                  <strong className="checkout-summary-package">{selectedPackage}</strong>
                 </div>
                 <div className="checkout-summary-row checkout-summary-row--total">
                   <span>Total Pembayaran:</span>
-                  <span style={{ color: "#4a151e" }}>
+                  <span className="checkout-summary-price">
                     {formatRupiah(getSelectedPackagePrice())}
                   </span>
                 </div>
@@ -405,28 +404,19 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
               </p>
 
               {paymentSuccessMsg && (
-                <div
-                  style={{
-                    backgroundColor: "#ecfdf5",
-                    color: "#065f46",
-                    padding: "0.6rem",
-                    borderRadius: "0.75rem",
-                    fontSize: "0.75rem",
-                    marginBottom: "0.75rem",
-                  }}
-                >
-                  {paymentSuccessMsg}
+                <div className="checkout-success-banner">
+                  <p className="checkout-success-banner__desc">{paymentSuccessMsg}</p>
                 </div>
               )}
 
-              <div className="checkout-summary-box" style={{ textAlign: "left" }}>
+              <div className="checkout-summary-box checkout-summary-box--left">
                 <div className="checkout-summary-row">
                   <span>Pemesan:</span>
                   <strong>{createdOrderData.order.buyer_name}</strong>
                 </div>
                 <div className="checkout-summary-row">
                   <span>Tautan:</span>
-                  <strong style={{ fontFamily: "monospace", color: "#4338ca" }}>
+                  <strong className="checkout-summary-code--link">
                     undang_an.digital/{createdOrderData.invitation.slug}
                   </strong>
                 </div>
@@ -436,19 +426,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                 </div>
                 <div className="checkout-summary-row checkout-summary-row--total">
                   <span>Status Pembayaran:</span>
-                  <span
-                    style={{
-                      padding: "0.15rem 0.5rem",
-                      borderRadius: "9999px",
-                      fontSize: "0.65rem",
-                      fontWeight: 800,
-                      textTransform: "uppercase",
-                      backgroundColor:
-                        createdOrderData.order.payment_status === "paid" ? "#d1fae5" : "#fef3c7",
-                      color:
-                        createdOrderData.order.payment_status === "paid" ? "#065f46" : "#b45309",
-                    }}
-                  >
+                  <span className="checkout-status-badge--success">
                     {createdOrderData.order.payment_status}
                   </span>
                 </div>
@@ -470,15 +448,14 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                   href={`/${createdOrderData.invitation.slug}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="checkout-btn-pay"
-                  style={{ display: "block", textDecoration: "none", marginTop: "1rem" }}
+                  className="checkout-btn-pay checkout-btn-pay--link"
                 >
                   🚀 Buka Undangan Digital Tamu →
                 </a>
               )}
             </div>
 
-            <div className="checkout-footer" style={{ justifyContent: "center" }}>
+            <div className="checkout-footer checkout-footer--center">
               <button type="button" onClick={onClose} className="checkout-btn-back">
                 Tutup Jendela
               </button>

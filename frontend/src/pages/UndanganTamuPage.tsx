@@ -189,10 +189,10 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
   // 1. Loading State
   if (loading) {
     return (
-      <div className="guest-view-wrapper" style={{ alignItems: "center" }}>
-        <div style={{ textAlign: "center", color: "#e5e7eb" }}>
-          <p style={{ fontSize: "1.2rem", fontWeight: 700 }}>Mempersiapkan Undangan Digital...</p>
-          <p style={{ fontSize: "0.85rem", color: "#9ca3af" }}>Mohon tunggu sebentar</p>
+      <div className="guest-view-wrapper guest-loading-wrapper">
+        <div className="guest-loading-box">
+          <p className="guest-loading-title">Mempersiapkan Undangan Digital...</p>
+          <p className="guest-loading-desc">Mohon tunggu sebentar</p>
         </div>
       </div>
     );
@@ -201,28 +201,16 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
   // 2. Error / Not Found / Expired
   if (error || !invitation) {
     return (
-      <div className="guest-view-wrapper" style={{ alignItems: "center", padding: "1.5rem" }}>
-        <div style={{ textAlign: "center", color: "#ffffff", maxWidth: "24rem" }}>
-          <span style={{ fontSize: "3rem" }}>⚠️</span>
-          <h2 style={{ fontFamily: "Georgia, serif", fontSize: "1.5rem", margin: "1rem 0 0.5rem 0" }}>
+      <div className="guest-view-wrapper guest-error-wrapper">
+        <div className="guest-error-box">
+          <span className="guest-error-icon">⚠️</span>
+          <h2 className="guest-error-title">
             Undangan Tidak Tersedia
           </h2>
-          <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1.5rem" }}>
+          <p className="guest-error-desc">
             {error || "Tautan undangan tidak ditemukan atau masa aktifnya telah berakhir."}
           </p>
-          <Link
-            to="/"
-            style={{
-              display: "inline-block",
-              padding: "0.65rem 1.25rem",
-              backgroundColor: "#ffffff",
-              color: "#1c1917",
-              borderRadius: "9999px",
-              fontWeight: 700,
-              fontSize: "0.8rem",
-              textDecoration: "none",
-            }}
-          >
+          <Link to="/" className="guest-error-btn">
             Kembali ke Beranda
           </Link>
         </div>
@@ -403,7 +391,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
               &ldquo;Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu
               dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.&rdquo;
               <br />
-              <strong style={{ display: "block", marginTop: "0.25rem", fontStyle: "normal" }}>
+              <strong className="guest-quote-source">
                 (QS. Ar-Rum: 21)
               </strong>
             </p>
@@ -420,7 +408,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
                   className="guest-couple-avatar"
                 />
               ) : (
-                <span style={{ fontSize: "2rem" }}>🤵</span>
+                <span className="guest-avatar-emoji">🤵</span>
               )}
               <h3 className="guest-couple-name">{pria?.nama || "Dimas Pratama, S.Kom"}</h3>
               <p className="guest-couple-parents">
@@ -430,7 +418,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
               </p>
             </div>
 
-            <div style={{ textAlign: "center", fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: "1.5rem", color: "#8c6d3b" }}>
+            <div className="guest-mempelai-ampersand">
               &
             </div>
 
@@ -443,7 +431,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
                   className="guest-couple-avatar"
                 />
               ) : (
-                <span style={{ fontSize: "2rem" }}>👰</span>
+                <span className="guest-avatar-emoji">👰</span>
               )}
               <h3 className="guest-couple-name">{wanita?.nama || "Adinda Putri Lestari, S.E"}</h3>
               <p className="guest-couple-parents">
@@ -479,7 +467,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
 
           {/* Rangkaian Acara (Akad & Resepsi) */}
           <section className="guest-events-section">
-            <h3 style={{ fontFamily: "Georgia, serif", fontSize: "1.5rem", fontWeight: 800, textAlign: "center", color: "#381118", margin: 0 }}>
+            <h3 className="guest-events-title">
               Rangkaian Acara
             </h3>
 
@@ -576,13 +564,13 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
               {details.amplop.map((rek, idx) => (
                 <div key={idx} className="guest-amplop-card">
                   <div>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#8c6d3b", textTransform: "uppercase" }}>
+                    <span className="guest-bank-badge">
                       {rek.bank}
                     </span>
-                    <p style={{ fontFamily: "monospace", fontSize: "1.1rem", fontWeight: 800, margin: "0.25rem 0", color: "#111827" }}>
+                    <p className="guest-bank-rek">
                       {rek.no_rek}
                     </p>
-                    <p style={{ fontSize: "0.75rem", color: "#6b7280", margin: 0 }}>
+                    <p className="guest-bank-holder">
                       a.n. {rek.atas_nama}
                     </p>
                   </div>
@@ -607,7 +595,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
 
             <form onSubmit={handleSubmitRsvp} className="guest-rsvp-card">
               {rsvpSuccess && (
-                <div style={{ backgroundColor: "#ecfdf5", color: "#065f46", padding: "0.65rem", borderRadius: "0.75rem", fontSize: "0.75rem", marginBottom: "0.75rem", fontWeight: 600 }}>
+                <div className="guest-rsvp-success">
                   {rsvpSuccess}
                 </div>
               )}
@@ -674,7 +662,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
 
             {/* List Ucapan Doa Realtime */}
             <div className="guest-guestbook-list">
-              <h4 style={{ fontSize: "0.75rem", fontWeight: 800, textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.05em", margin: "0 0 0.5rem 0" }}>
+              <h4 className="guest-guestbook-title">
                 Doa Restu Tamu ({rsvps.length})
               </h4>
               {rsvps.map((r) => (
@@ -682,13 +670,13 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
                   <div className="guest-guestbook-header">
                     <strong className="guest-guestbook-name">{r.guest_name}</strong>
                     <span
-                      className="guest-guestbook-status"
-                      style={{
-                        backgroundColor:
-                          r.attendance === "hadir" ? "#d1fae5" : r.attendance === "ragu" ? "#fef3c7" : "#f3f4f6",
-                        color:
-                          r.attendance === "hadir" ? "#065f46" : r.attendance === "ragu" ? "#92400e" : "#4b5563",
-                      }}
+                      className={`guest-guestbook-status ${
+                        r.attendance === "hadir"
+                          ? "guest-guestbook-status--hadir"
+                          : r.attendance === "ragu"
+                          ? "guest-guestbook-status--ragu"
+                          : "guest-guestbook-status--tidak-hadir"
+                      }`}
                     >
                       {r.attendance === "hadir"
                         ? `Hadir (${r.pax} org)`
@@ -705,22 +693,12 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
 
           {/* FR-D4: Viral Loop Footer */}
           <footer className="guest-footer">
-            <p style={{ margin: "0 0 0.5rem 0" }}>
-              Created with 🤍 by <strong style={{ color: "#381118" }}>asm.invitation</strong>
+            <p className="guest-footer-text">
+              Created with 🤍 by <strong className="guest-footer-brand">asm.invitation</strong>
             </p>
             <Link
               to="/"
-              style={{
-                display: "inline-block",
-                padding: "0.45rem 1rem",
-                borderRadius: "9999px",
-                backgroundColor: "#ffffff",
-                border: "1px solid #d5c9b8",
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                color: "#4a151e",
-                textDecoration: "none",
-              }}
+              className="guest-footer-btn"
             >
               ✨ Buat Undangan Digital Eksklusif Anda Sendiri
             </Link>

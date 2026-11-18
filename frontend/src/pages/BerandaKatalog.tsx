@@ -278,17 +278,11 @@ export default function BerandaKatalog() {
       ======================================================== */}
       <main id="katalog" className="katalog-grid-section">
         {filteredTemplates.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "4rem 0",
-              color: "#010710ff",
-            }}
-          >
-            <p style={{ fontWeight: 700, fontSize: "1.1rem" }}>
+          <div className="katalog-empty-state">
+            <p className="katalog-empty-title">
               Template tidak ditemukan
             </p>
-            <p style={{ fontSize: "0.85rem" }}>
+            <p className="katalog-empty-desc">
               Coba kata kunci lain atau pilih kategori acara berbeda.
             </p>
           </div>
@@ -350,14 +344,11 @@ export default function BerandaKatalog() {
                       </p>
                     </div>
                     <span
-                      style={{
-                        fontSize: "0.7rem",
-                        fontWeight: 700,
-                        color:
-                          item.package_type === "premium"
-                            ? "#6B1D2F"
-                            : "#047857",
-                      }}
+                      className={`katalog-card__quota-badge ${
+                        item.package_type === "premium"
+                          ? "katalog-card__quota-badge--premium"
+                          : "katalog-card__quota-badge--basic"
+                      }`}
                     >
                       {item.package_type === "premium"
                         ? "Kuota 20 Foto"
@@ -402,35 +393,13 @@ export default function BerandaKatalog() {
         <div className="katalog-pricing-grid">
           {/* Paket Basic */}
           <div className="pricing-table-card">
-            <h3
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 800,
-                margin: "0 0 0.5rem 0",
-                color: "#1f2937",
-              }}
-            >
+            <h3 className="pricing-plan-title">
               Paket Basic
             </h3>
-            <p
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: 900,
-                color: "#4a151e",
-                margin: "0 0 1rem 0",
-              }}
-            >
+            <p className="pricing-plan-price">
               Rp 79.000
             </p>
-            <ul
-              style={{
-                fontSize: "0.8rem",
-                color: "#4b5563",
-                lineHeight: 1.8,
-                paddingLeft: "1.2rem",
-                margin: 0,
-              }}
-            >
+            <ul className="pricing-plan-list">
               <li>Tanpa Galeri Foto (0 Foto)</li>
               <li>Masa Aktif 3 Bulan</li>
               <li>Form Data Acara Lengkap (Akad/Resepsi)</li>
@@ -442,35 +411,13 @@ export default function BerandaKatalog() {
           {/* Paket Premium */}
           <div className="pricing-table-card pricing-table-card--featured">
             <span className="pricing-badge-popular">Paling Diminati</span>
-            <h3
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 800,
-                margin: "0 0 0.5rem 0",
-                color: "#1f2937",
-              }}
-            >
+            <h3 className="pricing-plan-title">
               Paket Premium
             </h3>
-            <p
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: 900,
-                color: "#4a151e",
-                margin: "0 0 1rem 0",
-              }}
-            >
+            <p className="pricing-plan-price">
               Rp 149.000
             </p>
-            <ul
-              style={{
-                fontSize: "0.8rem",
-                color: "#4b5563",
-                lineHeight: 1.8,
-                paddingLeft: "1.2rem",
-                margin: 0,
-              }}
-            >
+            <ul className="pricing-plan-list">
               <li>
                 <strong>Galeri Kuota 20 Foto</strong>
               </li>
@@ -490,30 +437,15 @@ export default function BerandaKatalog() {
           5. SECTION DESAIN CUSTOM (#custom)
       ======================================================== */}
       <section id="custom" className="katalog-custom-section">
-        <h2
-          style={{
-            fontFamily: "Georgia, serif",
-            fontSize: "1.75rem",
-            fontWeight: 800,
-            margin: "0 0 0.5rem 0",
-          }}
-        >
+        <h2 className="katalog-custom-title">
           Punya Konsep Desain Impian Sendiri?
         </h2>
-        <p
-          style={{
-            fontSize: "0.9rem",
-            color: "#f3e8e2",
-            maxWidth: "36rem",
-            margin: "0 auto",
-            lineHeight: 1.6,
-          }}
-        >
+        <p className="katalog-custom-desc">
           Tim desainer studio asm.invitation siap membuatkan tema eksklusif
           sesuai adat, warna, dan konsep pernikahanmu.
         </p>
         <a
-          href="https://wa.me/6281234567890?text=Halo%20tim%20asm.invitation,%20saya%20tertarik%20konsultasi%20pembuatan%20undangan%20desain%20custom"
+          href="https://wa.me/62881012202821?text=Halo%20tim%20asm.invitation,%20saya%20tertarik%20konsultasi%20pembuatan%20undangan%20desain%20custom"
           target="_blank"
           rel="noreferrer"
           className="katalog-custom-btn"
