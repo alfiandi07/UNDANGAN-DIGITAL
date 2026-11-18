@@ -306,3 +306,4 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
     </div>
   );
 }
+

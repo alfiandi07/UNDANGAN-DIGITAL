@@ -247,3 +247,4 @@ export default function FormGaleri({
     </div>
   );
 }
+

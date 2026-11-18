@@ -184,3 +184,4 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
     </div>
   );
 }
+
