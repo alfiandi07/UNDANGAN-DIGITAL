@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import * as repo from "../repository/pengguna.js";
 import type { Peran } from "../models/pengguna.js";
 import { validateRealEmail } from "../lib/emailValidator.js";
-import { generateOtp, kirimEmailOtp } from "../lib/mailer.js";
+import { generateOtp, kirimEmailOtp, kirimEmailResetPassword } from "../lib/mailer.js";
 
 export async function daftarPengguna(_req: Request, res: Response) {
   res.json(await repo.semuaPengguna());
@@ -147,6 +147,72 @@ export async function kirimUlangOtpHandler(req: Request, res: Response) {
     success: true,
     message: "Kode OTP baru telah berhasil dikirim ke email Anda.",
   });
+}
+
+// POST /api/auth/forgot-password
+export async function lupaPasswordHandler(req: Request, res: Response) {
+  try {
+    const email = String(req.body?.email ?? "").trim().toLowerCase();
+    if (!email) {
+      res.status(400).json({ error: "Alamat email wajib diisi" });
+      return;
+    }
+
+    const pengguna = await repo.cariPenggunaByEmail(email);
+    if (!pengguna) {
+      res.status(404).json({ error: "Akun dengan email tersebut tidak ditemukan" });
+      return;
+    }
+
+    const otp = generateOtp();
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+    const result = await repo.simpanResetOtp(email, otp, otpExpires);
+    await kirimEmailResetPassword(email, result.nama, otp);
+
+    res.json({
+      success: true,
+      message: "Kode OTP untuk reset password telah dikirim ke email Anda.",
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Gagal memproses lupa password";
+    res.status(500).json({ error: msg });
+  }
+}
+
+// POST /api/auth/reset-password
+export async function resetPasswordHandler(req: Request, res: Response) {
+  try {
+    const email = String(req.body?.email ?? "").trim().toLowerCase();
+    const otp = String(req.body?.otp ?? "").trim();
+    const password = String(req.body?.password ?? "");
+
+    if (!email || !otp || !password) {
+      res.status(400).json({ error: "Email, kode OTP, dan password baru wajib diisi" });
+      return;
+    }
+
+    if (password.length < 6) {
+      res.status(400).json({ error: "Password baru minimal 6 karakter" });
+      return;
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    const hasil = await repo.verifikasiResetOtpDanUbahPassword(email, otp, hash);
+
+    if (!hasil.success) {
+      res.status(400).json({ error: hasil.message || "Gagal mengatur ulang password" });
+      return;
+    }
+
+    res.json({
+      success: true,
+      message: "Password berhasil diperbarui! Silakan login dengan password baru Anda.",
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Gagal mengatur ulang password";
+    res.status(500).json({ error: msg });
+  }
 }
 
 // DELETE /api/pengguna/:id

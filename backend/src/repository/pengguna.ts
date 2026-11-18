@@ -66,10 +66,20 @@ export async function cariPenggunaByEmail(
 
   try {
     // 1. Cek tabel admins
-    const [adminRows] = await pool.execute<RowDataPacket[]>(
-      "SELECT id, name as nama, email, password_hash as password, 'admin' as peran, is_verified, NULL as verification_otp, NULL as otp_expires_at FROM admins WHERE LOWER(email) = ?",
-      [cleanEmail]
-    );
+    let adminRows: RowDataPacket[] = [];
+    try {
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        "SELECT id, name as nama, email, password_hash as password, 'admin' as peran, is_verified, verification_otp, otp_expires_at FROM admins WHERE LOWER(email) = ?",
+        [cleanEmail]
+      );
+      adminRows = rows;
+    } catch {
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        "SELECT id, name as nama, email, password_hash as password, 'admin' as peran, is_verified, NULL as verification_otp, NULL as otp_expires_at FROM admins WHERE LOWER(email) = ?",
+        [cleanEmail]
+      );
+      adminRows = rows;
+    }
 
     if (adminRows.length > 0) {
       return adminRows[0] as BarisPengguna;
@@ -194,6 +204,111 @@ export async function simpanOtpBaru(
   );
 
   return result.affectedRows > 0;
+}
+
+// Simpan OTP Reset Password (bisa untuk Admin maupun Klien User)
+export async function simpanResetOtp(
+  email: string,
+  otp: string,
+  otpExpires: Date
+): Promise<{ success: boolean; nama: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const user = await cariPenggunaByEmail(cleanEmail);
+
+  if (!user) {
+    throw new Error("Akun dengan email tersebut tidak ditemukan");
+  }
+
+  if (user.peran === "admin") {
+    try {
+      await pool.execute(
+        "UPDATE admins SET verification_otp = ?, otp_expires_at = ? WHERE LOWER(email) = ?",
+        [otp, otpExpires, cleanEmail]
+      );
+    } catch (err: any) {
+      if (err?.code === "ER_BAD_FIELD_ERROR" || String(err?.message).includes("verification_otp")) {
+        try {
+          await pool.execute(
+            "ALTER TABLE admins ADD COLUMN verification_otp VARCHAR(6) NULL, ADD COLUMN otp_expires_at DATETIME NULL"
+          );
+          await pool.execute(
+            "UPDATE admins SET verification_otp = ?, otp_expires_at = ? WHERE LOWER(email) = ?",
+            [otp, otpExpires, cleanEmail]
+          );
+        } catch (alterErr) {
+          console.error("Gagal alter table admins:", alterErr);
+          throw alterErr;
+        }
+      } else {
+        throw err;
+      }
+    }
+  } else {
+    await pool.execute(
+      "UPDATE orders SET verification_otp = ?, otp_expires_at = ? WHERE LOWER(buyer_email) = ?",
+      [otp, otpExpires, cleanEmail]
+    );
+  }
+
+  return { success: true, nama: user.nama };
+}
+
+// Verifikasi OTP dan Update Password Baru
+export async function verifikasiResetOtpDanUbahPassword(
+  email: string,
+  otp: string,
+  newPasswordHash: string
+): Promise<{ success: boolean; message?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanOtp = otp.trim();
+
+  // 1. Cek Admin
+  try {
+    const [adminRows] = await pool.execute<RowDataPacket[]>(
+      "SELECT id, verification_otp, otp_expires_at FROM admins WHERE LOWER(email) = ?",
+      [cleanEmail]
+    );
+    if (adminRows.length > 0) {
+      const adm = adminRows[0];
+      if (!adm.verification_otp || adm.verification_otp !== cleanOtp) {
+        return { success: false, message: "Kode OTP salah atau tidak cocok" };
+      }
+      if (adm.otp_expires_at && new Date() > new Date(adm.otp_expires_at)) {
+        return { success: false, message: "Kode OTP telah kedaluwarsa. Silakan minta kode baru." };
+      }
+
+      await pool.execute(
+        "UPDATE admins SET password_hash = ?, verification_otp = NULL, otp_expires_at = NULL WHERE id = ?",
+        [newPasswordHash, adm.id]
+      );
+      return { success: true };
+    }
+  } catch {
+    // Abaikan jika kolom di admins belum ada, lanjut cek orders
+  }
+
+  // 2. Cek Orders (User)
+  const [orderRows] = await pool.execute<RowDataPacket[]>(
+    "SELECT id, verification_otp, otp_expires_at FROM orders WHERE LOWER(buyer_email) = ? ORDER BY id DESC LIMIT 1",
+    [cleanEmail]
+  );
+  if (orderRows.length > 0) {
+    const ord = orderRows[0];
+    if (!ord.verification_otp || ord.verification_otp !== cleanOtp) {
+      return { success: false, message: "Kode OTP salah atau tidak cocok" };
+    }
+    if (ord.otp_expires_at && new Date() > new Date(ord.otp_expires_at)) {
+      return { success: false, message: "Kode OTP telah kedaluwarsa. Silakan minta kode baru." };
+    }
+
+    await pool.execute(
+      "UPDATE orders SET password_hash = ?, is_verified = TRUE, verification_otp = NULL, otp_expires_at = NULL WHERE LOWER(buyer_email) = ?",
+      [newPasswordHash, cleanEmail]
+    );
+    return { success: true };
+  }
+
+  return { success: false, message: "Akun dengan email tersebut tidak ditemukan" };
 }
 
 // Menghapus pengguna (Admin atau Klien User)

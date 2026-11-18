@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BerandaKatalog from "./pages/BerandaKatalog";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProdukPage from "./pages/ProdukPage";
 import PenggunaPage from "./pages/PenggunaPage";
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/" element={<BerandaKatalog />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/daftar" element={<RegisterPage />} />
+          <Route path="/lupa-password" element={<ForgotPasswordPage />} />
 
           {/* Protected Area */}
           <Route path="/dashboard" element={<ProtectedRoute />}>

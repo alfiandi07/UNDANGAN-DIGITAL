@@ -77,7 +77,12 @@ export default function LoginPage() {
             </div>
 
             <div className="auth-field-group">
-              <label className="auth-label">Password</label>
+              <div className="auth-label-row">
+                <label className="auth-label">Password</label>
+                <Link to="/lupa-password" className="auth-link text-xs">
+                  Lupa password?
+                </Link>
+              </div>
               <div className="auth-password-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}

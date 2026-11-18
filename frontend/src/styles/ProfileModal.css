@@ -11,7 +11,7 @@
 
 /* Kotak Modal Utama */
 .profile-modal-container {
-  @apply bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border border-gray-100;
+  @apply bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border border-blue-100;
 }
 
 .profile-modal-title {

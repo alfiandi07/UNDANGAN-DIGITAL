@@ -22,6 +22,16 @@ authRouter.post(
   pengguna.kirimUlangOtpHandler,
 ); // POST /api/auth/resend-otp
 
+authRouter.post(
+  "/forgot-password",
+  pengguna.lupaPasswordHandler,
+); // POST /api/auth/forgot-password
+
+authRouter.post(
+  "/reset-password",
+  pengguna.resetPasswordHandler,
+); // POST /api/auth/reset-password
+
 export const penggunaRouter = Router();
 penggunaRouter.get(
   "/",

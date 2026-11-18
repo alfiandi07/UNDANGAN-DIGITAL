@@ -77,7 +77,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   return (
     <div className="profile-modal-overlay">
       <div className="profile-modal-container">
-        <h3 className="profile-modal-title">👤 Pengaturan Profil Akun</h3>
+        <h3 className="profile-modal-title">Pengaturan Profil Akun</h3>
         <p className="profile-modal-subtitle">
           Kelola informasi nama dan kata sandi akun Anda.
         </p>

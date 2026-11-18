@@ -74,6 +74,20 @@ export function kirimUlangOtp(email: string) {
   });
 }
 
+export function mintaResetPassword(email: string) {
+  return request<{ success: boolean; message: string }>("/api/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPassword(email: string, otp: string, password: string) {
+  return request<{ success: boolean; message: string }>("/api/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email, otp, password }),
+  });
+}
+
 // ── Produk CRUD ────────────────────────────────────────
 export function ambilSemuaProduk() {
   return request<Produk[]>("/api/produk");
