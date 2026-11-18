@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ProfileModal from "../components/profile/ProfileModal";
 import "../styles/Dashboard.css";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   function handleLogout() {
     logout();
@@ -54,6 +57,15 @@ export default function DashboardPage() {
           </div>
 
           <div className="dashboard-header-right">
+            <button
+              type="button"
+              onClick={() => setIsProfileOpen(true)}
+              className="dashboard-btn-profile"
+              title="Edit Profil Saya"
+            >
+              👤 Profil Saya
+            </button>
+
             <span className="dashboard-user-greeting">
               Halo, <strong style={{ color: "#111827" }}>{user?.nama}</strong>
             </span>
@@ -81,6 +93,12 @@ export default function DashboardPage() {
       <main className="dashboard-content-container">
         <Outlet />
       </main>
+
+      {/* Modal Pengaturan Profil Saya */}
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
     </div>
   );
 }

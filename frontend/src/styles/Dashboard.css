@@ -118,6 +118,27 @@
   border: 1px solid #a7f3d0;
 }
 
+.dashboard-btn-profile {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #381118;
+  background-color: #f5efe6;
+  border: 1px solid #e8dec8;
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.15s ease;
+}
+
+.dashboard-btn-profile:hover {
+  background-color: #4a151e;
+  color: #ffffff;
+  border-color: #4a151e;
+}
+
 .dashboard-btn-logout {
   font-size: 0.75rem;
   font-weight: 600;
