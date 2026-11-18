@@ -83,8 +83,8 @@ export async function createOrder(req: Request, res: Response) {
       (pkg === "premium"
         ? template.price_special || 149000
         : template.price_standard || 99000);
-    // Standar = 0 foto (tanpa foto), Premium = 30 foto
-    const maxPhotos = pkg === "premium" ? 30 : 0;
+    // Standar = 0 foto (tanpa foto), Premium = 10 foto
+    const maxPhotos = pkg === "premium" ? 10 : 0;
 
     const expiresAt = hitungMasaAktif(pkg);
 
@@ -433,7 +433,7 @@ export async function uploadPhotoHandler(req: Request, res: Response) {
       return;
     }
 
-    // 1. Cek Kuota Paket (Standar = 0 foto, Premium = maks 30 foto)
+    // 1. Cek Kuota Paket (Standar = 0 foto, Premium = maks 10 foto)
     if (invitation.max_photos === 0) {
       res.status(403).json({
         error: "Paket Standar tidak mendukung galeri foto. Silakan upgrade ke Paket Premium.",

@@ -127,7 +127,7 @@ export default function EditorUndanganPage() {
     const files = e.target.files;
     if (!files || files.length === 0 || !slug) return;
 
-    const max = invitation?.max_photos ?? 30;
+    const max = invitation?.max_photos ?? 10;
     const current = eventDetails.photos?.length ?? 0;
 
     if (max === 0) {
@@ -169,7 +169,7 @@ export default function EditorUndanganPage() {
 
   function handleTambahFoto() {
     if (!newPhotoUrl.trim()) return;
-    const max = invitation?.max_photos ?? 30;
+    const max = invitation?.max_photos ?? 10;
     const current = eventDetails.photos?.length ?? 0;
 
     if (max === 0) {
@@ -879,7 +879,7 @@ export default function EditorUndanganPage() {
                 <span className="text-3xl">📷</span>
                 <h4 className="font-bold text-amber-900 text-sm">Paket Standar Tanpa Galeri Foto</h4>
                 <p className="text-xs text-amber-800 max-w-md mx-auto leading-relaxed">
-                  Undangan Anda terdaftar pada <strong>Paket Standar</strong> dengan layout elegan tanpa galeri foto. Jika ingin menambahkan galeri hingga 30 foto berkualitas tinggi, silakan upgrade ke <strong>Paket Premium</strong>.
+                  Undangan Anda terdaftar pada <strong>Paket Standar</strong> dengan layout elegan tanpa galeri foto. Jika ingin menambahkan galeri hingga 10 foto berkualitas tinggi, silakan upgrade ke <strong>Paket Premium</strong>.
                 </p>
               </div>
             ) : (
@@ -918,7 +918,7 @@ export default function EditorUndanganPage() {
                         className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-40 cursor-pointer"
                       >
                         <span>📁</span>
-                        {isQuotaFull ? "Kuota 30 Foto Penuh" : "Pilih Foto dari Galeri HP / PC"}
+                        {isQuotaFull ? "Kuota 10 Foto Penuh" : "Pilih Foto dari Galeri HP / PC"}
                       </button>
                     )}
                   </div>

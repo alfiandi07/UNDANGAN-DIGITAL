@@ -199,7 +199,7 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                 <p className="checkout-package-card__price">{formatRupiah(packagePrice)}</p>
                 <p className="checkout-package-card__features">
                   {selectedPackage === "premium"
-                    ? "Maksimal 30 Foto (Cloudinary) • Musik Autoplay • Masa Aktif 12 Bulan"
+                    ? "Maksimal 10 Foto (Cloudinary) • Musik Autoplay • Masa Aktif 12 Bulan"
                     : "Tanpa Galeri Foto (0 Foto) • Form Acara Lengkap • Masa Aktif 6 Bulan"}
                 </p>
               </div>

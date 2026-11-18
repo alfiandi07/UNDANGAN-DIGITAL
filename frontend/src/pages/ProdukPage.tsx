@@ -366,7 +366,7 @@ export default function ProdukPage() {
                       </p>
                       <p className="text-[10px] text-gray-400 mt-0.5">
                         {item.package_type === "premium"
-                          ? "Maks. 30 Foto • 12 Bln"
+                          ? "Maks. 10 Foto • 12 Bln"
                           : "Tanpa Foto • 6 Bln"}
                       </p>
                     </td>
