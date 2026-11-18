@@ -360,7 +360,7 @@ export default function BerandaKatalog() {
                       }}
                     >
                       {item.package_type === "premium"
-                        ? "Kuota 10 Foto"
+                        ? "Kuota 20 Foto"
                         : "Tanpa Foto"}
                     </span>
                   </div>
@@ -472,7 +472,7 @@ export default function BerandaKatalog() {
               }}
             >
               <li>
-                <strong>Galeri Kuota 10 Foto</strong>
+                <strong>Galeri Kuota 20 Foto</strong>
               </li>
               <li>
                 <strong>Masa Aktif 12 Bulan Penuh</strong>

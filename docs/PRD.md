@@ -137,10 +137,10 @@ Sistem menerapkan model produk di mana **setiap template adalah produk mandiri y
 | :--- | :--- | :--- |
 | **Konsep Desain** | Layout clean, fokus teks & ornamen minimalis elegan | Desain mewah, ornamen eksklusif, tata letak visual premium |
 | **Harga Produk** | **Ditetapkan bebas oleh Admin** saat upload (misal: Rp 49.000 / Rp 69.000) | **Ditetapkan bebas oleh Admin** saat upload (misal: Rp 99.000 / Rp 149.000) |
-| **Galeri Foto (`max_photos`)** | **Tanpa Foto** (`0 Foto`) – Form galeri foto otomatis dikunci | **Maksimal 10 Foto** (Auto-WebP, slider & grid interaktif, cepat dimuat di HP) |
+| **Galeri Foto (`max_photos`)** | **Tanpa Foto** (`0 Foto`) – Form galeri foto otomatis dikunci | **Maksimal 20 Foto** (Auto-WebP, slider & grid interaktif, cepat dimuat di HP) |
 | **Batas Ukuran per Foto** | N/A (Tanpa unggahan foto) | Maks. 800 KB per foto (Auto-kompresi ke WebP) |
 | **Masa Aktif Link (`expires_at`)** | **6 Bulan** (180 Hari dari aktivasi) | **12 Bulan** (365 Hari dari aktivasi) |
-| **Fitur Interaktif** | Hitung Mundur, Navigasi Maps, RSVP, Generator Nama Tamu WhatsApp, Amplop Digital | Semua fitur Standar + **Galeri Foto 10 Slot, Autoplay Musik Latar, Animasi & Desain Mewah** |
+| **Fitur Interaktif** | Hitung Mundur, Navigasi Maps, RSVP, Generator Nama Tamu WhatsApp, Amplop Digital | Semua fitur Standar + **Galeri Foto 20 Slot, Autoplay Musik Latar, Animasi & Desain Mewah** |
 | **Jadwal Auto-Delete Cloudinary** | N/A (Tidak ada beban foto di cloud) | **H+14** setelah status *Expired* |
 
 **Aturan Bisnis Utama:**
@@ -148,7 +148,7 @@ Sistem menerapkan model produk di mana **setiap template adalah produk mandiri y
 2. **Keterikatan Desain & Paket:** Pembeli **tidak dapat membeli template yang sama di paket berbeda** karena tata letak/arsitektur desainnya terpisah sejak awal. Pembeli memilih template berdasarkan preview desain dan paket yang sudah ditentukan.
 3. **Fleksibilitas Harga Admin:** Admin bebas menentukan harga promo, diskon, atau harga pasar untuk setiap template tanpa batasan sistem kaku.
 4. **Kebijakan Kuota Foto Ringan & Cepat:**
-   * Kuota galeri foto Paket Premium dibatasi maksimal **10 Foto** agar undangan tetap ringan, cepat dibuka di HP tamu, dan hemat kapasitas server/cloud storage. Sistem tidak menggunakan fitur add-on penambahan kuota foto agar performa undangan tetap optimal.
+   * Kuota galeri foto Paket Premium dibatasi maksimal **20 Foto** agar undangan tetap ringan, cepat dibuka di HP tamu, dan hemat kapasitas server/cloud storage. Sistem tidak menggunakan fitur add-on penambahan kuota foto agar performa undangan tetap optimal.
 
 ---
 
@@ -164,7 +164,7 @@ Sistem menerapkan model produk di mana **setiap template adalah produk mandiri y
 * **FR-B2 (Auto-Activation Webhook):** Endpoint `POST /api/payment/webhook` menangkap sinyal `settlement` atau `capture` dari Midtrans, lalu secara otomatis:
   1. Mengubah status pesanan menjadi `paid`.
   2. Mengaktifkan akses dashboard klien.
-  3. Mengatur nilai `max_photos` ($0$ untuk Standar, $10$ untuk Premium) dan menghitung tanggal `expires_at` ($+6$ bulan untuk Standar, $+12$ bulan untuk Premium).
+  3. Mengatur nilai `max_photos` ($0$ untuk Standar, $20$ untuk Premium) dan menghitung tanggal `expires_at` ($+6$ bulan untuk Standar, $+12$ bulan untuk Premium).
 
 ### 4.3. Modul C: Dashboard Klien & Editor Undangan (Multi-Acara)
 * **FR-C1 (Dynamic Event Form):** Formulir pengisian data menyesuaikan labelnya secara dinamis berdasarkan kategori acara:
@@ -173,7 +173,7 @@ Sistem menerapkan model produk di mana **setiap template adalah produk mandiri y
   * *Ulang Tahun:* Nama yang Berulang Tahun, Usia/Keberapa, Waktu & Lokasi Pesta.
 * **FR-C2 (Photo Quota Enforcer & Package Lock):** 
   * Untuk **Paket Standar**: Bagian galeri foto otomatis dinonaktifkan (keterangan: *Paket Standar Tanpa Galeri Foto*).
-  * Untuk **Paket Premium**: *Middleware* Express.js memeriksa kuota foto ($\text{current\_photos} < \text{max\_photos}$, maks 10). Jika kuota penuh, unggahan foto ditolak dengan pemberitahuan kuota 10 foto tercapai.
+  * Untuk **Paket Premium**: *Middleware* Express.js memeriksa kuota foto ($\text{current\_photos} < \text{max\_photos}$, maks 20). Jika kuota penuh, unggahan foto ditolak dengan pemberitahuan kuota 20 foto tercapai.
 * **FR-C3 (WhatsApp Guest Link Generator):** Fitur bagi klien untuk memasukkan daftar nama tamu (per baris) dan menghasilkan tautan siap bagikan ke WhatsApp dengan parameter `?to=Nama+Tamu`.
 
 ### 4.4. Modul D: Halaman Undangan Tamu (Guest View & Viral Loop)
@@ -269,7 +269,7 @@ CREATE TABLE invitations (
     slug VARCHAR(100) UNIQUE NOT NULL, -- contoh: bagas-sekar
     template_id INT NOT NULL,
     package_type ENUM('standard', 'premium') NOT NULL,
-    max_photos INT NOT NULL DEFAULT 0, -- 0 untuk Standard (tanpa foto), 10 untuk Premium
+    max_photos INT NOT NULL DEFAULT 0, -- 0 untuk Standard (tanpa foto), 20 untuk Premium
     current_photos INT NOT NULL DEFAULT 0,
     event_details JSON NOT NULL, -- Menyimpan profil acara, waktu, maps, & array foto Cloudinary
     status ENUM('draft', 'active', 'expired', 'cleaned') DEFAULT 'draft',

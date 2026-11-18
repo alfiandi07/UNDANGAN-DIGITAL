@@ -220,7 +220,7 @@ export default function TemplateModalForm({
                     👑 PREMIUM
                   </span>
                   <span className="text-xs text-amber-800 mt-1">
-                    Desain mewah • <strong>Galeri 10 foto</strong> • Musik
+                    Desain mewah • <strong>Galeri 20 foto</strong> • Musik
                     autoplay • Masa aktif 12 bulan
                   </span>
                 </button>
