@@ -22,13 +22,13 @@
     sans-serif;
 }
 
-/* 1.1 FULL FIXED FLORAL BACKGROUND (Full HD 1920x1080 - Nuansa Biru Cerah) */
+/* 1.1 FULL FIXED FLORAL BACKGROUND (WebP Kompresi Ringan 76KB - Nuansa Biru Cerah) */
 .katalog-floral-bg {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("/bg-wedding-floral-hd.jpg?v=1");
+  background-image: url("/bg-wedding-floral.webp?v=2");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
