@@ -343,6 +343,7 @@ export type Invitation = {
   event_details: EventDetails;
   status: "draft" | "active" | "expired" | "cleaned";
   expires_at: string;
+  is_expired?: boolean;
   created_at?: string;
   template_title?: string;
   buyer_name?: string;

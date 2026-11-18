@@ -230,33 +230,64 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
     );
   }
 
-  // 3. Status Gatekeeper: Expired / Draft
-  if (invitation.status === "expired" || invitation.status === "cleaned") {
+  // 3. Status Gatekeeper: Expired / Cleaned (FR-D2)
+  const isExpired =
+    !isDemoMode &&
+    (invitation.is_expired ||
+      invitation.status === "expired" ||
+      invitation.status === "cleaned" ||
+      (invitation.expires_at ? new Date() > new Date(invitation.expires_at) : false));
+
+  if (isExpired) {
+    const namaPria = invitation.event_details?.mempelai?.pria?.panggilan || invitation.event_details?.mempelai?.pria?.nama;
+    const namaWanita = invitation.event_details?.mempelai?.wanita?.panggilan || invitation.event_details?.mempelai?.wanita?.nama;
+    const judulAcara =
+      namaPria && namaWanita
+        ? `${namaPria} & ${namaWanita}`
+        : invitation.event_details?.title || invitation.buyer_name || "Mempelai";
+
+    let tglBerakhir = "";
+    if (invitation.expires_at) {
+      try {
+        tglBerakhir = new Date(invitation.expires_at).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      } catch {}
+    }
+
     return (
-      <div className="guest-view-wrapper" style={{ alignItems: "center", padding: "1.5rem" }}>
-        <div style={{ textAlign: "center", color: "#ffffff", maxWidth: "24rem" }}>
-          <span style={{ fontSize: "3rem" }}>⏳</span>
-          <h2 style={{ fontFamily: "Georgia, serif", fontSize: "1.5rem", margin: "1rem 0 0.5rem 0" }}>
-            Masa Aktif Undangan Berakhir
-          </h2>
-          <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1.5rem" }}>
-            Undangan ini telah melampaui masa aktif paket yang dipilih. Terima kasih atas pengertiannya.
+      <div className="guest-view-wrapper expired-invitation-container">
+        <div className="expired-invitation-card">
+          <div className="expired-icon-bubble">
+            ⏳
+          </div>
+          <span className="expired-tag">Masa Aktif Berakhir</span>
+          <h2 className="expired-title">Masa Aktif Undangan Selesai</h2>
+          <p className="expired-event-name">{judulAcara}</p>
+          <p className="expired-message">
+            Masa aktif penayangan undangan digital ini telah selesai. Seluruh data acara, galeri foto, dan amplop digital telah dinonaktifkan demi privasi dan keamanan. Terima kasih atas seluruh doa restu dan perhatian yang telah diberikan.
           </p>
-          <Link
-            to="/"
-            style={{
-              display: "inline-block",
-              padding: "0.65rem 1.25rem",
-              backgroundColor: "#ffffff",
-              color: "#1c1917",
-              borderRadius: "9999px",
-              fontWeight: 700,
-              fontSize: "0.8rem",
-              textDecoration: "none",
-            }}
-          >
-            Buat Undangan Baru
-          </Link>
+
+          {tglBerakhir && (
+            <div className="expired-date-info">
+              Masa aktif berakhir pada: <strong>{tglBerakhir}</strong>
+            </div>
+          )}
+
+          <div className="expired-actions">
+            <Link to="/login" className="expired-btn-owner">
+              👤 Pemilik Undangan? Masuk Dashboard
+            </Link>
+            <Link to="/" className="expired-btn-catalog">
+              ✨ Buat Undangan Digital Baru
+            </Link>
+          </div>
+
+          <div className="expired-footer">
+            Platform Katalog & Generator Undangan Digital &bull; <Link to="/">asm.invitation</Link>
+          </div>
         </div>
       </div>
     );

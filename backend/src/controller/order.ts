@@ -344,6 +344,22 @@ export async function getInvitationBySlug(req: Request, res: Response) {
       res.status(404).json({ error: "Undangan tidak ditemukan" });
       return;
     }
+
+    // FR-D2: Expiration Gatekeeper
+    const now = new Date();
+    const expiresAt = new Date(invitation.expires_at);
+    const isExpired =
+      invitation.status === "expired" ||
+      invitation.status === "cleaned" ||
+      now > expiresAt;
+
+    if (isExpired && invitation.status === "active") {
+      await repo.updateInvitationStatus(invitation.id, "expired");
+      invitation.status = "expired";
+    }
+
+    invitation.is_expired = isExpired;
+
     res.json(invitation);
   } catch (err) {
     res.status(500).json({ error: "Gagal mengambil data undangan" });

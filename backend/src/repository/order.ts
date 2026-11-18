@@ -207,3 +207,10 @@ export async function updateEventDetails(
   );
   return cariInvitationBySlug(slug);
 }
+
+export async function updateInvitationStatus(
+  id: number,
+  status: "draft" | "active" | "expired" | "cleaned"
+): Promise<void> {
+  await pool.execute("UPDATE invitations SET status = ? WHERE id = ?", [status, id]);
+}
