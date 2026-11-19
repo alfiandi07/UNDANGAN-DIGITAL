@@ -1,141 +1,113 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   TransaksiPage Stylesheet (Ocean Blue Theme for Buyer & Admin)
+   TransaksiPage Stylesheet (Option B: Warm Luxury Alabaster Theme)
    ============================================================================ */
 
-/* 1. Page Container dengan Nuansa Biru Laut */
+/* 1. Page Container */
 .transaksi-page-container {
-  @apply space-y-6 rounded-2xl p-4 transition-all;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
-  border: 1px solid #bae6fd;
-}
-
-@media (min-width: 640px) {
-  .transaksi-page-container {
-    @apply p-6;
-  }
+  @apply space-y-6;
 }
 
 /* 2. Header Banner */
 .transaksi-header-card {
-  @apply bg-white/95 p-6 rounded-2xl shadow-xs border border-sky-200 flex flex-col justify-between items-start gap-4 backdrop-blur-xs;
-}
-
-@media (min-width: 640px) {
-  .transaksi-header-card {
-    @apply flex-row items-center;
-  }
+  @apply bg-white p-6 rounded-2xl shadow-xs border border-[#E7E4DC] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4;
 }
 
 .transaksi-header-title {
-  @apply text-2xl font-bold font-serif text-gray-900;
+  @apply text-xl sm:text-2xl font-bold font-serif text-slate-900 tracking-tight;
 }
 
 .transaksi-header-subtitle {
-  @apply text-xs text-gray-500 mt-1;
-}
-
-@media (min-width: 640px) {
-  .transaksi-header-subtitle {
-    @apply text-sm;
-  }
+  @apply text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed;
 }
 
 .transaksi-btn-pesan-baru {
-  @apply px-4 py-2 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer;
+  @apply inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs cursor-pointer;
 }
 
 /* 3. Kartu Undangan Pembeli */
 .invitation-section-title {
-  @apply text-sm font-bold uppercase tracking-wider text-sky-900 flex items-center gap-1.5;
+  @apply text-xs font-bold uppercase tracking-wider text-[#69584F] flex items-center gap-1.5;
 }
 
 .invitation-grid {
-  @apply grid grid-cols-1 gap-4;
-}
-
-@media (min-width: 768px) {
-  .invitation-grid {
-    @apply grid-cols-2;
-  }
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
 }
 
 .invitation-card {
-  @apply bg-white/95 p-5 rounded-2xl border border-sky-200 shadow-xs space-y-3 transition hover:shadow-md;
+  @apply bg-white p-5 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-3 transition hover:shadow-sm;
 }
 
 .invitation-package-tag {
-  @apply text-[10px] font-bold uppercase text-[#8C6D3B] tracking-wider;
+  @apply text-[10px] font-bold uppercase text-[#8C6D38] tracking-wider;
 }
 
 .invitation-card-title {
-  @apply text-lg font-serif font-bold text-[#3B171D];
+  @apply text-base font-serif font-bold text-slate-900;
+}
+
+.badge-status-active {
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80;
+}
+
+.badge-status-draft {
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/80;
 }
 
 .invitation-info-box {
-  @apply p-3 bg-sky-50/70 rounded-xl text-xs space-y-1.5 border border-sky-100;
+  @apply p-3.5 bg-[#FAF9F6] rounded-xl text-xs space-y-2 border border-[#E7E4DC]/80;
 }
 
 .invitation-btn-preview {
-  @apply flex-1 py-2 text-center text-xs font-bold border border-sky-200 rounded-xl text-[#4A151E] bg-white hover:bg-sky-50 transition;
+  @apply flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-center text-xs font-medium border border-slate-200/90 rounded-xl text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-2xs;
 }
 
 .invitation-btn-edit {
-  @apply flex-1 py-2 text-center text-xs font-bold bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl transition shadow-xs cursor-pointer;
+  @apply flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-center text-xs font-semibold bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl transition-colors shadow-xs cursor-pointer;
 }
 
 /* 4. Tabel Pesanan (Admin & Pembeli) */
 .transaksi-table-card {
-  @apply bg-white/95 rounded-2xl shadow-xs border border-sky-200 overflow-hidden backdrop-blur-xs;
+  @apply bg-white rounded-2xl shadow-xs border border-[#E7E4DC] overflow-hidden;
 }
 
 .transaksi-table-header-box {
-  @apply p-4 border-b border-sky-100 bg-sky-50/60 flex items-center justify-between;
+  @apply px-6 py-4 border-b border-[#E7E4DC] bg-[#F4F1EA] flex items-center justify-between;
 }
 
 .transaksi-table-title {
-  @apply text-sm font-bold text-sky-950;
+  @apply text-xs font-bold uppercase tracking-wider text-[#69584F];
 }
 
 .transaksi-table {
-  @apply w-full text-left text-xs text-gray-600;
+  @apply w-full text-left text-xs border-collapse;
 }
 
 .transaksi-th {
-  @apply px-6 py-4 bg-sky-100/70 text-[11px] uppercase text-sky-900 font-bold border-b border-sky-200;
+  @apply px-6 py-3.5 bg-[#F4F1EA] text-[11px] font-bold uppercase tracking-wider text-[#69584F] border-b border-[#E7E4DC];
 }
 
 .transaksi-td {
-  @apply px-6 py-4;
+  @apply px-6 py-4.5 text-xs text-slate-600 align-middle;
 }
 
 .transaksi-row {
-  @apply hover:bg-sky-50/60 transition;
-}
-
-/* 5. Status Badges */
-.badge-status-active {
-  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-emerald-100 text-emerald-800;
-}
-
-.badge-status-draft {
-  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-amber-100 text-amber-800;
+  @apply hover:bg-[#FBF9F5] transition-colors;
 }
 
 .badge-payment-paid {
-  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-emerald-100 text-emerald-700;
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80;
 }
 
 .badge-payment-pending {
-  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-amber-100 text-amber-700;
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/80;
 }
 
 .badge-payment-failed {
-  @apply px-2.5 py-1 text-[10px] font-bold rounded-full uppercase bg-red-100 text-red-700;
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200/80;
 }
 
 .btn-bayar-simulasi {
-  @apply px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50;
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer;
 }
-

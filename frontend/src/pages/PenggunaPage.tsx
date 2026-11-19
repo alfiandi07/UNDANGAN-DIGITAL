@@ -105,92 +105,103 @@ export default function PenggunaPage() {
 
   if (user?.peran !== "admin") {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-xl">
-        <h3 className="font-bold text-lg mb-1">Akses Ditolak</h3>
-        <p className="text-sm">Halaman ini hanya dapat diakses oleh akun dengan peran Administrator.</p>
+      <div className="bg-rose-50 border border-rose-200 text-rose-700 p-6 rounded-2xl max-w-md mx-auto my-12 text-center space-y-2">
+        <h3 className="font-bold text-base font-serif">Akses Ditolak</h3>
+        <p className="text-xs text-rose-600">Halaman ini hanya dapat diakses oleh akun dengan peran Administrator.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-800">Daftar Pengguna</h2>
-        <p className="text-sm text-gray-500">
-          Daftar semua pengguna yang terdaftar di sistem Undangan Digital
+      {/* Header Banner */}
+      <div className="bg-white p-6 rounded-2xl shadow-xs border border-[#E7E4DC]">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 font-serif tracking-tight">
+          Daftar Pengguna
+        </h2>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
+          Daftar semua akun pengguna dan administrator yang terdaftar di sistem Undangan Digital.
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
-          {error}
+        <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-xs font-medium flex items-center gap-2.5">
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Tabel Pengguna */}
+      <div className="bg-white rounded-2xl shadow-xs border border-[#E7E4DC] overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-3" />
-            <p>Memuat data pengguna...</p>
+          <div className="p-12 text-center text-slate-500">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
+            <p className="text-xs">Memuat data pengguna...</p>
           </div>
         ) : penggunaList.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
-            <p>Belum ada pengguna terdaftar.</p>
+          <div className="p-12 text-center text-slate-400">
+            <p className="text-sm font-semibold text-slate-700">Belum ada pengguna terdaftar.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-gray-50/80 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  <th className="px-6 py-4">ID</th>
-                  <th className="px-6 py-4">Nama</th>
-                  <th className="px-6 py-4">Email</th>
-                  <th className="px-6 py-4">Peran & Status</th>
-                  <th className="px-6 py-4 text-center">Aksi</th>
+                <tr className="bg-[#F4F1EA] text-[11px] font-bold uppercase tracking-wider text-[#69584F] border-b border-[#E7E4DC]">
+                  <th className="px-6 py-3.5">ID</th>
+                  <th className="px-6 py-3.5">Nama</th>
+                  <th className="px-6 py-3.5">Email</th>
+                  <th className="px-6 py-3.5">Peran &amp; Status</th>
+                  <th className="px-6 py-3.5 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 text-sm">
+              <tbody className="divide-y divide-[#E7E4DC]/60">
                 {penggunaList.map((item) => (
-                  <tr key={`${item.peran}-${item.id}`} className="hover:bg-gray-50/50 transition">
-                    <td className="px-6 py-4 font-mono text-gray-500">#{item.id}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900">{item.nama}</td>
-                    <td className="px-6 py-4 text-gray-600 font-mono text-xs">{item.email}</td>
-                    <td className="px-6 py-4">
+                  <tr key={`${item.peran}-${item.id}`} className="hover:bg-[#FBF9F5] transition-colors">
+                    <td className="px-6 py-4.5 font-mono text-slate-400 text-xs">#{item.id}</td>
+                    <td className="px-6 py-4.5 font-semibold text-slate-900 text-sm">{item.nama}</td>
+                    <td className="px-6 py-4.5 text-slate-500 font-mono text-xs">{item.email}</td>
+                    <td className="px-6 py-4.5">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span
-                          className={`px-2.5 py-0.5 text-xs font-semibold rounded-full uppercase ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                             item.peran === "admin"
-                              ? "bg-indigo-100 text-indigo-700"
-                              : "bg-gray-100 text-gray-700"
+                              ? "bg-[#FAF4E8] text-[#8C6D38] border border-[#E9DCBF]"
+                              : "bg-slate-100 text-slate-700 border border-slate-200"
                           }`}
                         >
                           {item.peran}
                         </span>
                         {item.peran !== "admin" && (
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold ${
                               item.is_verified
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : "bg-amber-50 text-amber-700 border border-amber-200"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200/80"
+                                : "bg-amber-50 text-amber-700 border border-amber-200/80"
                             }`}
                           >
-                            {item.is_verified ? "✓ Terverifikasi" : "Belum Verif"}
+                            <span className={`w-1 h-1 rounded-full ${item.is_verified ? "bg-emerald-500" : "bg-amber-500"}`} />
+                            {item.is_verified ? "Terverifikasi" : "Belum Verif"}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4.5 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <button
                           type="button"
                           onClick={() => handleBukaEdit(item)}
-                          className="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100/80 border border-slate-200/90 rounded-lg transition-colors cursor-pointer shadow-2xs"
                           title="Ubah data pengguna"
                         >
-                          ✏️ Edit
+                          <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          <span>Edit</span>
                         </button>
                         {user?.email.toLowerCase() === item.email.toLowerCase() ? (
-                          <span className="text-xs text-gray-400 italic font-medium">
+                          <span className="text-[11px] text-slate-400 italic font-medium px-2 py-1">
                             (Akun Anda)
                           </span>
                         ) : (
@@ -198,10 +209,13 @@ export default function PenggunaPage() {
                             type="button"
                             onClick={() => handleHapusPengguna(item)}
                             disabled={deletingId === item.id}
-                            className="px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition cursor-pointer disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50/70 hover:bg-rose-100/80 border border-rose-200/70 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                             title="Hapus akun pengguna ini"
                           >
-                            {deletingId === item.id ? "Menghapus..." : "🗑️ Hapus"}
+                            <svg className="w-3.5 h-3.5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <span>{deletingId === item.id ? "Menghapus..." : "Hapus"}</span>
                           </button>
                         )}
                       </div>
@@ -214,89 +228,106 @@ export default function PenggunaPage() {
         )}
       </div>
 
+      {/* Modal Edit Data Pengguna */}
       {editItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <h3 className="text-lg font-bold text-gray-900 font-serif mb-1">
-              Edit Data Pengguna
-            </h3>
-            <p className="text-xs text-gray-500 mb-4">
-              Ubah informasi akun pengguna #{editItem.id} ({editItem.peran}).
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border border-[#E7E4DC]">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 font-serif">
+                  Edit Data Pengguna
+                </h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Ubah informasi akun #{editItem.id} ({editItem.peran}).
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditItem(null)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
             {modalError && (
-              <div className="bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200 mb-4">
-                {modalError}
+              <div className="bg-rose-50 text-rose-700 text-xs p-3 rounded-xl border border-rose-200 mb-4 font-medium flex items-center gap-2">
+                <svg className="w-4 h-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>{modalError}</span>
               </div>
             )}
 
             <form onSubmit={handleSimpanEdit} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Nama Lengkap</label>
+                <label className="block font-medium text-slate-700 mb-1">Nama Lengkap</label>
                 <input
                   type="text"
                   required
                   value={editNama}
                   onChange={(e) => setEditNama(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs text-slate-900 bg-white transition-all"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Alamat Email</label>
+                <label className="block font-medium text-slate-700 mb-1">Alamat Email</label>
                 <input
                   type="email"
                   required
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm font-mono"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs font-mono text-slate-900 bg-white transition-all"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Peran Akun</label>
+                <label className="block font-medium text-slate-700 mb-1">Peran Akun</label>
                 <select
                   value={editPeran}
                   onChange={(e) => setEditPeran(e.target.value as "admin" | "user")}
                   disabled={user?.email.toLowerCase() === editItem.email.toLowerCase()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm bg-white disabled:bg-gray-100 disabled:text-gray-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs bg-white text-slate-900 disabled:bg-slate-100 disabled:text-slate-400 transition-all cursor-pointer"
                 >
-                  <option value="user">👤 Klien Pembeli (User)</option>
-                  <option value="admin">👑 Administrator</option>
+                  <option value="user">Klien Pembeli (User)</option>
+                  <option value="admin">Administrator (Admin)</option>
                 </select>
                 {user?.email.toLowerCase() === editItem.email.toLowerCase() && (
-                  <p className="text-[11px] text-gray-400 mt-1">
+                  <p className="text-[11px] text-slate-400 mt-1">
                     Anda tidak dapat mengubah peran akun Anda sendiri saat sedang login.
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Password Baru (Opsional)</label>
+                <label className="block font-medium text-slate-700 mb-1">Password Baru (Opsional)</label>
                 <input
                   type="password"
                   value={editPassword}
                   onChange={(e) => setEditPassword(e.target.value)}
                   placeholder="Kosongkan jika tidak ingin mengubah"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-sm"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs text-slate-900 bg-white transition-all placeholder:text-slate-400"
                 />
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-[11px] text-slate-400 mt-1">
                   Isi hanya jika ingin mereset password akun pengguna ini.
                 </p>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setEditItem(null)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition cursor-pointer"
+                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 text-sm font-bold text-white bg-[#4A151E] hover:bg-[#381118] rounded-xl transition disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="px-5 py-2 text-xs font-semibold text-white bg-[#4A151E] hover:bg-[#381118] rounded-xl transition-all disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {saving ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>
@@ -308,4 +339,3 @@ export default function PenggunaPage() {
     </div>
   );
 }
-
