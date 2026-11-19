@@ -4,11 +4,16 @@
    Palet: Warm Oatmeal Linen (#F4F1EA), Earthy Stone (#DCD7CA), Forest Olive (#2D3E2F)
    ========================================================================== */
 
-/* 1. PAGE WRAPPER */
+/* 1. PAGE WRAPPER (Ambient Botanical Glow - Earthy Botanical Theme) */
 .katalog-page {
   position: relative;
   min-height: 100vh;
   background-color: #f4f1ea;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(58, 84, 56, 0.18) 0px, transparent 55%),
+    radial-gradient(at 100% 20%, rgba(162, 88, 62, 0.14) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(130, 98, 43, 0.12) 0px, transparent 60%);
+  background-attachment: fixed;
   color: #212c22;
   overflow-x: hidden;
   font-family:
@@ -18,11 +23,6 @@
     "Segoe UI",
     Roboto,
     sans-serif;
-}
-
-/* 1.1 FULL FIXED BOTANICAL BACKGROUND (Removed washed out overlay - clean Warm Linen Paper) */
-.katalog-floral-bg {
-  display: none;
 }
 
 /* 2. NAVBAR */

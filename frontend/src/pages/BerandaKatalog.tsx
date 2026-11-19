@@ -171,9 +171,6 @@ export default function BerandaKatalog() {
 
   return (
     <div className="katalog-page">
-      {/* Full Fixed Floral Wallpaper Background (Full Sampai Bawah) */}
-      <div className="katalog-floral-bg" aria-hidden="true" />
-
       {/* ========================================================
           1. NAVBAR HEADER
       ======================================================== */}
