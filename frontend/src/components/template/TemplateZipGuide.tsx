@@ -1,24 +1,36 @@
 export default function TemplateZipGuide() {
   return (
-    <details className="mt-2 text-xs border-t border-amber-200/60 pt-2">
-      <summary className="cursor-pointer text-[#4A151E] hover:underline font-semibold flex items-center gap-1 select-none">
-        <span>📁 Lihat Panduan Struktur Folder .ZIP</span>
+    <details className="zip-guide-details">
+      <summary className="zip-guide-summary">
+        <svg
+          className="w-3.5 h-3.5 text-slate-400 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+          />
+        </svg>
+        <span>Lihat Panduan Struktur Folder .ZIP</span>
       </summary>
-      <div className="mt-2 p-3 bg-gray-900 text-gray-200 rounded-lg text-[11px] font-mono border border-gray-700">
-        <pre className="text-emerald-400">
+      <div className="zip-guide-content">
+        <pre className="zip-guide-pre">
 {`nama-template.zip
-├── index.html       ⭐ (Wajib ada di root zip)
+├── index.html       (Wajib ada di root zip)
 ├── style.css        (Style CSS desain)
 ├── script.js        (Script interaksi / countdown)
-└── assets/          (Folder gambar, musik, audio)
+└── assets/          (Folder gambar, audio, dll)
     ├── background.jpg
     └── music.mp3`}
         </pre>
-        <p className="mt-2 text-[10px] text-amber-300 font-sans leading-tight">
-          * <strong>Penting:</strong> Path berkas di dalam <code>index.html</code> wajib relatif, contoh: <code>./style.css</code> atau <code>assets/bg.jpg</code> (jangan diawali tanda <code>/</code>).
+        <p className="zip-guide-hint">
+          * <strong>Penting:</strong> Path berkas di dalam <code>index.html</code> wajib relatif, contoh: <code>./style.css</code> atau <code>assets/bg.jpg</code> (jangan diawali garis miring <code>/</code>).
         </p>
       </div>
     </details>
   );
 }
-

@@ -1,60 +1,62 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   TemplateModalForm Stylesheet (Sticky Header & Footer + Scrollable Body)
+   TemplateModalForm Stylesheet - Minimalist Elegant Theme
+   Brand: Royal Burgundy (#4A151E) & Warm Neutral Slate
    ============================================================================ */
 
 /* 1. Backdrop Overlay */
 .template-modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3;
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-5 transition-opacity duration-200;
 }
 
-@media (min-width: 640px) {
-  .template-modal-overlay {
-    @apply p-4;
-  }
-}
-
-/* 2. Container Modal (Tinggi dibatasi 88vh agar tidak pernah meluber dari layar) */
+/* 2. Container Modal */
 .template-modal-container {
-  @apply bg-white rounded-2xl max-w-xl w-full shadow-2xl relative flex flex-col overflow-hidden border border-gray-100;
-  max-height: 88vh;
+  @apply bg-white rounded-2xl max-w-xl w-full shadow-2xl relative flex flex-col overflow-hidden border border-slate-200/80;
+  max-height: 90vh;
 }
 
-/* 3. Sticky Header (Selalu mengunci di bagian atas) */
+/* 3. Sticky Header */
 .template-modal-header {
-  @apply px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0;
+  @apply px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0;
+}
+
+.template-modal-header-left {
+  @apply flex items-center gap-3.5;
+}
+
+.template-modal-header-icon {
+  @apply w-10 h-10 rounded-xl bg-[#4A151E]/5 text-[#4A151E] flex items-center justify-center shrink-0 border border-[#4A151E]/10;
 }
 
 .template-modal-title {
-  @apply text-lg font-bold text-gray-900 font-serif;
+  @apply text-base sm:text-lg font-bold text-slate-900 tracking-tight font-serif;
 }
 
 .template-modal-subtitle {
-  @apply text-[11px] text-gray-500 mt-0.5;
+  @apply text-xs text-slate-500 mt-0.5 font-sans leading-relaxed;
 }
 
 .template-modal-close-btn {
-  @apply w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer text-sm font-bold;
+  @apply w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer text-sm;
 }
 
-/* 4. Form Wrapper dengan min-h-0 (KUNCI agar flexbox tidak memanjat keluar layar) */
+/* 4. Form Wrapper */
 .template-modal-form {
   @apply flex flex-col flex-1 min-h-0 overflow-hidden;
 }
 
-/* 5. Scrollable Form Body (Hanya area ini yang memiliki scrollbar) */
+/* 5. Scrollable Form Body */
 .template-modal-body {
-  @apply px-6 py-4 overflow-y-auto space-y-4 text-xs flex-1 min-h-0;
+  @apply px-6 py-5 overflow-y-auto space-y-5 text-xs flex-1 min-h-0 bg-white;
 }
 
-/* Scrollbar styling agar terlihat rapi dan jelas bisa di-scroll */
+/* Custom Scrollbar */
 .template-modal-body::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .template-modal-body::-webkit-scrollbar-track {
   background: #f8fafc;
-  border-radius: 9999px;
 }
 .template-modal-body::-webkit-scrollbar-thumb {
   background: #cbd5e1;
@@ -64,53 +66,109 @@
   background: #94a3b8;
 }
 
+/* Error Banner */
 .template-modal-error-banner {
-  @apply bg-red-50 text-red-700 text-xs p-3 rounded-xl border border-red-200;
+  @apply bg-rose-50 text-rose-800 text-xs px-4 py-3 rounded-xl border border-rose-200 flex items-center gap-2.5 font-medium;
 }
 
-/* 6. Sticky Footer (Selalu mengunci di bawah, tombol Batal & Simpan selalu tampil) */
-.template-modal-footer {
-  @apply px-6 py-3.5 border-t border-gray-100 bg-gray-50 flex items-center justify-end gap-3 shrink-0;
+/* 6. Form Sections & Visual Dividers */
+.form-section-divider {
+  @apply pt-2 border-t border-slate-100 space-y-3.5;
 }
 
-.btn-form-submit {
-  @apply px-5 py-2 text-sm font-bold text-white bg-[#4A151E] hover:bg-[#381118] rounded-xl transition disabled:opacity-50 cursor-pointer shadow-xs;
+.form-section-title {
+  @apply text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5;
 }
 
-.btn-form-cancel {
-  @apply px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition cursor-pointer;
+/* 7. Input & Label Styles */
+.form-field-group {
+  @apply space-y-1.5;
 }
 
-/* 7. Pilihan Paket Desain (Standar vs Premium) */
+.form-field-label {
+  @apply block font-medium text-slate-700 text-xs tracking-normal;
+}
+
+.form-field-label-req {
+  @apply text-rose-500 font-semibold;
+}
+
+.form-field-input {
+  @apply w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs text-slate-900 bg-white transition-all placeholder:text-slate-400;
+}
+
+.form-field-input-mono {
+  @apply w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none font-mono text-xs text-slate-800 bg-white transition-all placeholder:text-slate-400;
+}
+
+.form-field-hint {
+  @apply text-[11px] text-slate-400 leading-normal;
+}
+
+/* 8. Tier Selection Grid (Standar vs Premium) */
 .tier-selection-grid {
-  @apply grid grid-cols-1 gap-3;
-}
-
-@media (min-width: 640px) {
-  .tier-selection-grid {
-    @apply grid-cols-2;
-  }
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-3;
 }
 
 .tier-card-btn {
-  @apply p-3 rounded-xl border text-left transition flex flex-col cursor-pointer bg-white border-gray-200 hover:border-gray-300;
+  @apply p-3.5 rounded-xl border border-slate-200/90 text-left transition-all duration-150 flex flex-col justify-between cursor-pointer bg-white hover:border-slate-300 hover:shadow-xs relative;
 }
 
 .tier-card-btn--standard-active {
-  @apply border-[#4A151E] bg-[#4A151E]/5 ring-2 ring-[#4A151E];
+  @apply border-[#4A151E] bg-[#4A151E]/[0.03] ring-1 ring-[#4A151E] shadow-xs;
 }
 
 .tier-card-btn--premium-active {
-  @apply border-amber-600 bg-amber-50 ring-2 ring-amber-600;
+  @apply border-amber-600/80 bg-amber-500/[0.04] ring-1 ring-amber-600/80 shadow-xs;
 }
 
-/* 8. Box Input Harga (Rp) */
+.tier-card-header {
+  @apply flex items-center justify-between mb-1.5;
+}
+
+.tier-card-title {
+  @apply text-xs font-bold text-slate-900 flex items-center gap-1.5 tracking-tight;
+}
+
+.tier-card-radio {
+  @apply w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center transition-colors;
+}
+
+.tier-card-radio--active-standard {
+  @apply border-[#4A151E] bg-[#4A151E];
+}
+
+.tier-card-radio--active-premium {
+  @apply border-amber-600 bg-amber-600;
+}
+
+.tier-card-radio-dot {
+  @apply w-1.5 h-1.5 rounded-full bg-white;
+}
+
+.tier-card-desc {
+  @apply text-[11px] text-slate-500 leading-relaxed;
+}
+
+.tier-card-desc strong {
+  @apply text-slate-700 font-semibold;
+}
+
+/* 9. Box Input Harga (Rp) */
 .price-input-box {
-  @apply p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-200;
+  @apply p-3.5 bg-slate-50/80 rounded-xl space-y-2 border border-slate-200/80;
 }
 
 .price-input-header {
   @apply flex items-center justify-between;
+}
+
+.price-input-header label {
+  @apply text-[11px] font-bold text-slate-700 uppercase tracking-wider;
+}
+
+.price-input-header span {
+  @apply text-[11px] text-slate-400;
 }
 
 .price-input-wrapper {
@@ -118,62 +176,113 @@
 }
 
 .price-input-prefix {
-  @apply absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm;
+  @apply absolute left-3.5 top-1/2 -translate-y-1/2 font-semibold text-slate-400 text-xs select-none;
 }
 
 .price-input-field {
-  @apply w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A151E] outline-none text-base font-bold text-gray-900 bg-white;
+  @apply w-full pl-10 pr-3.5 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-sm font-bold text-slate-900 bg-white transition-all placeholder:text-slate-300;
 }
 
-/* 9. Upload & Preview Foto Cover Template */
+/* 10. Upload & Preview Foto Cover Template */
 .cover-upload-section {
   @apply space-y-2;
 }
 
 .cover-upload-box {
-  @apply border-2 border-dashed border-gray-300 hover:border-[#4A151E] rounded-xl p-4 text-center bg-gray-50/60 hover:bg-gray-50 transition cursor-pointer flex flex-col items-center justify-center gap-1.5;
+  @apply border border-dashed border-slate-300 hover:border-[#4A151E] rounded-xl p-5 text-center bg-slate-50/50 hover:bg-[#4A151E]/[0.02] transition-all cursor-pointer flex flex-col items-center justify-center gap-2;
 }
 
 .cover-upload-icon {
-  @apply text-3xl mb-1;
+  @apply w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:text-[#4A151E];
 }
 
 .cover-upload-text {
-  @apply text-xs font-semibold text-gray-700;
+  @apply text-xs font-semibold text-slate-700;
 }
 
 .cover-upload-hint {
-  @apply text-[11px] text-gray-400;
+  @apply text-[11px] text-slate-400;
 }
 
 .cover-preview-card {
-  @apply flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-xl;
+  @apply flex items-center gap-4 p-3.5 bg-slate-50/90 border border-slate-200/90 rounded-xl;
 }
 
 .cover-preview-img {
-  @apply w-20 h-28 object-cover rounded-lg border border-gray-300 shadow-xs shrink-0 bg-white;
+  @apply w-16 h-22 object-cover rounded-lg border border-slate-200 shadow-xs shrink-0 bg-white;
 }
 
 .cover-preview-info {
-  @apply flex-1 min-w-0 space-y-1;
+  @apply flex-1 min-w-0 space-y-1.5;
 }
 
 .cover-preview-badge {
-  @apply inline-block px-2 py-0.5 text-[10px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-800;
+  @apply inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/70;
 }
 
 .cover-preview-url {
-  @apply text-[11px] text-gray-500 font-mono truncate block;
+  @apply text-[11px] text-slate-500 font-mono truncate block;
 }
 
 .cover-preview-actions {
-  @apply flex items-center gap-2 pt-1;
+  @apply flex items-center gap-2 pt-0.5;
 }
 
 .btn-cover-replace {
-  @apply px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition cursor-pointer;
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors cursor-pointer shadow-2xs;
 }
 
 .btn-cover-remove {
-  @apply px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition cursor-pointer;
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100/80 border border-rose-200/70 rounded-lg transition-colors cursor-pointer;
+}
+
+/* 11. ZIP Upload Container */
+.zip-upload-container {
+  @apply p-4 bg-slate-50/80 border border-slate-200/80 rounded-xl space-y-2;
+}
+
+.zip-upload-header {
+  @apply flex items-center justify-between;
+}
+
+.zip-file-input {
+  @apply w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:bg-slate-800 file:text-white file:text-xs file:font-semibold hover:file:bg-slate-700 cursor-pointer border border-slate-200 rounded-lg p-1 bg-white;
+}
+
+.zip-file-selected {
+  @apply text-[11px] text-emerald-700 font-medium flex items-center gap-1.5 bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-emerald-200/60;
+}
+
+/* 12. Panduan ZIP (TemplateZipGuide) */
+.zip-guide-details {
+  @apply mt-2 text-xs border-t border-slate-200/80 pt-2.5;
+}
+
+.zip-guide-summary {
+  @apply cursor-pointer text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1.5 select-none transition-colors;
+}
+
+.zip-guide-content {
+  @apply mt-2 p-3 bg-slate-900 text-slate-200 rounded-xl text-[11px] font-mono border border-slate-800 shadow-xs;
+}
+
+.zip-guide-pre {
+  @apply text-emerald-400 font-mono text-[11px] leading-relaxed;
+}
+
+.zip-guide-hint {
+  @apply mt-2 text-[10px] text-amber-300 font-sans leading-normal;
+}
+
+/* 13. Sticky Footer */
+.template-modal-footer {
+  @apply px-6 py-3.5 border-t border-slate-100 bg-slate-50/90 flex items-center justify-end gap-3 shrink-0;
+}
+
+.btn-form-cancel {
+  @apply px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 rounded-xl transition-colors cursor-pointer;
+}
+
+.btn-form-submit {
+  @apply inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-[#4A151E] hover:bg-[#381118] rounded-xl transition-all disabled:opacity-50 cursor-pointer shadow-xs;
 }
