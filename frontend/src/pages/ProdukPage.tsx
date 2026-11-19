@@ -219,15 +219,19 @@ export default function ProdukPage() {
 
   if (!isAdmin) {
     return (
-      <div className="bg-white p-8 rounded-2xl border border-gray-100 text-center max-w-md mx-auto my-12 space-y-4 shadow-xs">
-        <span className="text-4xl">🔒</span>
-        <h3 className="text-lg font-bold text-gray-800">Akses Terbatas</h3>
-        <p className="text-sm text-gray-500">
+      <div className="bg-white p-8 rounded-2xl border border-[#E7E4DC] text-center max-w-md mx-auto my-12 space-y-4 shadow-xs">
+        <div className="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h3 className="text-base font-bold text-slate-800">Akses Terbatas</h3>
+        <p className="text-xs text-slate-500">
           Halaman kelola master template hanya dapat diakses oleh Admin Studio.
         </p>
         <Link
           to="/dashboard/transaksi"
-          className="inline-block px-5 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-bold transition"
+          className="inline-block px-5 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-semibold transition-colors"
         >
           Lihat Undangan Saya
         </Link>
@@ -238,14 +242,13 @@ export default function ProdukPage() {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-xs border border-gray-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-xs border border-[#E7E4DC]">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 font-serif">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 font-serif tracking-tight">
             Kelola Master Template Undangan
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Studio Kolektif: Atur katalog template, upload gambar cover, harga 3
-            paket, dan tautan demo.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
+            Studio Kolektif: Atur katalog template, upload gambar cover, harga paket, dan tautan demo live.
           </p>
         </div>
 
@@ -254,62 +257,65 @@ export default function ProdukPage() {
             onClick={handleBukaTambah}
             className="btn-primary-action"
           >
-            <span>➕</span> Tambah Template Baru
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Tambah Template Baru</span>
           </button>
         )}
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm">
-          {error}
+        <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-xs font-medium flex items-center gap-2.5">
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
       {/* Tabel Template */}
       <div className="produk-card">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-slate-500">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
-            <p className="text-sm">Memuat data template...</p>
+            <p className="text-xs">Memuat data template...</p>
           </div>
         ) : templateList.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
-            <p className="text-base font-semibold">Belum ada master template</p>
-            <p className="text-sm mt-1">
+          <div className="p-12 text-center text-slate-400">
+            <p className="text-sm font-semibold text-slate-700">Belum ada master template</p>
+            <p className="text-xs mt-1">
               Klik tombol &ldquo;Tambah Template Baru&rdquo; untuk mendaftarkan
               template pertama Anda.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
+            <table className="w-full text-left text-xs text-slate-600">
               <thead className="produk-table-header">
                 <tr>
                   <th className="produk-table-th">Preview</th>
-                  <th className="produk-table-th">Template & Slug</th>
-                  <th className="produk-table-th">Kategori & Paket</th>
+                  <th className="produk-table-th">Template &amp; Slug</th>
+                  <th className="produk-table-th">Kategori &amp; Paket</th>
                   <th className="produk-table-th">Harga Produk</th>
                   <th className="produk-table-th">Status</th>
                   <th className="produk-table-th text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#E7E4DC]/60">
                 {templateList.map((item) => (
                   <tr key={item.id} className="produk-table-row">
                     {/* Thumbnail */}
                     <td className="produk-table-td">
-                      <div className="w-14 h-20 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 flex items-center justify-center">
+                      <div className="w-14 h-20 bg-slate-100 rounded-lg overflow-hidden border border-slate-200/80 flex items-center justify-center shrink-0">
                         {item.thumbnail_url ? (
                           <img
                             src={item.thumbnail_url}
                             alt={item.title}
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLElement).style.display = "none";
-                            }}
                           />
                         ) : (
-                          <span className="text-xs text-gray-400 font-medium">
+                          <span className="text-[10px] text-slate-400 font-medium">
                             Polos
                           </span>
                         )}
@@ -318,10 +324,10 @@ export default function ProdukPage() {
 
                     {/* Judul & Slug */}
                     <td className="produk-table-td">
-                      <p className="font-bold text-gray-900 text-base">
+                      <p className="font-bold text-slate-900 text-sm">
                         {item.title}
                       </p>
-                      <p className="text-xs text-indigo-600 font-mono mt-0.5">
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">
                         /{item.slug}
                       </p>
                       {item.demo_url && (
@@ -329,9 +335,12 @@ export default function ProdukPage() {
                           href={item.demo_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-700 mt-1"
+                          className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-[#4A151E] mt-1.5 transition-colors"
                         >
-                          🔗 Demo: {item.demo_url}
+                          <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          <span>Demo: {item.demo_url}</span>
                         </a>
                       )}
                     </td>
@@ -344,27 +353,33 @@ export default function ProdukPage() {
                         </span>
                         {item.package_type === "premium" ? (
                           <span className="badge-tier-premium">
-                            👑 PREMIUM
+                            <svg className="w-3 h-3 text-[#8C6D38] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                            PREMIUM
                           </span>
                         ) : (
                           <span className="badge-tier-standard">
-                            ⚡ STANDAR
+                            <svg className="w-3 h-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            STANDAR
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 font-medium mt-1">
+                      <p className="text-xs text-slate-500 font-medium mt-1">
                         {item.theme_style}
                       </p>
                     </td>
 
                     {/* Harga Produk */}
                     <td className="produk-table-td">
-                      <p className="text-base font-extrabold text-[#4A151E]">
+                      <p className="text-sm font-bold text-[#4A151E]">
                         {formatRupiah(
                           item.price || item.price_standard || 99000,
                         )}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
+                      <p className="text-[11px] text-slate-400 mt-0.5">
                         {item.package_type === "premium"
                           ? "Maks. 20 Foto • 12 Bln"
                           : "Tanpa Foto • 6 Bln"}
@@ -375,14 +390,15 @@ export default function ProdukPage() {
                     <td className="produk-table-td">
                       <button
                         onClick={() => handleToggleStatus(item)}
-                        className={`px-3 py-1 text-xs font-semibold rounded-full border cursor-pointer transition ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-full border cursor-pointer transition-colors ${
                           item.is_active
                             ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
-                            : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200"
+                            : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
                         }`}
                         title="Klik untuk ubah status tampil di katalog"
                       >
-                        {item.is_active ? "● Aktif di Katalog" : "○ Nonaktif"}
+                        <span className={`w-1.5 h-1.5 rounded-full ${item.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
+                        <span>{item.is_active ? "Aktif di Katalog" : "Nonaktif"}</span>
                       </button>
                     </td>
 
@@ -392,14 +408,22 @@ export default function ProdukPage() {
                         <button
                           onClick={() => handleBukaEdit(item)}
                           className="btn-action-edit"
+                          title="Edit Template"
                         >
-                          ✏️ Edit
+                          <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          <span>Edit</span>
                         </button>
                         <button
                           onClick={() => handleHapus(item.id, item.title)}
                           className="btn-action-delete"
+                          title="Hapus Template"
                         >
-                          🗑️ Hapus
+                          <svg className="w-3.5 h-3.5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Hapus</span>
                         </button>
                       </div>
                     </td>
