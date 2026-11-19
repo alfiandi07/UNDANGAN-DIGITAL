@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
-/* ============================================================================
-   TransaksiPage Stylesheet (Option B: Warm Luxury Alabaster Theme)
-   ============================================================================ */
+/* ==========================================================================
+   TRANSAKSI PAGE STYLESHEET (Clean Architecture - Earthy Botanical Theme)
+   Fitur: Riwayat Pesanan & Daftar Undangan Klien / Admin
+   Palet: Warm Oatmeal Linen (#F4F1EA), Earthy Stone (#DCD7CA), Forest Olive (#2D3E2F)
+   ========================================================================== */
 
-/* 1. Page Container */
+/* 1. Layout Container */
 .transaksi-page-container {
-  @apply space-y-6;
+  @apply space-y-6 max-w-6xl mx-auto;
 }
 
 /* 2. Header Banner */
 .transaksi-header-card {
-  @apply bg-white p-6 rounded-2xl shadow-xs border border-[#E7E4DC] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4;
+  @apply bg-white p-6 rounded-2xl shadow-xs border border-[#DCD7CA] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4;
 }
 
 .transaksi-header-title {
@@ -23,12 +25,12 @@
 }
 
 .transaksi-btn-pesan-baru {
-  @apply inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs cursor-pointer;
+  @apply inline-flex items-center gap-2 px-4 py-2.5 bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs cursor-pointer;
 }
 
-/* 3. Kartu Undangan Pembeli */
+/* 3. Section Undangan Digital Klien */
 .invitation-section-title {
-  @apply text-xs font-bold uppercase tracking-wider text-[#69584F] flex items-center gap-1.5;
+  @apply text-xs font-bold uppercase tracking-wider text-[#556050] flex items-center gap-1.5;
 }
 
 .invitation-grid {
@@ -36,11 +38,11 @@
 }
 
 .invitation-card {
-  @apply bg-white p-5 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-3 transition hover:shadow-sm;
+  @apply bg-white p-5 rounded-2xl border border-[#DCD7CA] shadow-xs space-y-3 transition hover:shadow-sm;
 }
 
 .invitation-package-tag {
-  @apply text-[10px] font-bold uppercase text-[#8C6D38] tracking-wider;
+  @apply text-[10px] font-bold uppercase text-[#82622B] tracking-wider;
 }
 
 .invitation-card-title {
@@ -48,7 +50,7 @@
 }
 
 .badge-status-active {
-  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80;
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EAF1E9] text-[#3A5438] border border-[#C7D7C5];
 }
 
 .badge-status-draft {
@@ -56,28 +58,28 @@
 }
 
 .invitation-info-box {
-  @apply p-3.5 bg-[#FAF9F6] rounded-xl text-xs space-y-2 border border-[#E7E4DC]/80;
+  @apply p-3.5 bg-[#FAF8F3] rounded-xl text-xs space-y-2 border border-[#DCD7CA]/80;
 }
 
 .invitation-btn-preview {
-  @apply flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-center text-xs font-medium border border-slate-200/90 rounded-xl text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-2xs;
+  @apply flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-center text-xs font-medium border border-[#DCD7CA] rounded-xl text-slate-700 bg-white hover:bg-[#F7F5EE] transition-colors shadow-2xs;
 }
 
 .invitation-btn-edit {
-  @apply flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-center text-xs font-semibold bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl transition-colors shadow-xs cursor-pointer;
+  @apply flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-center text-xs font-semibold bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-xl transition-colors shadow-xs cursor-pointer;
 }
 
 /* 4. Tabel Pesanan (Admin & Pembeli) */
 .transaksi-table-card {
-  @apply bg-white rounded-2xl shadow-xs border border-[#E7E4DC] overflow-hidden;
+  @apply bg-white rounded-2xl shadow-xs border border-[#DCD7CA] overflow-hidden;
 }
 
 .transaksi-table-header-box {
-  @apply px-6 py-4 border-b border-[#E7E4DC] bg-[#F4F1EA] flex items-center justify-between;
+  @apply px-6 py-4 border-b border-[#DCD7CA] bg-[#EAE6DC] flex items-center justify-between;
 }
 
 .transaksi-table-title {
-  @apply text-xs font-bold uppercase tracking-wider text-[#69584F];
+  @apply text-xs font-bold uppercase tracking-wider text-[#556050];
 }
 
 .transaksi-table {
@@ -85,7 +87,7 @@
 }
 
 .transaksi-th {
-  @apply px-6 py-3.5 bg-[#F4F1EA] text-[11px] font-bold uppercase tracking-wider text-[#69584F] border-b border-[#E7E4DC];
+  @apply px-6 py-3.5 bg-[#EAE6DC] text-[11px] font-bold uppercase tracking-wider text-[#556050] border-b border-[#DCD7CA];
 }
 
 .transaksi-td {
@@ -93,11 +95,11 @@
 }
 
 .transaksi-row {
-  @apply hover:bg-[#FBF9F5] transition-colors;
+  @apply hover:bg-[#F7F5EE] transition-colors;
 }
 
 .badge-payment-paid {
-  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80;
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EAF1E9] text-[#3A5438] border border-[#C7D7C5];
 }
 
 .badge-payment-pending {
@@ -109,5 +111,5 @@
 }
 
 .btn-bayar-simulasi {
-  @apply inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer;
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer;
 }

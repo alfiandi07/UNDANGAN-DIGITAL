@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   ProdukPage Stylesheet (Option B: Warm Luxury Alabaster Theme)
+   ProdukPage Stylesheet (Option 2: Earthy Botanical & Sage Eucalyptus Theme)
    ============================================================================ */
 
 /* Layout & Cards */
 .produk-card {
-  @apply bg-white rounded-2xl shadow-xs border border-[#E7E4DC] overflow-hidden;
+  @apply bg-white rounded-2xl shadow-xs border border-[#DCD7CA] overflow-hidden;
 }
 
 /* Tabel */
 .produk-table-header {
-  @apply bg-[#F4F1EA] text-[11px] font-bold uppercase tracking-wider text-[#69584F] border-b border-[#E7E4DC];
+  @apply bg-[#EAE6DC] text-[11px] font-bold uppercase tracking-wider text-[#556050] border-b border-[#DCD7CA];
 }
 
 .produk-table-th {
@@ -23,29 +23,29 @@
 }
 
 .produk-table-row {
-  @apply hover:bg-[#FBF9F5] transition-colors;
+  @apply hover:bg-[#F7F5EE] transition-colors;
 }
 
 /* Badges */
 .badge-category {
-  @apply inline-block px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200 uppercase tracking-wider;
+  @apply inline-block px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-[#EAF1E9] text-[#3A5438] border border-[#C7D7C5] uppercase tracking-wider;
 }
 
 .badge-tier-standard {
-  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/90 tracking-tight;
+  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#EAF1E9] text-[#3A5438] border border-[#C7D7C5] tracking-tight;
 }
 
 .badge-tier-premium {
-  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF4E8] text-[#8C6D38] border border-[#E9DCBF] tracking-tight;
+  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F5EFE3] text-[#82622B] border border-[#DFD2BA] tracking-tight;
 }
 
 /* Tombol */
 .btn-primary-action {
-  @apply inline-flex items-center gap-2 bg-[#4A151E] hover:bg-[#381118] text-white font-medium px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer text-xs sm:text-sm;
+  @apply inline-flex items-center gap-2 bg-[#2D3E2F] hover:bg-[#1E2B20] text-white font-medium px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer text-xs sm:text-sm;
 }
 
 .btn-action-edit {
-  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100/80 border border-slate-200/90 rounded-lg transition-colors cursor-pointer shadow-2xs;
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-[#F7F5EE] border border-[#DCD7CA] rounded-lg transition-colors cursor-pointer shadow-2xs;
 }
 
 .btn-action-delete {
@@ -58,11 +58,11 @@
 }
 
 .form-field-input {
-  @apply w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs bg-white transition-all;
+  @apply w-full px-3 py-2 border border-[#DCD7CA] rounded-lg focus:ring-2 focus:ring-[#2D3E2F]/15 focus:border-[#2D3E2F] outline-none text-xs bg-white transition-all;
 }
 
 .form-field-input-mono {
-  @apply w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none font-mono text-xs bg-white transition-all;
+  @apply w-full px-3 py-2 border border-[#DCD7CA] rounded-lg focus:ring-2 focus:ring-[#2D3E2F]/15 focus:border-[#2D3E2F] outline-none font-mono text-xs bg-white transition-all;
 }
 
 .form-field-hint {
@@ -75,5 +75,5 @@
 }
 
 .modal-dialog {
-  @apply bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative my-8 border border-[#E7E4DC];
+  @apply bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative my-8 border border-[#DCD7CA];
 }

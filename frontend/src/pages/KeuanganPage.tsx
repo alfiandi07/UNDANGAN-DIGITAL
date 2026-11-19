@@ -117,9 +117,9 @@ export default function KeuanganPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header Banner */}
-      <div className="bg-white p-6 rounded-2xl shadow-xs border border-[#E7E4DC] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-white p-6 rounded-2xl shadow-xs border border-[#DCD7CA] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <span className="text-[10px] font-bold uppercase text-[#8C6D38] tracking-wider">
+          <span className="text-[10px] font-bold uppercase text-[#82622B] tracking-wider">
             PRD MODUL E: STUDIO KOLEKTIF 3 ORANG
           </span>
           <h2 className="text-xl sm:text-2xl font-bold font-serif text-slate-900 tracking-tight mt-0.5">
@@ -133,7 +133,7 @@ export default function KeuanganPage() {
         <button
           onClick={handleCleanupManual}
           disabled={cleaning}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
           title="Menghapus foto undangan yang lewat masa tenggang"
         >
           <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,7 +163,7 @@ export default function KeuanganPage() {
 
       {loading ? (
         <div className="p-16 text-center text-slate-500">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D3E2F] mb-3" />
           <p className="text-xs">Menghitung kalkulasi finansial studio...</p>
         </div>
       ) : summary ? (
@@ -171,11 +171,11 @@ export default function KeuanganPage() {
           {/* 4 KPI STATS CARDS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Omset */}
-            <div className="bg-white p-5 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-1">
+            <div className="bg-white p-5 rounded-2xl border border-[#DCD7CA] shadow-xs space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                 Total Omset Lunas
               </span>
-              <p className="text-xl sm:text-2xl font-bold text-[#381118]">
+              <p className="text-xl sm:text-2xl font-bold text-[#212C22]">
                 {formatRupiah(summary.total_omset)}
               </p>
               <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
@@ -187,7 +187,7 @@ export default function KeuanganPage() {
             </div>
 
             {/* Total Pengeluaran */}
-            <div className="bg-white p-5 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-1">
+            <div className="bg-white p-5 rounded-2xl border border-[#DCD7CA] shadow-xs space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                 Biaya Operasional
               </span>
@@ -200,7 +200,7 @@ export default function KeuanganPage() {
             </div>
 
             {/* Laba Bersih */}
-            <div className="bg-white p-5 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-1">
+            <div className="bg-white p-5 rounded-2xl border border-[#DCD7CA] shadow-xs space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                 Laba Bersih (Net Profit)
               </span>
@@ -213,21 +213,21 @@ export default function KeuanganPage() {
             </div>
 
             {/* Bagian Per Orang */}
-            <div className="bg-[#4A151E] text-white p-5 rounded-2xl shadow-md space-y-1 border border-[#381118]">
-              <span className="text-[10px] font-bold text-[#E9DCBF] uppercase tracking-wider">
+            <div className="bg-[#2D3E2F] text-white p-5 rounded-2xl shadow-md space-y-1 border border-[#1E2B20]">
+              <span className="text-[10px] font-bold text-[#EBDCBF] uppercase tracking-wider">
                 Hak / Anggota (Bagi 3)
               </span>
               <p className="text-xl sm:text-2xl font-bold text-white">
                 {formatRupiah(summary.share_per_member)}
               </p>
-              <p className="text-[10px] text-[#E9DCBF]/80">
+              <p className="text-[10px] text-[#EBDCBF]/80">
                 Laba Bersih dibagi rata 3 orang
               </p>
             </div>
           </div>
 
           {/* BAGIAN BAGI HASIL 3 ANGGOTA TIM INTI (FR-E2) */}
-          <div className="bg-white p-6 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-4">
+          <div className="bg-white p-6 rounded-2xl border border-[#DCD7CA] shadow-xs space-y-4">
             <div className="border-b border-slate-100 pb-3">
               <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                 Bagi Hasil Tim Bertiga (Studio Kolektif)
@@ -241,10 +241,10 @@ export default function KeuanganPage() {
               {summary.team_members.map((member, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#FAF9F6] p-5 rounded-2xl border border-[#E7E4DC] space-y-3 relative overflow-hidden"
+                  className="bg-[#FAF8F3] p-5 rounded-2xl border border-[#DCD7CA] space-y-3 relative overflow-hidden"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[#4A151E] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                    <div className="w-9 h-9 rounded-full bg-[#2D3E2F] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                       #{idx + 1}
                     </div>
                     <div>
@@ -253,11 +253,11 @@ export default function KeuanganPage() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-[#E7E4DC]/80">
+                  <div className="p-3 bg-white rounded-xl border border-[#DCD7CA]/80">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                       Hak Komisi Bersih
                     </span>
-                    <p className="text-base font-bold text-[#4A151E] mt-0.5">
+                    <p className="text-base font-bold text-[#2D3E2F] mt-0.5">
                       {formatRupiah(member.share_amount)}
                     </p>
                   </div>
@@ -269,7 +269,7 @@ export default function KeuanganPage() {
           {/* MANAJEMEN BIAYA OPERASIONAL */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Form Catat Biaya */}
-            <div className="bg-white p-6 rounded-2xl border border-[#E7E4DC] shadow-xs space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-[#DCD7CA] shadow-xs space-y-4">
               <h3 className="font-serif text-base font-bold text-slate-900 tracking-tight">
                 Catat Biaya Operasional
               </h3>
@@ -284,7 +284,7 @@ export default function KeuanganPage() {
                     value={namaBiaya}
                     onChange={(e) => setNamaBiaya(e.target.value)}
                     placeholder="Contoh: Sewa VPS Server 13"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs text-slate-900 bg-white transition-all placeholder:text-slate-400"
+                    className="w-full px-3.5 py-2.5 border border-[#DCD7CA] rounded-xl focus:ring-2 focus:ring-[#2D3E2F]/15 focus:border-[#2D3E2F] outline-none text-xs text-slate-900 bg-white transition-all placeholder:text-slate-400"
                   />
                 </div>
 
@@ -301,14 +301,14 @@ export default function KeuanganPage() {
                       setNominalBiaya(e.target.value ? Number(e.target.value) : "")
                     }
                     placeholder="Contoh: 150000"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#4A151E]/15 focus:border-[#4A151E] outline-none text-xs text-slate-900 bg-white transition-all placeholder:text-slate-400"
+                    className="w-full px-3.5 py-2.5 border border-[#DCD7CA] rounded-xl focus:ring-2 focus:ring-[#2D3E2F]/15 focus:border-[#2D3E2F] outline-none text-xs text-slate-900 bg-white transition-all placeholder:text-slate-400"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={submittingExpense}
-                  className="w-full py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl font-semibold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                  className="w-full py-2.5 bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-xl font-semibold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                 >
                   {submittingExpense ? "Menyimpan..." : "Tambah Pengeluaran"}
                 </button>
@@ -316,9 +316,9 @@ export default function KeuanganPage() {
             </div>
 
             {/* Tabel Daftar Pengeluaran */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-[#E7E4DC] shadow-xs overflow-hidden flex flex-col justify-between">
-              <div className="px-6 py-4 border-b border-[#E7E4DC] bg-[#F4F1EA]">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#69584F]">
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-[#DCD7CA] shadow-xs overflow-hidden flex flex-col justify-between">
+              <div className="px-6 py-4 border-b border-[#DCD7CA] bg-[#EAE6DC]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#556050]">
                   Daftar Biaya Operasional Studio ({summary.expenses.length})
                 </h3>
               </div>
@@ -331,7 +331,7 @@ export default function KeuanganPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-[#F4F1EA] text-[11px] font-bold uppercase tracking-wider text-[#69584F] border-b border-[#E7E4DC]">
+                      <tr className="bg-[#EAE6DC] text-[11px] font-bold uppercase tracking-wider text-[#556050] border-b border-[#DCD7CA]">
                         <th className="px-5 py-3.5">Bulan</th>
                         <th className="px-5 py-3.5">Nama Pengeluaran</th>
                         <th className="px-5 py-3.5">Nominal</th>
@@ -339,7 +339,7 @@ export default function KeuanganPage() {
                         <th className="px-5 py-3.5 text-center">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#E7E4DC]/60">
+                    <tbody className="divide-y divide-[#DCD7CA]/60">
                       {summary.expenses.map((exp) => (
                         <tr key={exp.id} className="hover:bg-[#FBF9F5] transition-colors">
                           <td className="px-5 py-4 font-mono font-semibold text-slate-800">

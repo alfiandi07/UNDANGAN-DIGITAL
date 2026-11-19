@@ -1,9 +1,7 @@
 /* ==========================================================================
-   EDITOR UNDANGAN STYLESHEET (Clean Architecture)
+   EDITOR UNDANGAN STYLESHEET (Clean Architecture - Earthy Botanical Theme)
    Fitur: Dashboard Klien untuk Mengisi Data Acara, Foto & WA Guest Link
-   - Semantic Class BEM
-   - Tab Navigasi Bersih
-   - Photo Quota Counter
+   Palet: Warm Oatmeal Linen (#F4F1EA), Earthy Stone (#DCD7CA), Forest Olive (#2D3E2F)
    ========================================================================== */
 
 /* 1. CONTAINER UTAMA */
@@ -21,7 +19,7 @@
   background-color: #ffffff;
   padding: 1.5rem;
   border-radius: 1rem;
-  border: 1px solid #f3f4f6;
+  border: 1px solid #dcd7ca;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -44,43 +42,43 @@
 }
 
 .editor-breadcrumb-link {
-  color: #9ca3af;
+  color: #556050;
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .editor-breadcrumb-link:hover {
-  color: #4b5563;
+  color: #212c22;
 }
 
 .editor-breadcrumb-separator {
-  color: #d1d5db;
+  color: #dcd7ca;
 }
 
 .editor-breadcrumb-slug {
   font-family: monospace;
   font-weight: 700;
-  color: #4338ca;
+  color: #2d3e2f;
 }
 
 .editor-title {
   font-family: Georgia, Cambria, serif;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #111827;
+  color: #212c22;
   margin: 0.25rem 0;
 }
 
 .editor-meta {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #556050;
   margin: 0;
 }
 
 .editor-meta-package {
   text-transform: uppercase;
   font-weight: 800;
-  color: #8c6d3b;
+  color: #82622b;
 }
 
 .editor-topbar-actions {
@@ -90,35 +88,42 @@
 }
 
 .editor-btn-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 700;
-  border: 1px solid #d1d5db;
+  border: 1px solid #dcd7ca;
   border-radius: 0.75rem;
-  color: #374151;
+  color: #212c22;
+  background-color: #ffffff;
   text-decoration: none;
   transition: background-color 0.15s;
 }
 
 .editor-btn-preview:hover {
-  background-color: #f9fafb;
+  background-color: #f7f5ee;
 }
 
 .editor-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.5rem 1.25rem;
   font-size: 0.75rem;
   font-weight: 800;
-  background-color: #4a151e;
+  background-color: #2d3e2f;
   color: #ffffff;
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(45, 62, 47, 0.2);
   transition: background-color 0.15s;
 }
 
 .editor-btn-save:hover:not(:disabled) {
-  background-color: #360f15;
+  background-color: #1e2b20;
 }
 
 .editor-btn-save:disabled {
@@ -128,13 +133,13 @@
 
 /* 3. ALERTS */
 .editor-alert-success {
-  background-color: #ecfdf5;
-  color: #065f46;
+  background-color: #eaf1e9;
+  color: #3a5438;
   padding: 1rem;
   border-radius: 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 1px solid #a7f3d0;
+  border: 1px solid #c7d7c5;
 }
 
 .editor-alert-error {
@@ -151,7 +156,7 @@
 .editor-tabs-bar {
   display: flex;
   background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #dcd7ca;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
   padding: 0.5rem 1rem 0 1rem;
@@ -168,17 +173,20 @@
   border-bottom: 2px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  color: #6b7280;
+  color: #556050;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .editor-tab-btn:hover {
-  color: #111827;
+  color: #212c22;
 }
 
 .editor-tab-btn--active {
-  border-bottom-color: #4a151e;
-  color: #4a151e;
+  border-bottom-color: #2d3e2f;
+  color: #2d3e2f;
 }
 
 /* 5. TAB CONTENT CARD */
@@ -187,7 +195,7 @@
   padding: 1.75rem;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
-  border: 1px solid #f3f4f6;
+  border: 1px solid #dcd7ca;
   border-top: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -200,13 +208,13 @@
   font-family: Georgia, Cambria, serif;
   font-size: 1.25rem;
   font-weight: 800;
-  color: #1f2937;
+  color: #212c22;
   margin: 0 0 0.25rem 0;
 }
 
 .editor-section-header__desc {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #556050;
   margin: 0;
 }
 
@@ -224,8 +232,8 @@
 }
 
 .editor-subcard {
-  background-color: #faf7f2;
-  border: 1px solid #ebe3d5;
+  background-color: #faf8f3;
+  border: 1px solid #dcd7ca;
   border-radius: 1rem;
   padding: 1.25rem;
   display: flex;
@@ -236,7 +244,7 @@
 .editor-subcard__title {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #4a151e;
+  color: #2d3e2f;
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -258,7 +266,7 @@
 .editor-input {
   width: 100%;
   padding: 0.55rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #dcd7ca;
   border-radius: 0.65rem;
   font-size: 0.75rem;
   outline: none;
@@ -267,14 +275,14 @@
 }
 
 .editor-input:focus {
-  border-color: #4a151e;
-  box-shadow: 0 0 0 2px rgba(74, 21, 30, 0.1);
+  border-color: #2d3e2f;
+  box-shadow: 0 0 0 2px rgba(45, 62, 47, 0.12);
 }
 
 /* 6. PHOTO QUOTA CARD */
 .editor-quota-banner {
-  background-color: #fdf9f5;
-  border: 1px solid #e8dec8;
+  background-color: #faf8f3;
+  border: 1px solid #dcd7ca;
   border-radius: 0.75rem;
   padding: 1rem;
   display: flex;
@@ -295,7 +303,7 @@
   aspect-ratio: 1/1;
   border-radius: 0.75rem;
   overflow: hidden;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #dcd7ca;
 }
 
 .editor-photo-img {
@@ -323,8 +331,8 @@
 
 /* 7. WHATSAPP LINK GENERATOR */
 .editor-wa-box {
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background-color: #faf8f3;
+  border: 1px solid #dcd7ca;
   border-radius: 1rem;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
@@ -332,7 +340,7 @@
 
 .editor-wa-result-item {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #dcd7ca;
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   display: flex;
@@ -340,4 +348,3 @@
   align-items: center;
   margin-bottom: 0.5rem;
 }
-

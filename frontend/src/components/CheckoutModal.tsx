@@ -174,7 +174,9 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
             className="checkout-header__close-btn"
             aria-label="Tutup"
           >
-            ✕
+            <svg className="w-4 h-4 text-slate-400 hover:text-slate-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -223,9 +225,23 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                     onChange={(e) => handleSlugChange(e.target.value)}
                     className="checkout-slug-field"
                   />
-                  {slugChecking && <span className="checkout-slug-icon--loading">⏳</span>}
+                  {slugChecking && (
+                    <span className="checkout-slug-icon--loading">
+                      <div className="w-3.5 h-3.5 border-2 border-[#2D3E2F] border-t-transparent rounded-full animate-spin" />
+                    </span>
+                  )}
                   {!slugChecking && slugResult && (
-                    <span className="checkout-slug-icon">{slugResult.available ? "✅" : "❌"}</span>
+                    <span className="checkout-slug-icon">
+                      {slugResult.available ? (
+                        <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      )}
+                    </span>
                   )}
                 </div>
 
@@ -233,7 +249,8 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                 <div className="checkout-slug-status-slot">
                   {slugChecking ? (
                     <span className="checkout-slug-status--checking">
-                      ⏳ Memeriksa ketersediaan tautan...
+                      <div className="w-3 h-3 border-2 border-amber-600 border-t-transparent rounded-full animate-spin shrink-0" />
+                      <span>Memeriksa ketersediaan tautan...</span>
                     </span>
                   ) : slugResult ? (
                     <span
@@ -243,7 +260,16 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                           : "checkout-slug-status--unavailable"
                       }
                     >
-                      {slugResult.available ? "●" : "✕"} {slugResult.message}
+                      {slugResult.available ? (
+                        <svg className="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <circle cx="10" cy="10" r="5" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      )}
+                      <span>{slugResult.message}</span>
                     </span>
                   ) : (
                     <span className="checkout-slug-status--hint">
@@ -391,7 +417,15 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
           <div className="checkout-step-body">
             <div className="checkout-success-view">
               <div className="checkout-success-icon">
-                {createdOrderData.order.payment_status === "paid" ? "🎉" : "📋"}
+                {createdOrderData.order.payment_status === "paid" ? (
+                  <svg className="w-8 h-8 text-[#3A5438]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8 text-[#82622B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                )}
               </div>
 
               <h4 className="checkout-success-title">
@@ -439,9 +473,14 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                   onClick={handleBayarSimulasi}
                   className="checkout-btn-pay"
                 >
-                  {paySimulating
-                    ? "Memproses Aktivasi..."
-                    : "⚡ Bayar Sekarang (Simulasi Midtrans Lunas)"}
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>
+                    {paySimulating
+                      ? "Memproses Aktivasi..."
+                      : "Bayar Sekarang (Simulasi Midtrans Lunas)"}
+                  </span>
                 </button>
               ) : (
                 <a
@@ -450,7 +489,10 @@ export default function CheckoutModal({ template, onClose }: CheckoutModalProps)
                   rel="noreferrer"
                   className="checkout-btn-pay checkout-btn-pay--link"
                 >
-                  🚀 Buka Undangan Digital Tamu →
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span>Buka Undangan Digital Tamu</span>
                 </a>
               )}
             </div>

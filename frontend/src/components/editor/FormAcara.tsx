@@ -17,9 +17,12 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
       </h3>
 
       {/* Akad Nikah */}
-      <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-gray-800">
-          💍 Waktu & Lokasi Akad Nikah / Pemberkatan
+      <div className="p-4 bg-[#FAF8F3] rounded-2xl border border-[#DCD7CA] space-y-4">
+        <h4 className="font-bold text-xs uppercase tracking-wider text-[#212C22] flex items-center gap-1.5">
+          <svg className="w-4 h-4 text-[#82622B] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v1m6 11h2m-6 0a2 2 0 100-4 2 2 0 000 4zm-8 4v-4m0 0a2 2 0 100-4 2 2 0 000 4zm14-12l-1.5 1.5M6 6l1.5 1.5M12 21a9 9 0 100-18 9 9 0 000 18z" />
+          </svg>
+          <span>Waktu &amp; Lokasi Akad Nikah / Pemberkatan</span>
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -33,7 +36,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                   akad: { ...p.akad, tanggal: e.target.value },
                 }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -48,7 +51,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="Contoh: 08:00 - 10:00 WIB"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -63,7 +66,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="Masjid Agung Al-Barkah Bekasi"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -78,7 +81,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="https://maps.app.goo.gl/..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div className="sm:col-span-2">
@@ -93,16 +96,19 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="Jl. Veteran No. 46, Marga Jaya, Kec. Bekasi Selatan, Kota Bekasi"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
         </div>
       </div>
 
       {/* Resepsi Pernikahan */}
-      <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-gray-800">
-          🎉 Waktu & Lokasi Resepsi Pernikahan
+      <div className="p-4 bg-[#FAF8F3] rounded-2xl border border-[#DCD7CA] space-y-4">
+        <h4 className="font-bold text-xs uppercase tracking-wider text-[#212C22] flex items-center gap-1.5">
+          <svg className="w-4 h-4 text-[#A2583E] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          <span>Waktu &amp; Lokasi Resepsi Pernikahan</span>
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -116,7 +122,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                   resepsi: { ...p.resepsi, tanggal: e.target.value },
                 }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -131,7 +137,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="Contoh: 11:00 - 14:00 WIB"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -146,7 +152,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="Grand Ballroom Hotel Horison Bekasi"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -161,7 +167,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="https://maps.app.goo.gl/..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div className="sm:col-span-2">
@@ -176,7 +182,7 @@ export default function FormAcara({ eventDetails, setEventDetails }: FormAcaraPr
                 }))
               }
               placeholder="Jl. KH. Noer Ali, Pekayon Jaya, Kota Bekasi"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
         </div>

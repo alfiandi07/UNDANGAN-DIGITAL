@@ -662,7 +662,7 @@ export default function TemplateModalForm({
                   onChange={(e) =>
                     setFormData({ ...formData, is_active: e.target.checked })
                   }
-                  className="w-4 h-4 text-[#4A151E] rounded-md border-slate-300 focus:ring-[#4A151E] cursor-pointer"
+                  className="w-4 h-4 text-[#2D3E2F] rounded-md border-slate-300 focus:ring-[#2D3E2F] cursor-pointer"
                 />
                 <label
                   htmlFor="is_active"

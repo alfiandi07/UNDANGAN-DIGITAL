@@ -219,7 +219,7 @@ export default function ProdukPage() {
 
   if (!isAdmin) {
     return (
-      <div className="bg-white p-8 rounded-2xl border border-[#E7E4DC] text-center max-w-md mx-auto my-12 space-y-4 shadow-xs">
+      <div className="bg-white p-8 rounded-2xl border border-[#DCD7CA] text-center max-w-md mx-auto my-12 space-y-4 shadow-xs">
         <div className="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -231,7 +231,7 @@ export default function ProdukPage() {
         </p>
         <Link
           to="/dashboard/transaksi"
-          className="inline-block px-5 py-2.5 bg-[#4A151E] hover:bg-[#381118] text-white rounded-xl text-xs font-semibold transition-colors"
+          className="inline-block px-5 py-2.5 bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-xl text-xs font-semibold transition-colors"
         >
           Lihat Undangan Saya
         </Link>
@@ -242,7 +242,7 @@ export default function ProdukPage() {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-xs border border-[#E7E4DC]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-xs border border-[#DCD7CA]">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 font-serif tracking-tight">
             Kelola Master Template Undangan
@@ -278,7 +278,7 @@ export default function ProdukPage() {
       <div className="produk-card">
         {loading ? (
           <div className="p-12 text-center text-slate-500">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D3E2F] mb-3" />
             <p className="text-xs">Memuat data template...</p>
           </div>
         ) : templateList.length === 0 ? (
@@ -302,7 +302,7 @@ export default function ProdukPage() {
                   <th className="produk-table-th text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E7E4DC]/60">
+              <tbody className="divide-y divide-[#DCD7CA]/60">
                 {templateList.map((item) => (
                   <tr key={item.id} className="produk-table-row">
                     {/* Thumbnail */}
@@ -335,7 +335,7 @@ export default function ProdukPage() {
                           href={item.demo_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-[#4A151E] mt-1.5 transition-colors"
+                          className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-[#2D3E2F] mt-1.5 transition-colors"
                         >
                           <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -353,14 +353,14 @@ export default function ProdukPage() {
                         </span>
                         {item.package_type === "premium" ? (
                           <span className="badge-tier-premium">
-                            <svg className="w-3 h-3 text-[#8C6D38] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3 text-[#82622B] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                             </svg>
                             PREMIUM
                           </span>
                         ) : (
                           <span className="badge-tier-standard">
-                            <svg className="w-3 h-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3 text-[#3A5438] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                             STANDAR
@@ -374,7 +374,7 @@ export default function ProdukPage() {
 
                     {/* Harga Produk */}
                     <td className="produk-table-td">
-                      <p className="text-sm font-bold text-[#4A151E]">
+                      <p className="text-sm font-bold text-[#2D3E2F]">
                         {formatRupiah(
                           item.price || item.price_standard || 99000,
                         )}

@@ -17,18 +17,23 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
       </h3>
 
       {/* Mempelai Pria */}
-      <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EBE3D5] space-y-4">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-[#4A151E]">
-          🤵 Mempelai Pria
+      <div className="p-4 bg-[#FAF8F3] rounded-2xl border border-[#DCD7CA] space-y-4">
+        <h4 className="font-bold text-xs uppercase tracking-wider text-[#2D3E2F] flex items-center gap-1.5">
+          <svg className="w-4 h-4 text-[#82622B] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span>Mempelai Pria</span>
         </h4>
 
         {/* Foto Profil Pria */}
-        <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-200">
-          <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-[#D4A373] flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-[#DCD7CA]">
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-100 border-2 border-[#DCD7CA] flex items-center justify-center shrink-0">
             {pria?.foto ? (
               <img src={pria.foto} alt="Pria" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-2xl">🤵</span>
+              <svg className="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             )}
           </div>
           <div className="flex-1 space-y-1">
@@ -52,7 +57,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                   }))
                 }
                 placeholder="https://... URL foto profil atau atur di tab Galeri"
-                className="flex-1 px-2.5 py-1 text-xs border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-[#4A151E]"
+                className="flex-1 px-2.5 py-1 text-xs border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-[#2D3E2F]"
               />
               {pria?.foto && (
                 <button
@@ -94,7 +99,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Contoh: Dimas Pratama, S.Kom"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -114,7 +119,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Dimas"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -134,7 +139,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Bpk. Hendra Gunawan"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -154,25 +159,30 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Ibu Siti Rahmawati"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
         </div>
       </div>
 
       {/* Mempelai Wanita */}
-      <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EBE3D5] space-y-4">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-[#4A151E]">
-          👰 Mempelai Wanita
+      <div className="p-4 bg-[#FAF8F3] rounded-2xl border border-[#DCD7CA] space-y-4">
+        <h4 className="font-bold text-xs uppercase tracking-wider text-[#2D3E2F] flex items-center gap-1.5">
+          <svg className="w-4 h-4 text-[#A2583E] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span>Mempelai Wanita</span>
         </h4>
 
         {/* Foto Profil Wanita */}
-        <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-200">
-          <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-[#D4A373] flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-[#DCD7CA]">
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-100 border-2 border-[#DCD7CA] flex items-center justify-center shrink-0">
             {wanita?.foto ? (
               <img src={wanita.foto} alt="Wanita" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-2xl">👰</span>
+              <svg className="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             )}
           </div>
           <div className="flex-1 space-y-1">
@@ -196,7 +206,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                   }))
                 }
                 placeholder="https://... URL foto profil atau atur di tab Galeri"
-                className="flex-1 px-2.5 py-1 text-xs border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-[#4A151E]"
+                className="flex-1 px-2.5 py-1 text-xs border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-[#2D3E2F]"
               />
               {wanita?.foto && (
                 <button
@@ -238,7 +248,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Contoh: Adinda Putri Lestari, S.E"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -258,7 +268,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Dinda"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -278,7 +288,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Bpk. Bambang Sudiro"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
           <div>
@@ -298,7 +308,7 @@ export default function FormMempelai({ eventDetails, setEventDetails }: FormMemp
                 }))
               }
               placeholder="Ibu Ratna Dewi"
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#4A151E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs bg-white outline-none focus:ring-2 focus:ring-[#2D3E2F]"
             />
           </div>
         </div>

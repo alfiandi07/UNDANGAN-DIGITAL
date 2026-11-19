@@ -1,17 +1,15 @@
 /* ==========================================================================
-   BERANDA KATALOG STYLESHEET (Clean Architecture)
+   BERANDA KATALOG STYLESHEET (Clean Architecture - Earthy Botanical Theme)
    Fitur: Halaman Utama Etalase Master Template & Landing Page
-   - Semantic Class BEM
-   - Responsif Mobile-First
-   - Rapi & Mudah Dipelihara
+   Palet: Warm Oatmeal Linen (#F4F1EA), Earthy Stone (#DCD7CA), Forest Olive (#2D3E2F)
    ========================================================================== */
 
 /* 1. PAGE WRAPPER */
 .katalog-page {
   position: relative;
   min-height: 100vh;
-  background-color: #ebebec;
-  color: #1e293b;
+  background-color: #f4f1ea;
+  color: #212c22;
   overflow-x: hidden;
   font-family:
     system-ui,
@@ -22,7 +20,7 @@
     sans-serif;
 }
 
-/* 1.1 FULL FIXED FLORAL BACKGROUND (WebP Kompresi Ringan 76KB - Nuansa Biru Cerah) */
+/* 1.1 FULL FIXED BOTANICAL BACKGROUND */
 .katalog-floral-bg {
   position: fixed;
   inset: 0;
@@ -32,6 +30,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  opacity: 0.15;
   pointer-events: none;
   z-index: 0;
 }
@@ -41,15 +40,10 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: linear-gradient(
-    135deg,
-    rgba(242, 246, 248, 0.92) 0%,
-    rgba(56, 189, 248, 0.85) 50%,
-    rgba(14, 83, 115, 0.78) 100%
-  );
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid #dcd7ca;
   padding: 0.85rem 1.5rem;
 }
 
@@ -73,16 +67,17 @@
   font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: 0.05em;
-  color: #110e0e;
+  color: #212c22;
 }
 
 .katalog-navbar__brand-badge {
   font-size: 0.625rem;
   font-weight: 800;
-  background-color: rgb(255, 255, 255);
-  color: #190b0b;
+  background-color: #f5efe3;
+  color: #82622b;
+  border: 1px solid #dfd2ba;
   padding: 0.15rem 0.5rem;
-  border-radius: 0.25rem;
+  border-radius: 9999px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -96,19 +91,19 @@
 }
 
 .katalog-navbar__link {
-  color: #0f172a;
+  color: #556050;
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .katalog-navbar__link:hover {
-  color: #0284c7;
+  color: #2d3e2f;
 }
 
 .katalog-navbar__link--active {
-  color: #0c4a6e;
+  color: #2d3e2f;
   font-weight: 800;
-  border-bottom: 2px solid #0c4a6e;
+  border-bottom: 2px solid #2d3e2f;
   padding-bottom: 0.25rem;
 }
 
@@ -122,33 +117,32 @@
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.5rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid #dcd7ca;
   border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #0284c7;
+  background-color: #ffffff;
+  color: #2d3e2f;
   text-decoration: none;
   transition: all 0.15s;
 }
 
 .katalog-btn-login:hover {
-  background-color: #ffffff;
-  color: #0369a1;
+  background-color: #f7f5ee;
 }
 
 .katalog-btn-cta {
   font-size: 0.75rem;
   font-weight: 800;
   padding: 0.5rem 1.15rem;
-  background-color: #0284c7;
+  background-color: #2d3e2f;
   color: #ffffff;
   border-radius: 9999px;
   text-decoration: none;
-  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 2px 6px rgba(45, 62, 47, 0.25);
   transition: background-color 0.15s;
 }
 
 .katalog-btn-cta:hover {
-  background-color: #0369a1;
+  background-color: #1e2b20;
 }
 
 /* 3. HERO SECTION */
@@ -165,9 +159,9 @@
   gap: 0.4rem;
   padding: 0.35rem 0.85rem;
   border-radius: 9999px;
-  background-color: #e0f2fe;
-  border: 1px solid #bae6fd;
-  color: #04080a;
+  background-color: #f5efe3;
+  border: 1px solid #dfd2ba;
+  color: #82622b;
   font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -179,24 +173,22 @@
   font-family: Georgia, Cambria, serif;
   font-size: 2.25rem;
   font-weight: 800;
-  color: #381118;
-  line-height: 1.2;
-  max-width: 48rem;
-  margin: 0 auto 0.75rem auto;
+  color: #212c22;
+  margin-bottom: 0.75rem;
 }
 
 .katalog-hero__desc {
   font-size: 0.95rem;
-  color: #6e5d53;
-  max-width: 40rem;
-  margin: 0 auto 1.5rem auto;
+  color: #556050;
+  max-width: 42rem;
+  margin: 0 auto 1.75rem auto;
   line-height: 1.6;
 }
 
-/* Search Box */
+/* Search Bar */
 .katalog-search-wrapper {
-  max-width: 38rem;
-  margin: 0 auto 1rem auto;
+  max-width: 32rem;
+  margin: 0 auto;
   padding: 0 0.5rem;
 }
 
@@ -205,7 +197,7 @@
   align-items: center;
   gap: 0.5rem;
   background-color: #ffffff;
-  border: 1px solid #e3d9c9;
+  border: 1px solid #dcd7ca;
   border-radius: 9999px;
   padding: 0.5rem 1rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
@@ -217,7 +209,7 @@
   outline: none;
   background: transparent;
   font-size: 0.85rem;
-  color: #374151;
+  color: #212c22;
 }
 
 .katalog-search-input::placeholder {
@@ -239,22 +231,23 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 700;
-  border: 1px solid #e3d9c9;
+  border: 1px solid #dcd7ca;
   background-color: #ffffff;
-  color: #69584f;
+  color: #556050;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .katalog-chip:hover {
-  background-color: #f0f9ff;
+  background-color: #f7f5ee;
+  color: #212c22;
 }
 
 .katalog-chip--active {
-  background-color: #4a151e;
-  border-color: #4a151e;
-  color: #fff9f2;
-  box-shadow: 0 1px 3px rgba(74, 21, 30, 0.2);
+  background-color: #2d3e2f;
+  border-color: #2d3e2f;
+  color: #f7f5ee;
+  box-shadow: 0 1px 3px rgba(45, 62, 47, 0.25);
 }
 
 /* 4. KATALOG CARD GRID */
@@ -275,7 +268,7 @@
 .katalog-card {
   background-color: #ffffff;
   border-radius: 1.25rem;
-  border: 1px solid #ebe3d5;
+  border: 1px solid #dcd7ca;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   display: flex;
@@ -288,27 +281,27 @@
 
 .katalog-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 24px -8px rgba(45, 62, 47, 0.12);
 }
 
 /* Mockup Frame */
 .katalog-card__preview {
   position: relative;
   height: 16rem;
-  background-color: #f0f9ff;
+  background-color: #faf8f3;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-bottom: 1px solid #e0f2fe;
+  border-bottom: 1px solid #dcd7ca;
 }
 
 .katalog-card__badge-tag {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
-  background-color: #4a151e;
-  color: #fff9f2;
+  background-color: #2d3e2f;
+  color: #ffffff;
   font-size: 0.625rem;
   font-weight: 800;
   padding: 0.2rem 0.6rem;
@@ -321,8 +314,9 @@
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  background-color: #ffc554;
-  color: #422b00;
+  background-color: #f5efe3;
+  color: #82622b;
+  border: 1px solid #dfd2ba;
   font-size: 0.625rem;
   font-weight: 800;
   padding: 0.2rem 0.5rem;
@@ -335,8 +329,8 @@
   height: 12.5rem;
   background-color: #ffffff;
   border-radius: 1rem;
-  border: 4px solid #1f2937;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 4px solid #2d3e2f;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -348,21 +342,23 @@
 .katalog-card__phone-notch {
   width: 2rem;
   height: 0.25rem;
-  background-color: #374151;
+  background-color: #2d3e2f;
   border-radius: 9999px;
   margin-bottom: auto;
 }
 
 .katalog-card__phone-icon {
-  font-size: 2.25rem;
   margin: auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .katalog-card__phone-title {
   font-size: 0.6rem;
   font-family: Georgia, Cambria, serif;
   font-weight: 700;
-  color: #374151;
+  color: #212c22;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -378,11 +374,12 @@
   justify-content: center;
   gap: 0.75rem;
   font-size: 0.65rem;
-  color: #6b7280;
-  background-color: rgba(255, 255, 255, 0.88);
+  color: #556050;
+  background-color: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(4px);
   padding: 0.35rem 0.5rem;
   border-radius: 0.5rem;
+  border: 1px solid #dcd7ca;
 }
 
 /* Card Body */
@@ -400,7 +397,7 @@
 
 .katalog-card__theme {
   font-weight: 800;
-  color: #8c6d3b;
+  color: #82622b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -409,7 +406,7 @@
   font-family: Georgia, Cambria, serif;
   font-size: 1.15rem;
   font-weight: 800;
-  color: #3b171d;
+  color: #212c22;
   margin: 0 0 0.85rem 0;
 }
 
@@ -417,7 +414,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #dcd7ca;
   padding-top: 0.65rem;
   margin-bottom: 1rem;
 }
@@ -433,7 +430,7 @@
 .katalog-card__price-val {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #3b171d;
+  color: #2d3e2f;
   margin: 0;
 }
 
@@ -447,22 +444,22 @@
 .katalog-card__btn-demo {
   text-align: center;
   padding: 0.55rem;
-  border: 1px solid #d5c9b8;
+  border: 1px solid #dcd7ca;
   border-radius: 0.75rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #4a151e;
+  color: #2d3e2f;
   text-decoration: none;
   transition: background-color 0.15s;
 }
 
 .katalog-card__btn-demo:hover {
-  background-color: #f9f5ee;
+  background-color: #f7f5ee;
 }
 
 .katalog-card__btn-order {
   padding: 0.55rem;
-  background-color: #4a151e;
+  background-color: #2d3e2f;
   color: #ffffff;
   border: none;
   border-radius: 0.75rem;
@@ -473,7 +470,7 @@
 }
 
 .katalog-card__btn-order:hover {
-  background-color: #360f15;
+  background-color: #1e2b20;
 }
 
 /* 5. SECTION PAKET HARGA (#paket) */
@@ -490,13 +487,13 @@
   font-family: Georgia, Cambria, serif;
   font-size: 1.85rem;
   font-weight: 800;
-  color: #381118;
+  color: #212c22;
   margin-bottom: 0.5rem;
 }
 
 .katalog-section-desc {
   font-size: 0.85rem;
-  color: #6e5d53;
+  color: #556050;
   margin-bottom: 2rem;
 }
 
@@ -509,7 +506,7 @@
 
 .pricing-table-card {
   background: #ffffff;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #dcd7ca;
   border-radius: 1.25rem;
   padding: 1.75rem;
   position: relative;
@@ -517,8 +514,8 @@
 }
 
 .pricing-table-card--featured {
-  border-color: #0284c7;
-  background: #f0f9ff;
+  border: 2px solid #2d3e2f;
+  background: #faf8f3;
 }
 
 .pricing-badge-popular {
@@ -526,7 +523,7 @@
   top: -0.75rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #4a151e;
+  background: #2d3e2f;
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 800;
@@ -539,19 +536,19 @@
   font-size: 1.1rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
-  color: #1f2937;
+  color: #212c22;
 }
 
 .pricing-plan-price {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #4a151e;
+  color: #2d3e2f;
   margin: 0 0 1rem 0;
 }
 
 .pricing-plan-list {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #556050;
   line-height: 1.8;
   padding-left: 1.2rem;
   margin: 0;
@@ -564,7 +561,7 @@
   max-width: 60rem;
   margin: 4rem auto;
   padding: 2.5rem 1.5rem;
-  background: linear-gradient(135deg, #4a151e 0%, #29080e 100%);
+  background: linear-gradient(135deg, #2d3e2f 0%, #1a241b 100%);
   color: #ffffff;
   border-radius: 1.5rem;
   text-align: center;
@@ -579,7 +576,7 @@
 
 .katalog-custom-desc {
   font-size: 0.9rem;
-  color: #f3e8e2;
+  color: #eaf1e9;
   max-width: 36rem;
   margin: 0 auto;
   line-height: 1.6;
@@ -606,11 +603,11 @@
 }
 
 .katalog-card__quota-badge--premium {
-  color: #6B1D2F;
+  color: #82622b;
 }
 
 .katalog-card__quota-badge--basic {
-  color: #047857;
+  color: #3a5438;
 }
 
 .katalog-custom-btn {
@@ -635,7 +632,7 @@
 
 /* 7. FOOTER */
 .katalog-footer {
-  border-top: 1px solid #ede5d8;
+  border-top: 1px solid #dcd7ca;
   padding: 2rem 1rem;
   text-align: center;
   font-size: 0.75rem;
@@ -662,7 +659,7 @@
     gap: 1.25rem;
     font-size: 0.75rem;
     padding-top: 0.5rem;
-    border-top: 1px solid rgba(230, 215, 205, 0.4);
+    border-top: 1px solid #dcd7ca;
   }
 
   .katalog-hero {

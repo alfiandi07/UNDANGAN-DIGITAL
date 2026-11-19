@@ -257,7 +257,7 @@ export default function EditorUndanganPage() {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://asminvitation.my.id";
     const linkUndangan = `${baseUrl}/${slug}?to=${encodeURIComponent(namaTamu)}`;
 
-    return `Kepada Yth. Bapak/Ibu/Saudara/i *${namaTamu}*,\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk hadir di momen bahagia pernikahan kami:\n\n*${pria} & ${wanita}*\n\nInformasi lengkap dan tautan undangan digital dapat diakses pada link berikut:\n${linkUndangan}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih 🤍`;
+    return `Kepada Yth. Bapak/Ibu/Saudara/i *${namaTamu}*,\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk hadir di momen bahagia pernikahan kami:\n\n*${pria} & ${wanita}*\n\nInformasi lengkap dan tautan undangan digital dapat diakses pada link berikut:\n${linkUndangan}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih.`;
   }
 
   function handleSalinPesan(namaTamu: string, idx: number) {
@@ -270,7 +270,7 @@ export default function EditorUndanganPage() {
   if (loading) {
     return (
       <div className="p-16 text-center text-gray-500">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D3E2F] mb-3" />
         <p className="text-sm">Memuat editor acara...</p>
       </div>
     );
@@ -283,7 +283,7 @@ export default function EditorUndanganPage() {
         <p className="text-xs">{error}</p>
         <Link
           to="/dashboard/transaksi"
-          className="inline-block px-4 py-2 bg-[#4A151E] text-white rounded-xl text-xs font-bold"
+          className="inline-block px-4 py-2 bg-[#2D3E2F] text-white rounded-xl text-xs font-bold"
         >
           Kembali ke Daftar Undangan
         </Link>
@@ -321,7 +321,11 @@ export default function EditorUndanganPage() {
             rel="noreferrer"
             className="editor-btn-preview"
           >
-            👁️ Pratinjau Web
+            <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span>Pratinjau Web</span>
           </a>
           <button
             type="button"
@@ -329,20 +333,29 @@ export default function EditorUndanganPage() {
             disabled={saving}
             className="editor-btn-save"
           >
-            {saving ? "Menyimpan..." : "💾 Simpan Perubahan"}
+            <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            <span>{saving ? "Menyimpan..." : "Simpan Perubahan"}</span>
           </button>
         </div>
       </div>
 
       {successMsg && (
-        <div className="editor-alert-success">
-          ✅ {successMsg}
+        <div className="editor-alert-success flex items-center gap-2">
+          <svg className="w-4 h-4 text-[#3A5438] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{successMsg}</span>
         </div>
       )}
 
       {error && (
-        <div className="editor-alert-error">
-          ❌ {error}
+        <div className="editor-alert-error flex items-center gap-2">
+          <svg className="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
@@ -353,40 +366,55 @@ export default function EditorUndanganPage() {
           onClick={() => setActiveTab("mempelai")}
           className={`editor-tab-btn ${activeTab === "mempelai" ? "editor-tab-btn--active" : ""}`}
         >
-          👫 Mempelai & Orang Tua
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span>Mempelai &amp; Orang Tua</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("acara")}
           className={`editor-tab-btn ${activeTab === "acara" ? "editor-tab-btn--active" : ""}`}
         >
-          📅 Jadwal Akad & Resepsi
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Jadwal Akad &amp; Resepsi</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("galeri")}
           className={`editor-tab-btn ${activeTab === "galeri" ? "editor-tab-btn--active" : ""}`}
         >
-          📸 Galeri & Musik ({currentPhotosCount}/{maxPhotosCount})
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Galeri &amp; Musik ({currentPhotosCount}/{maxPhotosCount})</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("amplop")}
           className={`editor-tab-btn ${activeTab === "amplop" ? "editor-tab-btn--active" : ""}`}
         >
-          💌 Amplop Digital & Cerita
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <span>Amplop Digital &amp; Cerita</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("tamu")}
           className={`editor-tab-btn ${activeTab === "tamu" ? "editor-tab-btn--active" : ""}`}
         >
-          📲 Sebar Tautan WhatsApp (FR-C3)
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <span>Sebar Tautan WhatsApp (FR-C3)</span>
         </button>
       </div>
 
       {/* Tab Contents */}
-      <form onSubmit={handleSimpan} className="bg-white p-6 sm:p-8 rounded-b-2xl shadow-xs border border-gray-100">
+      <form onSubmit={handleSimpan} className="bg-white p-6 sm:p-8 rounded-b-2xl shadow-xs border border-[#DCD7CA]">
         {/* TAB 1: MEMPELAI & ORANG TUA */}
         {activeTab === "mempelai" && (
           <FormMempelai
@@ -453,19 +481,22 @@ export default function EditorUndanganPage() {
         )}
 
         {/* Bottom Save Bar */}
-        <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
+        <div className="pt-6 border-t border-[#DCD7CA] flex justify-end gap-3">
           <Link
             to="/dashboard/transaksi"
-            className="px-4 py-2 text-xs font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition"
+            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-[#F7F5EE] rounded-xl transition-colors"
           >
             Kembali
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 text-xs font-bold bg-[#4A151E] hover:bg-[#360F15] text-white rounded-xl transition shadow-xs disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-6 py-2.5 text-xs font-bold bg-[#2D3E2F] hover:bg-[#1E2B20] text-white rounded-xl transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
           >
-            {saving ? "Menyimpan..." : "💾 Simpan Perubahan Acara"}
+            <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            <span>{saving ? "Menyimpan..." : "Simpan Perubahan Acara"}</span>
           </button>
         </div>
       </form>

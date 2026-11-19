@@ -247,7 +247,9 @@ export default function BerandaKatalog() {
         {/* Search Bar */}
         <div className="katalog-search-wrapper">
           <div className="katalog-search-box">
-            <span>🔍</span>
+            <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
             <input
               type="text"
               placeholder="Cari tema"
@@ -299,21 +301,33 @@ export default function BerandaKatalog() {
                   <div className="katalog-card__phone-frame">
                     <div className="katalog-card__phone-notch" />
                     <span className="katalog-card__phone-icon">
-                      {item.category === "wedding"
-                        ? "💍"
-                        : item.category === "khitan"
-                          ? ""
-                          : item.category === "birthday"
-                            ? ""
-                            : ""}
+                      <svg className="w-6 h-6 text-[#82622B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v1m6 11h2m-6 0a2 2 0 100-4 2 2 0 000 4zm-8 4v-4m0 0a2 2 0 100-4 2 2 0 000 4zm14-12l-1.5 1.5M6 6l1.5 1.5M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                      </svg>
                     </span>
                     <p className="katalog-card__phone-title">{item.title}</p>
                   </div>
 
                   <div className="katalog-card__features-bar">
-                    <span>🎵 Autoplay</span>
-                    <span>💌 Amplop</span>
-                    <span>📍 Maps</span>
+                    <span className="inline-flex items-center gap-1">
+                      <svg className="w-3 h-3 text-[#3A5438]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                      </svg>
+                      Autoplay
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <svg className="w-3 h-3 text-[#82622B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Amplop
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <svg className="w-3 h-3 text-[#A2583E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Maps
+                    </span>
                   </div>
                 </div>
 
@@ -450,7 +464,10 @@ export default function BerandaKatalog() {
           rel="noreferrer"
           className="katalog-custom-btn"
         >
-          <span>💬</span> Konsultasi Desain Custom via WhatsApp
+          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.772.82 2.791.82 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.766-5.768-5.766zm9.969 5.768c0 5.518-4.482 10-10 10-1.745 0-3.415-.45-4.886-1.291l-7.114 1.863 1.894-6.924c-.958-1.523-1.464-3.287-1.464-5.097 0-5.518 4.482-10 10-10 5.518 0 10 4.482 10 10z"/>
+          </svg>
+          <span>Konsultasi Desain Custom via WhatsApp</span>
         </a>
       </section>
 

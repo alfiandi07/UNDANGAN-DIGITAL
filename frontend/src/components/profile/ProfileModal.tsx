@@ -88,8 +88,11 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           </div>
         )}
         {successMsg && (
-          <div className="bg-emerald-50 text-emerald-800 text-xs p-3 rounded-xl border border-emerald-200 mb-4">
-            ✓ {successMsg}
+          <div className="bg-[#EAF1E9] text-[#3A5438] text-xs p-3 rounded-xl border border-[#C7D7C5] mb-4 flex items-center gap-2">
+            <svg className="w-4 h-4 shrink-0 text-[#3A5438]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{successMsg}</span>
           </div>
         )}
 

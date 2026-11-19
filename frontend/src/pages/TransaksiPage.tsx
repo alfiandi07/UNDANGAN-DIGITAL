@@ -116,7 +116,7 @@ export default function TransaksiPage() {
       {!isAdmin && invitations.length > 0 && (
         <div className="space-y-3">
           <h3 className="invitation-section-title">
-            <svg className="w-4 h-4 text-[#8C6D38] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[#82622B] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
             <span>Undangan Digital Anda</span>
@@ -203,7 +203,7 @@ export default function TransaksiPage() {
 
         {loading ? (
           <div className="p-12 text-center text-slate-500">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A151E] mb-3" />
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D3E2F] mb-3" />
             <p className="text-xs">Memuat data transaksi...</p>
           </div>
         ) : orders.length === 0 ? (
@@ -229,7 +229,7 @@ export default function TransaksiPage() {
                   <th className="transaksi-th text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E7E4DC]/60">
+              <tbody className="divide-y divide-[#DCD7CA]/60">
                 {orders.map((o) => (
                   <tr key={o.id} className="transaksi-row">
                     <td className="transaksi-td font-mono font-bold text-slate-900">
@@ -246,7 +246,7 @@ export default function TransaksiPage() {
 
                     <td className="transaksi-td">
                       <p className="font-semibold text-slate-800">{o.template_title ?? "Template"}</p>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[#FAF4E8] text-[#8C6D38] border border-[#E9DCBF]">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[#F5EFE3] text-[#82622B] border border-[#DFD2BA]">
                         {o.package_type}
                       </span>
                     </td>

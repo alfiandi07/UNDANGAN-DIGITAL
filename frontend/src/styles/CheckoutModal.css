@@ -1,9 +1,9 @@
 /* ==========================================================================
-   CHECKOUT MODAL STYLESHEET (Clean Architecture)
+   CHECKOUT MODAL STYLESHEET (Clean Architecture - Earthy Botanical Theme)
    Fitur: Modal Pop-up Pemesanan Undangan Digital
    - Ukuran stabil (Anti Layout Shift)
    - Slot validasi slug terkunci (Anti Bergerak Naik-Turun)
-   - Semantic Class BEM agar mudah dibaca & dirawat
+   - Palet: Warm Oatmeal Linen, Earthy Stone (#DCD7CA), Forest Olive (#2D3E2F)
    ========================================================================== */
 
 /* 1. BACKDROP & OVERLAY */
@@ -23,15 +23,16 @@
 /* 2. MODAL CARD CONTAINER (Ukuran Terkunci) */
 .checkout-modal-card {
   background-color: #ffffff;
+  border: 1px solid #dcd7ca;
   border-radius: 1.5rem;
   max-width: 34rem;
   width: 100%;
-  min-height: 530px; /* KUNCI UTAMA: Ukuran stabil, tidak membesar/mengecil */
+  min-height: 530px;
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(45, 62, 47, 0.2);
   margin: auto 0;
   animation: checkoutFadeIn 0.2s ease-out;
 }
@@ -52,7 +53,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid #f1ece4;
+  border-bottom: 1px solid #dcd7ca;
   padding-bottom: 0.85rem;
   margin-bottom: 1.25rem;
 }
@@ -61,7 +62,7 @@
   font-size: 0.65rem;
   font-weight: 800;
   text-transform: uppercase;
-  color: #8c6d3b;
+  color: #82622b;
   letter-spacing: 0.05em;
   display: block;
 }
@@ -70,7 +71,7 @@
   font-size: 1.35rem;
   font-weight: 700;
   font-family: Georgia, Cambria, serif;
-  color: #3b171d;
+  color: #212c22;
   margin: 0.15rem 0 0 0;
 }
 
@@ -82,10 +83,13 @@
   cursor: pointer;
   padding: 0.25rem;
   transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .checkout-header__close-btn:hover {
-  color: #374151;
+  color: #212c22;
 }
 
 /* 4. STEP 1: PILIHAN 2 PAKET (BASIC & PREMIUM) */
@@ -113,7 +117,7 @@
 
 .checkout-package-card {
   position: relative;
-  border: 2px solid #e5e7eb;
+  border: 2px solid #dcd7ca;
   border-radius: 1rem;
   padding: 1rem;
   text-align: center;
@@ -123,13 +127,13 @@
 }
 
 .checkout-package-card:hover {
-  border-color: #d1d5db;
+  border-color: #2d3e2f;
 }
 
 .checkout-package-card--selected {
-  border-color: #4a151e;
-  background-color: #fdf9f5;
-  box-shadow: 0 2px 8px rgba(74, 21, 30, 0.08);
+  border-color: #2d3e2f;
+  background-color: #faf8f3;
+  box-shadow: 0 2px 8px rgba(45, 62, 47, 0.08);
 }
 
 .checkout-package-card__badge {
@@ -137,7 +141,7 @@
   top: -0.6rem;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4a151e;
+  background-color: #2d3e2f;
   color: #ffffff;
   font-size: 0.55rem;
   font-weight: 800;
@@ -151,20 +155,20 @@
 .checkout-package-card__name {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #1f2937;
+  color: #212c22;
   margin: 0;
 }
 
 .checkout-package-card__price {
   font-size: 1.1rem;
   font-weight: 900;
-  color: #4a151e;
+  color: #2d3e2f;
   margin: 0.35rem 0;
 }
 
 .checkout-package-card__features {
   font-size: 0.65rem;
-  color: #6b7280;
+  color: #556050;
   margin: 0;
 }
 
@@ -176,16 +180,16 @@
 .checkout-slug-input-box {
   display: flex;
   align-items: center;
-  border: 1px solid #d1d5db;
+  border: 1px solid #dcd7ca;
   border-radius: 0.75rem;
   padding: 0.65rem 0.85rem;
-  background-color: #f9fafb;
+  background-color: #ffffff;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .checkout-slug-input-box:focus-within {
-  border-color: #4a151e;
-  box-shadow: 0 0 0 3px rgba(74, 21, 30, 0.12);
+  border-color: #2d3e2f;
+  box-shadow: 0 0 0 3px rgba(45, 62, 47, 0.12);
 }
 
 .checkout-slug-input-box--valid {
@@ -209,11 +213,10 @@
   outline: none;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #212c22;
   padding-left: 0.25rem;
 }
 
-/* KUNCI UTAMA ANTI NAIK-TURUN: Tinggi slot selalu 24px */
 .checkout-slug-status-slot {
   height: 24px;
   min-height: 24px;
@@ -266,7 +269,7 @@
 .checkout-form-input {
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #dcd7ca;
   border-radius: 0.75rem;
   font-size: 0.75rem;
   outline: none;
@@ -275,8 +278,8 @@
 }
 
 .checkout-form-input:focus {
-  border-color: #4a151e;
-  box-shadow: 0 0 0 3px rgba(74, 21, 30, 0.12);
+  border-color: #2d3e2f;
+  box-shadow: 0 0 0 3px rgba(45, 62, 47, 0.12);
 }
 
 .checkout-form-hint {
@@ -297,8 +300,8 @@
 
 /* 7. RINGKASAN HARGA (SUMMARY BOX) */
 .checkout-summary-box {
-  background-color: #faf7f2;
-  border: 1px solid #ebe3d5;
+  background-color: #faf8f3;
+  border: 1px solid #dcd7ca;
   border-radius: 0.85rem;
   padding: 0.75rem 1rem;
   font-size: 0.75rem;
@@ -308,16 +311,16 @@
 .checkout-summary-row {
   display: flex;
   justify-content: space-between;
-  color: #4b5563;
+  color: #556050;
   margin-bottom: 0.25rem;
 }
 
 .checkout-summary-row--total {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #dcd7ca;
   padding-top: 0.4rem;
   margin-top: 0.4rem;
   font-weight: 800;
-  color: #111827;
+  color: #212c22;
 }
 
 /* 8. FOOTER AKSI MODAL */
@@ -325,7 +328,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #dcd7ca;
   padding-top: 1rem;
   margin-top: 1rem;
 }
@@ -338,7 +341,7 @@
 .checkout-total-amount {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #4a151e;
+  color: #2d3e2f;
   margin-left: 0.25rem;
 }
 
@@ -347,7 +350,7 @@
   border: none;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #556050;
   padding: 0.5rem 0.85rem;
   border-radius: 0.65rem;
   cursor: pointer;
@@ -355,11 +358,11 @@
 }
 
 .checkout-btn-back:hover {
-  background-color: #f3f4f6;
+  background-color: #f7f5ee;
 }
 
 .checkout-btn-primary {
-  background-color: #4a151e;
+  background-color: #2d3e2f;
   color: #ffffff;
   border: none;
   font-size: 0.75rem;
@@ -368,11 +371,11 @@
   border-radius: 0.75rem;
   cursor: pointer;
   transition: background-color 0.15s, opacity 0.15s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(45, 62, 47, 0.15);
 }
 
 .checkout-btn-primary:hover:not(:disabled) {
-  background-color: #360f15;
+  background-color: #1e2b20;
 }
 
 .checkout-btn-primary:disabled {
@@ -389,13 +392,14 @@
 .checkout-success-icon {
   width: 3.5rem;
   height: 3.5rem;
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #eaf1e9;
+  color: #3a5438;
+  border: 1px solid #c7d7c5;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   margin: 0 auto 0.75rem auto;
 }
 
@@ -403,7 +407,7 @@
   font-size: 1.15rem;
   font-family: Georgia, Cambria, serif;
   font-weight: 700;
-  color: #111827;
+  color: #212c22;
   margin: 0 0 0.25rem 0;
 }
 
@@ -416,7 +420,7 @@
 .checkout-btn-pay {
   width: 100%;
   padding: 0.8rem;
-  background-color: #059669;
+  background-color: #2d3e2f;
   color: #ffffff;
   border: none;
   border-radius: 0.75rem;
@@ -424,11 +428,15 @@
   font-weight: 800;
   cursor: pointer;
   margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   transition: background-color 0.15s;
 }
 
 .checkout-btn-pay:hover {
-  background-color: #047857;
+  background-color: #1e2b20;
 }
 
 .checkout-package-card--static {
@@ -438,10 +446,14 @@
 
 .checkout-slug-icon {
   font-size: 0.85rem;
+  display: flex;
+  align-items: center;
 }
 
 .checkout-slug-icon--loading {
   font-size: 0.75rem;
+  display: flex;
+  align-items: center;
 }
 
 .checkout-req-star {
@@ -450,12 +462,13 @@
 
 .checkout-summary-code {
   font-family: monospace;
-  color: #4a151e;
+  color: #2d3e2f;
 }
 
 .checkout-summary-code--link {
   font-family: monospace;
-  color: #4338ca;
+  color: #2d3e2f;
+  font-weight: 700;
 }
 
 .checkout-summary-package {
@@ -463,12 +476,12 @@
 }
 
 .checkout-summary-price {
-  color: #4a151e;
+  color: #2d3e2f;
 }
 
 .checkout-success-banner {
-  background-color: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background-color: #eaf1e9;
+  border: 1px solid #c7d7c5;
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
   margin-bottom: 1rem;
@@ -477,7 +490,7 @@
 
 .checkout-success-banner__desc {
   font-size: 0.8rem;
-  color: #065f46;
+  color: #3a5438;
   font-weight: 500;
   margin: 0;
   line-height: 1.4;
@@ -492,12 +505,16 @@
   border-radius: 9999px;
   font-size: 0.7rem;
   font-weight: 700;
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #eaf1e9;
+  color: #3a5438;
+  border: 1px solid #c7d7c5;
 }
 
 .checkout-btn-pay--link {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   text-decoration: none;
   margin-top: 1rem;
   text-align: center;
@@ -506,4 +523,3 @@
 .checkout-footer--center {
   justify-content: center;
 }
-
