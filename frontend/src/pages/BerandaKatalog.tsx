@@ -227,130 +227,51 @@ export default function BerandaKatalog() {
       </header>
 
       {/* ========================================================
-          2. HERO SECTION - SPLIT ARCHITECTURAL WEDDING ARCH
+          2. HERO SECTION (Clean Centered Minimalist)
       ======================================================== */}
       <section className="katalog-hero">
         <div className="katalog-hero__container">
-          {/* Kolom Kiri: Headline & Aksi Pencarian */}
-          <div className="katalog-hero__content">
-            <div className="katalog-hero__badge">
-              <span className="katalog-hero__badge-dot animate-pulse"></span>
-              <span>STUDIO UNDANGAN DIGITAL #1</span>
-            </div>
+          <div className="katalog-hero__badge">
+            <span className="katalog-hero__badge-dot animate-pulse"></span>
+            <span>Studio Undangan Digital</span>
+          </div>
 
-            <h1 className="katalog-hero__title">
-              Katalog Eksklusif Undangan Digital Modern
-            </h1>
+          <h1 className="katalog-hero__title">
+            Katalog Master Undangan Digital
+          </h1>
 
-            <p className="katalog-hero__desc">
-              Pernikahan, Khitanan, Ulang Tahun, & Aqiqah Mobile-First (100dvh). Dilengkapi musik autoplay, amplop digital, navigasi Google Maps presisi, dan konfirmasi RSVP realtime.
-            </p>
+          <p className="katalog-hero__desc">
+            Pilihan template pernikahan, khitanan, & syukuran mobile-first. Dilengkapi musik autoplay, amplop digital, navigasi Google Maps, dan konfirmasi RSVP realtime.
+          </p>
 
-            {/* Search Bar */}
-            <div className="katalog-search-wrapper">
-              <div className="katalog-search-box">
-                <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Cari tema: Adat Sunda, Jawa Keraton, Modern Minimalis..."
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  className="katalog-search-input"
-                />
-                <button
-                  type="button"
-                  className="katalog-search-btn"
-                >
-                  Cari
-                </button>
-              </div>
-            </div>
-
-            {/* Category Filter Chips */}
-            <div className="katalog-chips-container">
-              {kategoriPilihan.map((kat) => (
-                <button
-                  key={kat.val}
-                  type="button"
-                  onClick={() => setKategoriAktif(kat.val)}
-                  className={`katalog-chip ${kategoriAktif === kat.val ? "katalog-chip--active" : ""}`}
-                >
-                  {kat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Social Proof Stats */}
-            <div className="katalog-hero__stats">
-              <div>
-                <p className="katalog-stat-val">100+</p>
-                <p className="katalog-stat-label">Master Template</p>
-              </div>
-              <div>
-                <p className="katalog-stat-val">4.9/5</p>
-                <p className="katalog-stat-label">Rating Pasangan</p>
-              </div>
-              <div>
-                <p className="katalog-stat-val">100%</p>
-                <p className="katalog-stat-label">Mobile Ready</p>
-              </div>
+          {/* Search Bar */}
+          <div className="katalog-search-wrapper">
+            <div className="katalog-search-box">
+              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Cari tema: Adat Sunda, Jawa Keraton, Modern Minimalis..."
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                className="katalog-search-input"
+              />
             </div>
           </div>
 
-          {/* Kolom Kanan: Architectural Wedding Arch (Gaya 1: Full Bunga & Dedaunan) */}
-          <div className="katalog-hero__showcase">
-            <div className="katalog-arch-wrapper">
-              {/* Botanical Crown Overlap SVG */}
-              <div className="katalog-arch-crown">
-                <svg viewBox="0 0 120 120" fill="none" className="w-full h-full">
-                  <path d="M100 10 C60 20 40 50 50 110" stroke="#3A5438" strokeWidth="2.5" strokeLinecap="round"/>
-                  <circle cx="80" cy="25" r="9" fill="#4B6A49"/>
-                  <circle cx="55" cy="45" r="10" fill="#5C7F59"/>
-                  <circle cx="45" cy="75" r="9" fill="#3A5438"/>
-                  <circle cx="75" cy="55" r="16" fill="#FFFFFF" stroke="#DCD7CA" strokeWidth="1.5"/>
-                  <circle cx="75" cy="55" r="9" fill="#F5EFE3"/>
-                  <circle cx="75" cy="55" r="5" fill="#A2583E"/>
-                </svg>
-              </div>
-
-              {/* Glowing Aura Frame */}
-              <div className="katalog-arch-glow"></div>
-
-              {/* Main Wedding Arch Card */}
-              <div className="katalog-arch-card">
-                <div className="katalog-arch-image-box">
-                  <img
-                    src="/botanical-moss-arch.jpg"
-                    alt="Lush Botanical Wedding Arch"
-                    className="katalog-arch-image"
-                  />
-
-                  {/* Gradient Vignette & Information */}
-                  <div className="katalog-arch-overlay">
-                    <span className="katalog-arch-tag">
-                      100% Floral Asli
-                    </span>
-                    <h3 className="katalog-arch-title">
-                      Lush Botanical Arch
-                    </h3>
-                    <p className="katalog-arch-desc">
-                      Dekorasi mawar putih, lumut sage asli, dan dedaunan eucalyptus rimbun.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Rating Badge */}
-                <div className="katalog-arch-badge-rating">
-                  <svg className="w-3.5 h-3.5 text-amber-500 fill-amber-500" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span className="text-xs font-bold text-[#2D3E2F]">4.9</span>
-                  <span className="text-[10px] text-[#556050] font-medium">Tema Favorit</span>
-                </div>
-              </div>
-            </div>
+          {/* Category Filter Chips */}
+          <div className="katalog-chips-container">
+            {kategoriPilihan.map((kat) => (
+              <button
+                key={kat.val}
+                type="button"
+                onClick={() => setKategoriAktif(kat.val)}
+                className={`katalog-chip ${kategoriAktif === kat.val ? "katalog-chip--active" : ""}`}
+              >
+                {kat.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
