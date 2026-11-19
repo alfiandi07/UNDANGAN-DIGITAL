@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ProfileModal from "../components/profile/ProfileModal";
 import "../styles/Dashboard.css";
@@ -15,8 +15,9 @@ export default function DashboardPage({ children }: DashboardPageProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   function handleLogout() {
+    setIsMobileMenuOpen(false);
     logout();
-    navigate("/masuk");
+    navigate("/login", { replace: true });
   }
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -260,7 +261,7 @@ export default function DashboardPage({ children }: DashboardPageProps) {
 
       {/* Konten Halaman Aktif */}
       <main className="dashboard-content-container">
-        {children}
+        {children ?? <Outlet />}
       </main>
 
       {/* Modal Profile Popup */}
