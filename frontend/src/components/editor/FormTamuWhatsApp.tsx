@@ -69,7 +69,7 @@ export default function FormTamuWhatsApp({
                   <div>
                     <p className="font-bold text-gray-900 text-xs sm:text-sm">{nama}</p>
                     <p className="text-[11px] font-mono text-indigo-700">
-                      undang_an.digital/{slug}?to={encodeURIComponent(nama)}
+                      asminvitation.my.id/{slug}?to={encodeURIComponent(nama)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

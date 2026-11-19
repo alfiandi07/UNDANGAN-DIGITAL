@@ -254,7 +254,8 @@ export default function EditorUndanganPage() {
   function buatTeksWhatsApp(namaTamu: string): string {
     const pria = eventDetails.mempelai?.pria?.panggilan || "Mempelai Pria";
     const wanita = eventDetails.mempelai?.wanita?.panggilan || "Mempelai Wanita";
-    const linkUndangan = `http://103.247.11.210/${slug}?to=${encodeURIComponent(namaTamu)}`;
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://asminvitation.my.id";
+    const linkUndangan = `${baseUrl}/${slug}?to=${encodeURIComponent(namaTamu)}`;
 
     return `Kepada Yth. Bapak/Ibu/Saudara/i *${namaTamu}*,\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk hadir di momen bahagia pernikahan kami:\n\n*${pria} & ${wanita}*\n\nInformasi lengkap dan tautan undangan digital dapat diakses pada link berikut:\n${linkUndangan}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih 🤍`;
   }
