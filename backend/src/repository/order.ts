@@ -92,7 +92,7 @@ export async function cariOrderByOrderId(orderId: string): Promise<Order | null>
 
 export async function cariInvitationByOrderId(orderId: string): Promise<Invitation | null> {
   const [rows] = await pool.execute<BarisInvitation[]>(
-    `SELECT i.*, t.title as template_title, o.buyer_name
+    `SELECT i.*, t.title as template_title, o.buyer_name, o.buyer_email
      FROM invitations i
      JOIN templates t ON i.template_id = t.id
      JOIN orders o ON i.order_id = o.order_id
@@ -109,7 +109,7 @@ export async function cariInvitationByOrderId(orderId: string): Promise<Invitati
 
 export async function cariInvitationBySlug(slug: string): Promise<Invitation | null> {
   const [rows] = await pool.execute<BarisInvitation[]>(
-    `SELECT i.*, t.title as template_title, o.buyer_name
+    `SELECT i.*, t.title as template_title, o.buyer_name, o.buyer_email
      FROM invitations i
      JOIN templates t ON i.template_id = t.id
      JOIN orders o ON i.order_id = o.order_id
@@ -149,7 +149,7 @@ export async function semuaOrdersByEmail(email: string): Promise<Order[]> {
 
 export async function semuaInvitationsByEmail(email: string): Promise<Invitation[]> {
   const [rows] = await pool.execute<BarisInvitation[]>(
-    `SELECT i.*, t.title as template_title, o.buyer_name, o.payment_status
+    `SELECT i.*, t.title as template_title, o.buyer_name, o.buyer_email, o.payment_status
      FROM invitations i
      JOIN templates t ON i.template_id = t.id
      JOIN orders o ON i.order_id = o.order_id

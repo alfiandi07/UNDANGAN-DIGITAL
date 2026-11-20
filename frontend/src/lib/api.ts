@@ -5,7 +5,19 @@ export type Pengguna = {
   email: string;
   peran: "admin" | "user";
   is_verified?: boolean;
+  token?: string;
 };
+
+export function getAuthToken(): string | null {
+  try {
+    const saved = localStorage.getItem("undangan_user");
+    if (!saved) return null;
+    const parsed = JSON.parse(saved);
+    return parsed.token || null;
+  } catch {
+    return null;
+  }
+}
 
 export type Produk = {
   id: number;
@@ -24,9 +36,14 @@ export type DataProduk = {
 
 // ── Fetch wrapper ──────────────────────────────────────
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
+  const token = getAuthToken();
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
     ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options?.headers,
+    },
   });
   const body = await res.json().catch(() => null);
   if (!res.ok) {
@@ -268,8 +285,10 @@ export async function uploadTemplateZip(formData: FormData): Promise<{
   demo_url: string;
   template: Template;
 }> {
+  const token = getAuthToken();
   const res = await fetch("/api/templates/upload-zip", {
     method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,
   });
   const body = await res.json().catch(() => null);
@@ -285,8 +304,10 @@ export async function uploadCoverTemplate(formData: FormData): Promise<{
   message: string;
   url: string;
 }> {
+  const token = getAuthToken();
   const res = await fetch("/api/templates/upload-cover", {
     method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,
   });
   const body = await res.json().catch(() => null);
@@ -414,8 +435,10 @@ export async function uploadFotoCloudinary(slug: string, file: File) {
   const formData = new FormData();
   formData.append("photo", file);
 
+  const token = getAuthToken();
   const res = await fetch(`/api/client/invitations/${slug}/photo`, {
     method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,
   });
 

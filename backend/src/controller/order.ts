@@ -5,6 +5,7 @@ import * as repo from "../repository/order.js";
 import * as templateRepo from "../repository/template.js";
 import type { PackageType } from "../models/order.js";
 import { uploadToCloudinary } from "../lib/cloudinary.js";
+import type { AuthenticatedRequest } from "../middleware/auth.js";
 
 function hitungMasaAktif(packageType: PackageType): Date {
   const now = new Date();
@@ -235,7 +236,11 @@ export async function midtransWebhook(req: Request, res: Response) {
 
     // Verifikasi signature jika Server Key tersedia (NFR-3 SHA-512)
     const serverKey = process.env.MIDTRANS_SERVER_KEY;
-    if (serverKey && signature_key) {
+    if (serverKey) {
+      if (!signature_key) {
+        res.status(401).json({ error: "Missing signature key in webhook payload" });
+        return;
+      }
       const payload = `${order_id}${status_code}${gross_amount}${serverKey}`;
       const expectedSignature = crypto
         .createHash("sha512")
@@ -270,6 +275,15 @@ export async function midtransWebhook(req: Request, res: Response) {
 // POST /api/orders/:orderId/simulasi-bayar (Untuk pengujian instan tanpa kartu kredit)
 export async function simulasiBayar(req: Request, res: Response) {
   try {
+    const simulationAllowed = process.env.ENABLE_PAYMENT_SIMULATION !== "false";
+    if (!simulationAllowed) {
+      res.status(403).json({
+        error:
+          "Fitur simulasi pembayaran dinonaktifkan di server ini. Silakan gunakan metode pembayaran resmi Midtrans.",
+      });
+      return;
+    }
+
     const orderId = String(req.params.orderId);
     const order = await repo.cariOrderByOrderId(orderId);
     if (!order) {
@@ -294,7 +308,16 @@ export async function simulasiBayar(req: Request, res: Response) {
 // GET /api/orders/my-orders (Pesanan & Undangan milik pembeli yang login)
 export async function getBuyerOrders(req: Request, res: Response) {
   try {
-    const email = String(req.query.email ?? "").trim();
+    const authReq = req as AuthenticatedRequest;
+    const authUser = authReq.user;
+    const requestedEmail = String(req.query.email ?? "").trim().toLowerCase();
+
+    // Jika bukan admin, hanya bisa melihat pesanannya sendiri
+    let email = authUser?.email || requestedEmail;
+    if (authUser?.peran === "admin" && requestedEmail) {
+      email = requestedEmail;
+    }
+
     if (!email) {
       res.status(400).json({ error: "Email pembeli diperlukan" });
       return;

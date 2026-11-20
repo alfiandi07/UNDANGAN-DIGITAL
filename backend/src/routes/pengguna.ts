@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as pengguna from "../controller/pengguna.js";
+import { authMiddleware, requireAdmin } from "../middleware/auth.js";
 export const authRouter = Router();
 authRouter.post(
   "/login",
@@ -35,15 +36,20 @@ authRouter.post(
 export const penggunaRouter = Router();
 penggunaRouter.get(
   "/",
+  authMiddleware,
+  requireAdmin,
   pengguna.daftarPengguna,
-); // GET /api/pengguna
+); // GET /api/pengguna (Admin Only)
 
 penggunaRouter.put(
   "/:id",
+  authMiddleware,
   pengguna.ubahPenggunaHandler,
-); // PUT /api/pengguna/:id
+); // PUT /api/pengguna/:id (Self or Admin)
 
 penggunaRouter.delete(
   "/:id",
+  authMiddleware,
+  requireAdmin,
   pengguna.hapusPenggunaHandler,
-); // DELETE /api/pengguna/:id
+); // DELETE /api/pengguna/:id (Admin Only)

@@ -1,7 +1,11 @@
 import { Router } from "express";
 import * as finance from "../controller/finance.js";
+import { authMiddleware, requireAdmin } from "../middleware/auth.js";
 
 export const financeRouter = Router();
+
+// Seluruh endpoint keuangan wajib autentikasi dan khusus peran Admin
+financeRouter.use(authMiddleware, requireAdmin);
 
 financeRouter.get("/summary", finance.getSummary); // GET /api/finance/summary
 financeRouter.post("/expenses", finance.addExpense); // POST /api/finance/expenses

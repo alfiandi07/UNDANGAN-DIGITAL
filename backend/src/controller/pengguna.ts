@@ -4,6 +4,8 @@ import * as repo from "../repository/pengguna.js";
 import type { Peran } from "../models/pengguna.js";
 import { validateRealEmail } from "../lib/emailValidator.js";
 import { generateOtp, kirimEmailOtp, kirimEmailResetPassword } from "../lib/mailer.js";
+import { signToken } from "../lib/auth.js";
+import type { AuthenticatedRequest } from "../middleware/auth.js";
 
 export async function daftarPengguna(_req: Request, res: Response) {
   res.json(await repo.semuaPengguna());
@@ -34,12 +36,19 @@ export async function login(req: Request, res: Response) {
     return;
   }
 
+  const token = signToken({
+    id: baris.id,
+    email: baris.email,
+    peran: baris.peran,
+  });
+
   res.json({
     id: baris.id,
     nama: baris.nama,
     email: baris.email,
     peran: baris.peran,
     is_verified: baris.is_verified,
+    token,
   });
 }
 
@@ -78,8 +87,15 @@ export async function daftar(req: Request, res: Response) {
   // 4. Kirim Email OTP ke alamat user
   await kirimEmailOtp(email, nama, otp);
 
+  const token = signToken({
+    id: pengguna.id,
+    email: pengguna.email,
+    peran: pengguna.peran,
+  });
+
   res.status(201).json({
     ...pengguna,
+    token,
     message: "Pendaftaran berhasil! Kode verifikasi 6 digit telah dikirim ke email Anda.",
     needs_verification: peran !== "admin",
   });
@@ -103,9 +119,18 @@ export async function verifikasiOtpHandler(req: Request, res: Response) {
 
   const pengguna = await repo.cariPenggunaByEmail(email);
 
+  const token = pengguna
+    ? signToken({
+        id: pengguna.id,
+        email: pengguna.email,
+        peran: pengguna.peran,
+      })
+    : undefined;
+
   res.json({
     success: true,
     message: "Selamat! Email Anda berhasil diverifikasi. Akun Anda telah aktif.",
+    token,
     user: pengguna
       ? {
           id: pengguna.id,
@@ -113,6 +138,7 @@ export async function verifikasiOtpHandler(req: Request, res: Response) {
           email: pengguna.email,
           peran: pengguna.peran,
           is_verified: true,
+          token,
         }
       : null,
   });
@@ -242,6 +268,8 @@ export async function hapusPenggunaHandler(req: Request, res: Response) {
 // PUT /api/pengguna/:id
 export async function ubahPenggunaHandler(req: Request, res: Response) {
   try {
+    const authReq = req as AuthenticatedRequest;
+    const currentUser = authReq.user;
     const id = Number(req.params.id);
     const peranLama = String(req.query.peran || "user") as Peran;
     const { nama, email, peran, password } = req.body ?? {};
@@ -249,6 +277,14 @@ export async function ubahPenggunaHandler(req: Request, res: Response) {
     if (!id || isNaN(id)) {
       res.status(400).json({ error: "ID pengguna tidak valid" });
       return;
+    }
+
+    // Otorisasi: User biasa hanya boleh mengubah akunnya sendiri & tidak boleh mengubah peran
+    if (!currentUser || currentUser.peran !== "admin") {
+      if (!currentUser || currentUser.id !== id) {
+        res.status(403).json({ error: "Akses ditolak: Anda hanya dapat mengubah data profil Anda sendiri." });
+        return;
+      }
     }
 
     if (!nama || !email) {
@@ -270,10 +306,14 @@ export async function ubahPenggunaHandler(req: Request, res: Response) {
       passwordHash = await bcrypt.hash(String(password), 10);
     }
 
+    const targetPeran = currentUser?.peran === "admin"
+      ? ((peran === "admin" ? "admin" : "user") as Peran)
+      : peranLama;
+
     const updated = await repo.ubahPengguna(id, peranLama, {
       nama: String(nama),
       email: String(email),
-      peran: (peran === "admin" ? "admin" : "user") as Peran,
+      peran: targetPeran,
       passwordHash,
     });
 

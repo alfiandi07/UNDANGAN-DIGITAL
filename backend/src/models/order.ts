@@ -58,6 +58,7 @@ export type Invitation = {
   created_at?: string;
   template_title?: string;
   buyer_name?: string;
+  buyer_email?: string;
 };
 
 export type CreateOrderInput = {

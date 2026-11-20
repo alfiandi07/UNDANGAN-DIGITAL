@@ -3,8 +3,10 @@
  * Mendukung Resend API, SMTP kustom, atau fallback console log untuk mode dev
  */
 
+import crypto from "crypto";
+
 export function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 }
 
 export async function kirimEmailOtp(
