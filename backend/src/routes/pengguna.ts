@@ -1,10 +1,13 @@
 import { Router } from "express";
 import * as pengguna from "../controller/pengguna.js";
 import { authMiddleware, requireAdmin } from "../middleware/auth.js";
+import { loginRateLimiter, otpRateLimiter } from "../middleware/rateLimiter.js";
+
 export const authRouter = Router();
+
 authRouter.post(
   "/login",
-
+  loginRateLimiter,
   pengguna.login,
 ); // POST /api/auth/login
 
@@ -15,21 +18,25 @@ authRouter.post(
 
 authRouter.post(
   "/verify-otp",
+  otpRateLimiter,
   pengguna.verifikasiOtpHandler,
 ); // POST /api/auth/verify-otp
 
 authRouter.post(
   "/resend-otp",
+  otpRateLimiter,
   pengguna.kirimUlangOtpHandler,
 ); // POST /api/auth/resend-otp
 
 authRouter.post(
   "/forgot-password",
+  otpRateLimiter,
   pengguna.lupaPasswordHandler,
 ); // POST /api/auth/forgot-password
 
 authRouter.post(
   "/reset-password",
+  otpRateLimiter,
   pengguna.resetPasswordHandler,
 ); // POST /api/auth/reset-password
 

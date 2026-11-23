@@ -11,16 +11,30 @@ export async function daftarPengguna(_req: Request, res: Response) {
   res.json(await repo.semuaPengguna());
 }
 
+// Dummy hash valid untuk menjaga waktu eksekusi bcrypt selalu konstan (mitigasi timing attack)
+const DUMMY_BCRYPT_HASH = "$2a$10$wT8K8.wJ0JvVn8N8l1fOcuqfGqQk5PsmG4GqK7sZ6pZ9b1q2w3e4r";
+
 export async function login(req: Request, res: Response) {
   const { email, password } = req.body ?? {};
-  if (!email || !password) {
-    res.status(400).json({ error: "Email dan password wajib diisi" });
+
+  // Validasi tipe data ketat (mencegah type confusion attack)
+  if (
+    !email ||
+    !password ||
+    typeof email !== "string" ||
+    typeof password !== "string"
+  ) {
+    res.status(400).json({ error: "Email dan password wajib diisi dengan format teks yang valid" });
     return;
   }
-  const baris = await repo.cariPenggunaByEmail(String(email));
-  const cocok = baris
-    ? await bcrypt.compare(String(password), baris.password)
-    : false;
+
+  const cleanEmail = email.trim().toLowerCase();
+  const baris = await repo.cariPenggunaByEmail(cleanEmail);
+
+  // Jika akun tidak ditemukan, bandingkan tetap dengan dummy hash agar waktu proses selalu sama (~100ms)
+  const hashToCompare = baris?.password || DUMMY_BCRYPT_HASH;
+  const cocok = await bcrypt.compare(password, hashToCompare);
+
   if (!baris || !cocok) {
     res.status(401).json({ error: "Email atau password salah" });
     return;

@@ -7,7 +7,24 @@ export type TokenPayload = {
   exp: number; // Unix timestamp in seconds
 };
 
-const JWT_SECRET = process.env.JWT_SECRET || "asm-undangan-jwt-secret-key-2026-production-salt";
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "FATAL SECURITY ERROR: JWT_SECRET wajib dikonfigurasi di file .env pada environment produksi! Server dihentikan demi keamanan."
+      );
+    }
+    console.warn(
+      "[SECURITY WARNING] JWT_SECRET tidak ditemukan di .env. Menggunakan runtime random secret untuk sesi development lokal."
+    );
+    // Hasilkan random secret 64-char unik setiap restart jika di dev dan belum pasang .env
+    return crypto.randomBytes(32).toString("hex");
+  }
+  return secret;
+}
+
+const JWT_SECRET = getJwtSecret();
 
 function base64UrlEncode(str: string): string {
   return Buffer.from(str)
@@ -94,3 +111,4 @@ export function verifyToken(token: string): TokenPayload | null {
     return null;
   }
 }
+

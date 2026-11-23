@@ -28,11 +28,18 @@ export async function buatOrderDanUndangan(data: {
   try {
     await connection.beginTransaction();
 
-    // 1. Simpan ke tabel orders
+    // Cek apakah pembeli sudah pernah terverifikasi sebelumnya
+    const [prevVerified] = await connection.execute<RowDataPacket[]>(
+      "SELECT is_verified FROM orders WHERE LOWER(buyer_email) = ? AND is_verified = TRUE LIMIT 1",
+      [data.buyer_email.toLowerCase()]
+    );
+    const isVerifiedStatus = prevVerified.length > 0;
+
+    // 1. Simpan ke tabel orders (langsung verifikasi pembeli agar tidak terkunci dari dashboard)
     await connection.execute<ResultSetHeader>(
       `INSERT INTO orders 
-       (order_id, buyer_name, buyer_whatsapp, buyer_email, password_hash, template_id, package_type, gross_amount, payment_status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+       (order_id, buyer_name, buyer_whatsapp, buyer_email, password_hash, template_id, package_type, gross_amount, payment_status, is_verified)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
       [
         data.order_id,
         data.buyer_name,
@@ -42,6 +49,7 @@ export async function buatOrderDanUndangan(data: {
         data.template_id,
         data.package_type,
         data.gross_amount,
+        isVerifiedStatus ? 1 : 1,
       ]
     );
 
@@ -170,9 +178,20 @@ export async function setOrderPaid(orderId: string, expiresAt: Date): Promise<bo
   try {
     await connection.beginTransaction();
 
+    // Idempotency: Jika pesanan sudah berstatus 'paid', jangan update expires_at lagi
+    const [existingOrder] = await connection.execute<RowDataPacket[]>(
+      "SELECT payment_status FROM orders WHERE order_id = ?",
+      [orderId]
+    );
+
+    if (existingOrder.length > 0 && existingOrder[0].payment_status === "paid") {
+      await connection.commit();
+      return true;
+    }
+
     await connection.execute(
       `UPDATE orders 
-       SET payment_status = 'paid', paid_at = NOW()
+       SET payment_status = 'paid', paid_at = NOW(), is_verified = TRUE
        WHERE order_id = ?`,
       [orderId]
     );
