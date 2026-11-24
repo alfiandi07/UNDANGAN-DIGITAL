@@ -112,6 +112,32 @@ export default function TransaksiPage() {
         </div>
       )}
 
+      {/* Panduan Pembeli Baru: Jika Belum Memiliki Pesanan/Undangan */}
+      {!isAdmin && invitations.length === 0 && !loading && (
+        <div className="bg-[#FAF7F2] border border-[#E5DECF] rounded-2xl p-6 sm:p-8 text-center max-w-2xl mx-auto my-6 shadow-sm">
+          <div className="w-14 h-14 bg-[#EAE2D2] rounded-full flex items-center justify-center mx-auto mb-3.5 text-[#2D3E2F]">
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <h3 className="font-serif text-xl font-bold text-slate-900 mb-2">
+            Silakan Pesan Undangan Terlebih Dahulu
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 mb-6 max-w-md mx-auto leading-relaxed">
+            Akun Anda berhasil dibuat. Untuk mulai mengaktifkan dan mengedit undangan digital Anda, silakan pilih desain tema yang Anda sukai di katalog kami.
+          </p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#2D3E2F] hover:bg-[#233225] text-[#F9F7F1] text-xs font-semibold rounded-xl transition shadow hover:shadow-md"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            <span>Buka Katalog &amp; Pesan Undangan</span>
+          </Link>
+        </div>
+      )}
+
       {/* Konten Klien / Pembeli: Kartu Undangan */}
       {!isAdmin && invitations.length > 0 && (
         <div className="space-y-3">
@@ -212,8 +238,16 @@ export default function TransaksiPage() {
             <p className="text-xs mt-1">
               {isAdmin
                 ? "Belum ada pesanan yang masuk dari pembeli."
-                : "Anda belum pernah melakukan pemesanan template undangan."}
+                : "Anda belum memiliki pesanan aktif. Silakan pilih template di katalog terlebih dahulu."}
             </p>
+            {!isAdmin && (
+              <Link
+                to="/"
+                className="inline-block mt-3 px-4 py-1.5 text-xs font-semibold text-[#2D3E2F] bg-[#F5EFE3] hover:bg-[#EAE2D2] rounded-lg border border-[#DFD2BA] transition"
+              >
+                Pilih Template Sekarang &rarr;
+              </Link>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">

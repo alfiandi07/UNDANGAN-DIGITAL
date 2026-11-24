@@ -29,7 +29,10 @@ export default function App() {
           {/* Halaman Utama Publik */}
           <Route path="/" element={<BerandaKatalog />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signin" element={<LoginPage />} />
           <Route path="/daftar" element={<RegisterPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
           <Route path="/lupa-password" element={<ForgotPasswordPage />} />
 
           {/* Protected Area */}

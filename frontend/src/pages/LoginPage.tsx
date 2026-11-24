@@ -123,7 +123,7 @@ export default function LoginPage() {
 
           <div className="auth-footer">
             Belum punya akun?
-            <Link to="/register" className="auth-link">
+            <Link to="/daftar" className="auth-link">
               Daftar di sini
             </Link>
           </div>
