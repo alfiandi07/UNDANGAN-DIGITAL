@@ -342,15 +342,28 @@ export async function getAllOrdersAdmin(_req: Request, res: Response) {
   }
 }
 
-// GET /api/orders/:orderId
+// GET /api/orders/:orderId (Protected: Owner or Admin)
 export async function getOrderDetail(req: Request, res: Response) {
   try {
+    const authReq = req as AuthenticatedRequest;
+    const currentUser = authReq.user;
     const orderId = String(req.params.orderId);
     const order = await repo.cariOrderByOrderId(orderId);
     if (!order) {
       res.status(404).json({ error: "Pesanan tidak ditemukan" });
       return;
     }
+
+    // IDOR Protection: Hanya pemilik pesanan atau Admin yang berhak melihat data order
+    const userEmail = (currentUser?.email || "").toLowerCase();
+    const buyerEmail = (order.buyer_email || "").toLowerCase();
+    if (currentUser?.peran !== "admin" && userEmail !== buyerEmail) {
+      res.status(403).json({
+        error: "Akses ditolak: Anda tidak memiliki izin untuk melihat detail pesanan ini.",
+      });
+      return;
+    }
+
     const invitation = await repo.cariInvitationByOrderId(orderId);
     res.json({ order, invitation });
   } catch (err) {

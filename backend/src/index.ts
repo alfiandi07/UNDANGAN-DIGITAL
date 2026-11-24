@@ -21,6 +21,7 @@ import { uploadImage } from "./middleware/upload.js";
 import { authMiddleware, requireOwnerOrAdmin } from "./middleware/auth.js";
 import { daftarRsvps, kirimRsvp } from "./controller/rsvp.js";
 import { financeRouter } from "./routes/finance.js";
+import { rsvpRateLimiter } from "./middleware/rateLimiter.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 
@@ -79,7 +80,7 @@ app.post(
 ); // PRD FR-C2 & Endpoint 7: Upload Foto Cloudinary (Protected: Owner/Admin)
 app.delete("/api/client/invitations/:slug/photo", authMiddleware, requireOwnerOrAdmin, deletePhotoHandler); // Protected: Owner/Admin
 app.get("/api/invitations/:slug/rsvps", daftarRsvps); // PRD Modul D: Daftar Ucapan Doa
-app.post("/api/invitations/:slug/rsvps", kirimRsvp); // PRD Modul D: Submit RSVP & Ucapan Tamu
+app.post("/api/invitations/:slug/rsvps", rsvpRateLimiter, kirimRsvp); // PRD Modul D: Submit RSVP & Ucapan Tamu (Protected by RateLimiter)
 app.use("/api/finance", financeRouter); // PRD Modul E: Laporan Finansial & Auto-Cleanup
 
 // Urutan penting: route → 404 → errorHandler paling akhir

@@ -82,3 +82,10 @@ export const otpRateLimiter = createRateLimiter({
   message: "Terlalu banyak permintaan verifikasi kode OTP. Silakan tunggu beberapa saat lagi.",
 });
 
+// 3. Rate limiter untuk Ucapan & RSVP Tamu: Maksimal 10 ucapan per 5 menit per IP (mencegah spam bot)
+export const rsvpRateLimiter = createRateLimiter({
+  windowMs: 5 * 60 * 1000,
+  maxRequests: 10,
+  message: "Terlalu banyak pengiriman ucapan dari perangkat Anda. Silakan tunggu 5 menit sebelum mengirim kembali.",
+});
+
