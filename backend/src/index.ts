@@ -30,6 +30,15 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.json());
 
+// HTTP Security Headers (Anti-Clickjacking, Anti-MIME-Sniffing, Strict-Referrer)
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  next();
+});
+
 // Sajikan folder static template hasil ekstrak ZIP (PRD: Zip Template Engine)
 app.use("/templates", express.static(path.join(__dirname, "../public/templates")));
 // Sajikan folder static gambar cover template

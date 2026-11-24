@@ -3,6 +3,7 @@ import { useParams, useSearchParams, useLocation, Link } from "react-router-dom"
 import * as api from "../lib/api";
 import type { Invitation, Rsvp, Attendance } from "../lib/api";
 import { getDemoData, DEMO_INVITATIONS } from "../utils/demoData";
+import { sanitizeUrl } from "../utils/sanitizeUrl";
 import "../styles/UndanganTamu.css";
 
 interface UndanganTamuPageProps {
@@ -551,7 +552,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
               </p>
               {details.akad?.maps_url && (
                 <a
-                  href={details.akad.maps_url}
+                  href={sanitizeUrl(details.akad.maps_url)}
                   target="_blank"
                   rel="noreferrer"
                   className="guest-maps-btn inline-flex items-center justify-center gap-1.5"
@@ -590,7 +591,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
               </p>
               {details.resepsi?.maps_url && (
                 <a
-                  href={details.resepsi.maps_url}
+                  href={sanitizeUrl(details.resepsi.maps_url)}
                   target="_blank"
                   rel="noreferrer"
                   className="guest-maps-btn inline-flex items-center justify-center gap-1.5"

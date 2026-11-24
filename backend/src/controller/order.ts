@@ -436,6 +436,24 @@ export async function saveEventDetails(req: Request, res: Response) {
       return;
     }
 
+    // Sanitasi URL Maps & Musik untuk mencegah stored XSS via skema berbahaya (javascript:, data:)
+    const sanitizeUrlBackend = (url?: unknown): string => {
+      if (typeof url !== "string") return "";
+      const trimmed = url.trim();
+      if (!trimmed) return "";
+      return /^(https?:\/\/|\/)/i.test(trimmed) ? trimmed : "";
+    };
+
+    if (event_details.akad && typeof event_details.akad === "object") {
+      event_details.akad.maps_url = sanitizeUrlBackend(event_details.akad.maps_url);
+    }
+    if (event_details.resepsi && typeof event_details.resepsi === "object") {
+      event_details.resepsi.maps_url = sanitizeUrlBackend(event_details.resepsi.maps_url);
+    }
+    if (event_details.music_url) {
+      event_details.music_url = sanitizeUrlBackend(event_details.music_url);
+    }
+
     const updated = await repo.updateEventDetails(
       slug,
       event_details,
@@ -491,18 +509,29 @@ export async function uploadPhotoHandler(req: Request, res: Response) {
     const folder = `asm-invitations/${slug}`;
     const result = await uploadToCloudinary(file.buffer, folder);
 
-    // 3. Tambahkan URL foto ke array event_details.photos
-    existingPhotos.push(result.secure_url);
-    details.photos = existingPhotos;
+    // 3. Re-verifikasi kuota terbaru dari database untuk mencegah race condition upload paralel
+    const freshInv = await repo.cariInvitationBySlug(slug);
+    const freshDetails = freshInv?.event_details || {};
+    const freshPhotos: string[] = Array.isArray(freshDetails.photos) ? [...freshDetails.photos] : [];
 
-    // 4. Update Database
-    const updated = await repo.updateEventDetails(slug, details, existingPhotos.length);
+    if (freshPhotos.length >= (freshInv?.max_photos ?? invitation.max_photos)) {
+      res.status(400).json({
+        error: `Kuota galeri foto telah penuh! Batas maksimal adalah ${invitation.max_photos} foto.`,
+      });
+      return;
+    }
+
+    freshPhotos.push(result.secure_url);
+    freshDetails.photos = freshPhotos;
+
+    // 4. Update Database secara atomik
+    const updated = await repo.updateEventDetails(slug, freshDetails, freshPhotos.length);
 
     res.json({
       success: true,
       message: "Foto berhasil diunggah ke Cloudinary!",
       photo_url: result.secure_url,
-      current_photos: existingPhotos.length,
+      current_photos: freshPhotos.length,
       max_photos: invitation.max_photos,
       invitation: updated,
     });

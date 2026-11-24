@@ -5,6 +5,7 @@ import type { Template } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import CheckoutModal from "../components/CheckoutModal";
 import { formatRupiah } from "../utils/format";
+import { sanitizeUrl } from "../utils/sanitizeUrl";
 import "../styles/BerandaKatalog.css";
 
 const DEFAULT_MASTER_TEMPLATES: Template[] = [
@@ -370,7 +371,7 @@ export default function BerandaKatalog() {
 
                   <div className="katalog-card__buttons">
                     <a
-                      href={item.demo_url}
+                      href={sanitizeUrl(item.demo_url)}
                       target="_blank"
                       rel="noreferrer"
                       className="katalog-card__btn-demo"

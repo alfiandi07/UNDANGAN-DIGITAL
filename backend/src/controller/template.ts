@@ -227,12 +227,58 @@ export async function uploadZipHandler(req: Request, res: Response) {
     }
 
     // Target folder ekstraksi: backend/public/templates/[slug]
-    const targetDir = path.join(__dirname, "../../public/templates", cleanSlug);
+    const targetDir = path.resolve(__dirname, "../../public/templates", cleanSlug);
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
 
-    // Ekstrak seluruh isi file zip
+    // 2. Proteksi Keamanan Ekstraksi ZIP (Zip Slip, Zip Bomb, & Filter File Terlarang)
+    const MAX_UNCOMPRESSED_SIZE = 100 * 1024 * 1024; // 100 MB
+    const MAX_ENTRY_COUNT = 500;
+    const DANGEROUS_EXTENSIONS = [
+      ".php", ".phtml", ".php3", ".php4", ".php5", ".phps",
+      ".sh", ".bash", ".exe", ".bat", ".cmd", ".com", ".dll",
+      ".py", ".pl", ".cgi", ".jar", ".vbs", ".hta", ".env", ".htaccess"
+    ];
+
+    if (zipEntries.length > MAX_ENTRY_COUNT) {
+      res.status(400).json({
+        error: `File .zip ditolak: Jumlah file di dalam arsip terlalu banyak (${zipEntries.length} file, batas maksimal ${MAX_ENTRY_COUNT} file).`,
+      });
+      return;
+    }
+
+    let totalUncompressedSize = 0;
+    for (const entry of zipEntries) {
+      totalUncompressedSize += entry.header.size;
+      if (totalUncompressedSize > MAX_UNCOMPRESSED_SIZE) {
+        res.status(400).json({
+          error: "File .zip ditolak: Total ukuran ekstraksi melebihi batas aman 100 MB (Zip Bomb Protection)!",
+        });
+        return;
+      }
+
+      // Validasi Zip Slip (Path Traversal Protection)
+      const resolvedEntryPath = path.resolve(targetDir, entry.entryName);
+      if (!resolvedEntryPath.startsWith(targetDir + path.sep) && resolvedEntryPath !== targetDir) {
+        res.status(400).json({
+          error: "File .zip terindikasi tidak aman (terdeteksi path traversal / Zip Slip pada nama file)!",
+        });
+        return;
+      }
+
+      // Validasi Ekstensi Terlarang
+      const entryLower = entry.entryName.toLowerCase();
+      const hasDangerousExt = DANGEROUS_EXTENSIONS.some((ext) => entryLower.endsWith(ext));
+      if (hasDangerousExt) {
+        res.status(400).json({
+          error: `File .zip ditolak: Ditemukan file dengan ekstensi terlarang (${entry.entryName}). Hanya aset web statis (HTML, CSS, JS, Gambar, Font) yang diizinkan!`,
+        });
+        return;
+      }
+    }
+
+    // Ekstrak seluruh isi file zip secara aman
     zip.extractAllTo(targetDir, true);
 
     // Cari letak index.html (bisa di root zip atau di dalam subfolder)

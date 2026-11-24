@@ -178,9 +178,9 @@ export async function setOrderPaid(orderId: string, expiresAt: Date): Promise<bo
   try {
     await connection.beginTransaction();
 
-    // Idempotency: Jika pesanan sudah berstatus 'paid', jangan update expires_at lagi
+    // Idempotency: Jika pesanan sudah berstatus 'paid', jangan update expires_at lagi (Row-level lock FOR UPDATE)
     const [existingOrder] = await connection.execute<RowDataPacket[]>(
-      "SELECT payment_status FROM orders WHERE order_id = ?",
+      "SELECT payment_status FROM orders WHERE order_id = ? FOR UPDATE",
       [orderId]
     );
 

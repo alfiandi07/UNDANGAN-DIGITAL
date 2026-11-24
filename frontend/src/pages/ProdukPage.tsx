@@ -4,6 +4,7 @@ import * as api from "../lib/api";
 import type { Template, DataTemplateInput } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import TemplateModalForm from "../components/template/TemplateModalForm";
+import { sanitizeUrl } from "../utils/sanitizeUrl";
 import "./ProdukPage.css";
 
 export default function ProdukPage() {
@@ -332,7 +333,7 @@ export default function ProdukPage() {
                       </p>
                       {item.demo_url && (
                         <a
-                          href={item.demo_url}
+                          href={sanitizeUrl(item.demo_url)}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-[#2D3E2F] mt-1.5 transition-colors"
