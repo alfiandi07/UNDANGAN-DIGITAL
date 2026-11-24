@@ -234,22 +234,31 @@ export async function midtransWebhook(req: Request, res: Response) {
       return;
     }
 
-    // Verifikasi signature jika Server Key tersedia (NFR-3 SHA-512)
+    // Verifikasi signature Midtrans secara ketat (Fail-Closed & Timing-Safe SHA-512)
     const serverKey = process.env.MIDTRANS_SERVER_KEY;
-    if (serverKey) {
-      if (!signature_key) {
-        res.status(401).json({ error: "Missing signature key in webhook payload" });
-        return;
-      }
-      const payload = `${order_id}${status_code}${gross_amount}${serverKey}`;
-      const expectedSignature = crypto
-        .createHash("sha512")
-        .update(payload)
-        .digest("hex");
-      if (signature_key !== expectedSignature) {
-        res.status(403).json({ error: "Invalid signature key" });
-        return;
-      }
+    if (!serverKey) {
+      console.error("[SECURITY ERROR] MIDTRANS_SERVER_KEY belum dikonfigurasi di file .env server.");
+      res.status(500).json({ error: "Server payment gateway configuration missing" });
+      return;
+    }
+
+    if (!signature_key || typeof signature_key !== "string") {
+      res.status(401).json({ error: "Missing or invalid signature key in webhook payload" });
+      return;
+    }
+
+    const payload = `${order_id}${status_code}${gross_amount}${serverKey}`;
+    const expectedSignature = crypto
+      .createHash("sha512")
+      .update(payload)
+      .digest("hex");
+
+    const sigBuf = Buffer.from(signature_key, "hex");
+    const expBuf = Buffer.from(expectedSignature, "hex");
+
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      res.status(403).json({ error: "Invalid signature key" });
+      return;
     }
 
     // Cek status pembayaran
@@ -436,12 +445,12 @@ export async function saveEventDetails(req: Request, res: Response) {
       return;
     }
 
-    // Sanitasi URL Maps & Musik untuk mencegah stored XSS via skema berbahaya (javascript:, data:)
+    // Sanitasi URL Maps & Musik untuk mencegah stored XSS via skema berbahaya (javascript:, data:) dan open-redirect (//)
     const sanitizeUrlBackend = (url?: unknown): string => {
       if (typeof url !== "string") return "";
       const trimmed = url.trim();
       if (!trimmed) return "";
-      return /^(https?:\/\/|\/)/i.test(trimmed) ? trimmed : "";
+      return /^(https?:\/\/|\/(?!\/|\\))/i.test(trimmed) ? trimmed : "";
     };
 
     if (event_details.akad && typeof event_details.akad === "object") {

@@ -267,6 +267,15 @@ export async function uploadZipHandler(req: Request, res: Response) {
         return;
       }
 
+      // Validasi Symlink (Mencegah Symbolic Link Traversal ke File Sistem)
+      const isSymlink = Boolean(entry.attr && ((entry.attr >>> 16) & 0o120000) === 0o120000);
+      if (isSymlink) {
+        res.status(400).json({
+          error: `File .zip ditolak: Ditemukan symbolic link (${entry.entryName}) yang berpotensi membahayakan sistem server!`,
+        });
+        return;
+      }
+
       // Validasi Ekstensi Terlarang
       const entryLower = entry.entryName.toLowerCase();
       const hasDangerousExt = DANGEROUS_EXTENSIONS.some((ext) => entryLower.endsWith(ext));
@@ -278,8 +287,15 @@ export async function uploadZipHandler(req: Request, res: Response) {
       }
     }
 
-    // Ekstrak seluruh isi file zip secara aman
-    zip.extractAllTo(targetDir, true);
+    // Ekstrak seluruh isi file zip secara aman dengan Rollback Cleanup jika gagal
+    try {
+      zip.extractAllTo(targetDir, true);
+    } catch (extractErr) {
+      if (fs.existsSync(targetDir)) {
+        fs.rmSync(targetDir, { recursive: true, force: true });
+      }
+      throw extractErr;
+    }
 
     // Cari letak index.html (bisa di root zip atau di dalam subfolder)
     let demoPath = `/templates/${cleanSlug}/index.html`;

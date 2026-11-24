@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as pengguna from "../controller/pengguna.js";
 import { authMiddleware, requireAdmin } from "../middleware/auth.js";
-import { loginRateLimiter, otpRateLimiter } from "../middleware/rateLimiter.js";
+import { loginRateLimiter, otpRateLimiter, registerRateLimiter } from "../middleware/rateLimiter.js";
 
 export const authRouter = Router();
 
@@ -13,8 +13,9 @@ authRouter.post(
 
 authRouter.post(
   "/daftar",
+  registerRateLimiter,
   pengguna.daftar,
-); // POST /api/auth/daftar
+); // POST /api/auth/daftar (Rate-Limited)
 
 authRouter.post(
   "/verify-otp",

@@ -356,7 +356,7 @@ export default function UndanganTamuPage({ isDemo = false }: UndanganTamuPagePro
       <div className="guest-phone-container">
         {/* Audio Element */}
         {details.music_url && (
-          <audio ref={audioRef} src={details.music_url} loop preload="auto" />
+          <audio ref={audioRef} src={sanitizeUrl(details.music_url)} loop preload="auto" />
         )}
 
         {/* Floating Music Button */}

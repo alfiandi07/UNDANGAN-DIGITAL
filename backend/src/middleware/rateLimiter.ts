@@ -89,3 +89,17 @@ export const rsvpRateLimiter = createRateLimiter({
   message: "Terlalu banyak pengiriman ucapan dari perangkat Anda. Silakan tunggu 5 menit sebelum mengirim kembali.",
 });
 
+// 4. Rate limiter untuk Pemesanan / Checkout: Maksimal 5 pesanan per 10 menit per IP (mencegah spam pesanan/slug locking)
+export const orderRateLimiter = createRateLimiter({
+  windowMs: 10 * 60 * 1000,
+  maxRequests: 5,
+  message: "Terlalu banyak pembuatan pesanan dalam waktu singkat. Silakan tunggu beberapa saat.",
+});
+
+// 5. Rate limiter untuk Registrasi Akun: Maksimal 5 pendaftaran per 15 menit per IP (mencegah spam OTP email)
+export const registerRateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  maxRequests: 5,
+  message: "Terlalu banyak pendaftaran akun dari perangkat Anda. Silakan tunggu 15 menit.",
+});
+
