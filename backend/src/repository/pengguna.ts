@@ -8,6 +8,31 @@ type BarisPengguna = RowDataPacket & Pengguna & {
   otp_expires_at?: Date | null;
 };
 
+// Pelacak jumlah kesalahan OTP per email (Maksimal 5x salah, setelah itu OTP otomatis dihanguskan)
+const MAX_OTP_ATTEMPTS = 5;
+const otpFailedAttempts = new Map<string, number>();
+
+async function catatKegagalanOtp(cleanEmail: string, isAdminTable: boolean): Promise<boolean> {
+  const attempts = (otpFailedAttempts.get(cleanEmail) || 0) + 1;
+  if (attempts >= MAX_OTP_ATTEMPTS) {
+    otpFailedAttempts.delete(cleanEmail);
+    if (isAdminTable) {
+      await pool.execute(
+        "UPDATE admins SET verification_otp = NULL, otp_expires_at = NULL WHERE LOWER(email) = ?",
+        [cleanEmail]
+      );
+    } else {
+      await pool.execute(
+        "UPDATE orders SET verification_otp = NULL, otp_expires_at = NULL WHERE LOWER(buyer_email) = ?",
+        [cleanEmail]
+      );
+    }
+    return true; // OTP telah dihanguskan
+  }
+  otpFailedAttempts.set(cleanEmail, attempts);
+  return false;
+}
+
 // Mengambil seluruh pengguna (Admin tim inti + Klien pembeli yang memesan)
 export async function semuaPengguna(): Promise<Pengguna[]> {
   try {
@@ -171,13 +196,16 @@ export async function verifikasiOtp(email: string, otp: string): Promise<boolean
 
   const user = rows[0];
   if (!user.verification_otp || user.verification_otp !== cleanOtp) {
+    await catatKegagalanOtp(cleanEmail, false);
     return false;
   }
 
   if (user.otp_expires_at && new Date() > new Date(user.otp_expires_at)) {
+    otpFailedAttempts.delete(cleanEmail);
     return false; // OTP kedaluwarsa
   }
 
+  otpFailedAttempts.delete(cleanEmail);
   // Sukses verifikasi
   await pool.execute(
     `UPDATE orders 
@@ -196,6 +224,7 @@ export async function simpanOtpBaru(
   otpExpires: Date
 ): Promise<boolean> {
   const cleanEmail = email.trim().toLowerCase();
+  otpFailedAttempts.delete(cleanEmail);
   const [result] = await pool.execute<ResultSetHeader>(
     `UPDATE orders 
      SET verification_otp = ?, otp_expires_at = ? 
@@ -213,6 +242,7 @@ export async function simpanResetOtp(
   otpExpires: Date
 ): Promise<{ success: boolean; nama: string }> {
   const cleanEmail = email.trim().toLowerCase();
+  otpFailedAttempts.delete(cleanEmail);
   const user = await cariPenggunaByEmail(cleanEmail);
 
   if (!user) {
@@ -271,11 +301,20 @@ export async function verifikasiResetOtpDanUbahPassword(
     if (adminRows.length > 0) {
       const adm = adminRows[0];
       if (!adm.verification_otp || adm.verification_otp !== cleanOtp) {
-        return { success: false, message: "Kode OTP salah atau tidak cocok" };
+        const burned = await catatKegagalanOtp(cleanEmail, true);
+        return {
+          success: false,
+          message: burned
+            ? "Terlalu banyak percobaan salah (5x). Kode OTP telah dihanguskan, silakan minta kode baru."
+            : "Kode OTP salah atau tidak cocok",
+        };
       }
       if (adm.otp_expires_at && new Date() > new Date(adm.otp_expires_at)) {
+        otpFailedAttempts.delete(cleanEmail);
         return { success: false, message: "Kode OTP telah kedaluwarsa. Silakan minta kode baru." };
       }
+
+      otpFailedAttempts.delete(cleanEmail);
 
       await pool.execute(
         "UPDATE admins SET password_hash = ?, verification_otp = NULL, otp_expires_at = NULL WHERE id = ?",
@@ -295,11 +334,20 @@ export async function verifikasiResetOtpDanUbahPassword(
   if (orderRows.length > 0) {
     const ord = orderRows[0];
     if (!ord.verification_otp || ord.verification_otp !== cleanOtp) {
-      return { success: false, message: "Kode OTP salah atau tidak cocok" };
+      const burned = await catatKegagalanOtp(cleanEmail, false);
+      return {
+        success: false,
+        message: burned
+          ? "Terlalu banyak percobaan salah (5x). Kode OTP telah dihanguskan, silakan minta kode baru."
+          : "Kode OTP salah atau tidak cocok",
+      };
     }
     if (ord.otp_expires_at && new Date() > new Date(ord.otp_expires_at)) {
+      otpFailedAttempts.delete(cleanEmail);
       return { success: false, message: "Kode OTP telah kedaluwarsa. Silakan minta kode baru." };
     }
+
+    otpFailedAttempts.delete(cleanEmail);
 
     await pool.execute(
       "UPDATE orders SET password_hash = ?, is_verified = TRUE, verification_otp = NULL, otp_expires_at = NULL WHERE LOWER(buyer_email) = ?",

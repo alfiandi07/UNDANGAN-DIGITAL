@@ -25,6 +25,9 @@ import { rsvpRateLimiter } from "./middleware/rateLimiter.js";
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 
+// Percayai 1 hop reverse proxy (Nginx) agar req.ip membaca IP asli pengunjung, bukan header X-Forwarded-For mentah
+app.set("trust proxy", 1);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

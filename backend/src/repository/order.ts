@@ -87,9 +87,12 @@ export async function buatOrderDanUndangan(data: {
   }
 }
 
+const ORDER_PUBLIC_COLS =
+  "o.id, o.order_id, o.buyer_name, o.buyer_whatsapp, o.buyer_email, o.template_id, o.package_type, o.gross_amount, o.payment_status, o.paid_at, o.created_at";
+
 export async function cariOrderByOrderId(orderId: string): Promise<Order | null> {
   const [rows] = await pool.execute<BarisOrder[]>(
-    `SELECT o.*, t.title as template_title
+    `SELECT ${ORDER_PUBLIC_COLS}, t.title as template_title
      FROM orders o
      JOIN templates t ON o.template_id = t.id
      WHERE o.order_id = ?`,
@@ -134,7 +137,7 @@ export async function cariInvitationBySlug(slug: string): Promise<Invitation | n
 
 export async function semuaOrdersAdmin(): Promise<Order[]> {
   const [rows] = await pool.execute<BarisOrder[]>(
-    `SELECT o.*, t.title as template_title
+    `SELECT ${ORDER_PUBLIC_COLS}, t.title as template_title
      FROM orders o
      JOIN templates t ON o.template_id = t.id
      ORDER BY o.id DESC`
@@ -144,11 +147,11 @@ export async function semuaOrdersAdmin(): Promise<Order[]> {
 
 export async function semuaOrdersByEmail(email: string): Promise<Order[]> {
   const [rows] = await pool.execute<BarisOrder[]>(
-    `SELECT o.*, t.title as template_title, i.slug, i.status as invitation_status
+    `SELECT ${ORDER_PUBLIC_COLS}, t.title as template_title, i.slug, i.status as invitation_status
      FROM orders o
      JOIN templates t ON o.template_id = t.id
      LEFT JOIN invitations i ON o.order_id = i.order_id
-     WHERE o.buyer_email = ?
+     WHERE LOWER(o.buyer_email) = LOWER(?)
      ORDER BY o.id DESC`,
     [email]
   );

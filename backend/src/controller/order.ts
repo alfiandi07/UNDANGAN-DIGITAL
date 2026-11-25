@@ -4,8 +4,19 @@ import crypto from "crypto";
 import * as repo from "../repository/order.js";
 import * as templateRepo from "../repository/template.js";
 import type { PackageType } from "../models/order.js";
-import { uploadToCloudinary } from "../lib/cloudinary.js";
+import { uploadToCloudinary, deleteFromCloudinary } from "../lib/cloudinary.js";
 import type { AuthenticatedRequest } from "../middleware/auth.js";
+import { verifyToken } from "../lib/auth.js";
+import { cariPenggunaByEmail } from "../repository/pengguna.js";
+
+function extractCloudinaryPublicId(url: string): string | null {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
 
 function hitungMasaAktif(packageType: PackageType): Date {
   const now = new Date();
@@ -40,6 +51,47 @@ export async function createOrder(req: Request, res: Response) {
     ) {
       res.status(400).json({ error: "Seluruh kolom wajib diisi lengkap" });
       return;
+    }
+
+    const cleanEmail = String(buyer_email).trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      res.status(400).json({ error: "Format alamat email tidak valid" });
+      return;
+    }
+
+    if (String(password).length < 6) {
+      res.status(400).json({ error: "Password minimal 6 karakter" });
+      return;
+    }
+
+    // Proteksi Anti-Account Takeover: Jika email sudah terdaftar, wajib terautentikasi sebagai pemiliknya atau masukkan password yang cocok
+    const existingAccount = await cariPenggunaByEmail(cleanEmail);
+    let finalPasswordHash: string;
+    if (existingAccount) {
+      const authHeader = req.headers.authorization;
+      const tokenPayload =
+        authHeader && authHeader.startsWith("Bearer ")
+          ? verifyToken(authHeader.substring(7).trim())
+          : null;
+      const isLoggedInOwner =
+        tokenPayload && tokenPayload.email.toLowerCase() === cleanEmail;
+
+      if (!isLoggedInOwner) {
+        const passwordMatches = await bcrypt.compare(
+          String(password),
+          existingAccount.password
+        );
+        if (!passwordMatches || existingAccount.peran === "admin") {
+          res.status(401).json({
+            error:
+              "Email ini sudah terdaftar. Silakan login terlebih dahulu atau masukkan password akun Anda yang benar untuk membuat pesanan baru.",
+          });
+          return;
+        }
+      }
+      finalPasswordHash = existingAccount.password;
+    } else {
+      finalPasswordHash = await bcrypt.hash(String(password), 10);
     }
 
     // 1. Normalisasi & Validasi Slug
@@ -89,8 +141,8 @@ export async function createOrder(req: Request, res: Response) {
 
     const expiresAt = hitungMasaAktif(pkg);
 
-    // 3. Hash password pembeli (disimpan langsung di tabel orders untuk login klien)
-    const passwordHash = await bcrypt.hash(String(password), 10);
+    // 3. Gunakan hash password yang sudah diverifikasi kepemilikannya
+    const passwordHash = finalPasswordHash;
 
     // 4. Generate order_id unik: ASM-YYMMDD-XXXX
     const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, "");
@@ -405,6 +457,31 @@ export async function getInvitationBySlug(req: Request, res: Response) {
 
     invitation.is_expired = isExpired;
 
+    // Cek otorisasi opsional untuk menyembunyikan data sensitif & memblokir akses publik ke status draft
+    const authHeader = req.headers.authorization;
+    const tokenPayload =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? verifyToken(authHeader.substring(7).trim())
+        : null;
+    const isOwnerOrAdmin = Boolean(
+      tokenPayload &&
+        (tokenPayload.peran === "admin" ||
+          tokenPayload.email.toLowerCase() === (invitation.buyer_email || "").toLowerCase())
+    );
+
+    if (invitation.status === "draft" && !isOwnerOrAdmin) {
+      res.status(403).json({
+        error: "Undangan ini masih berstatus draft dan belum dipublikasikan.",
+      });
+      return;
+    }
+
+    if (!isOwnerOrAdmin) {
+      const { buyer_email: _be, order_id: _oi, ...publicInvitation } = invitation as unknown as Record<string, unknown>;
+      res.json(publicInvitation);
+      return;
+    }
+
     res.json(invitation);
   } catch (err) {
     res.status(500).json({ error: "Gagal mengambil data undangan" });
@@ -574,6 +651,14 @@ export async function deletePhotoHandler(req: Request, res: Response) {
 
     const updatedPhotos = existingPhotos.filter((p) => p !== photo_url);
     details.photos = updatedPhotos;
+
+    // Hapus aset fisik dari Cloudinary jika berasal dari Cloudinary
+    if (typeof photo_url === "string" && photo_url.includes("cloudinary.com")) {
+      const publicId = extractCloudinaryPublicId(photo_url);
+      if (publicId) {
+        await deleteFromCloudinary(publicId);
+      }
+    }
 
     const updated = await repo.updateEventDetails(slug, details, updatedPhotos.length);
 

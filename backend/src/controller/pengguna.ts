@@ -90,7 +90,8 @@ export async function daftar(req: Request, res: Response) {
   }
 
   const hash = await bcrypt.hash(password, 10);
-  const peran: Peran = req.body?.peran === "admin" ? "admin" : "user";
+  // Selalu paksa peran = "user" untuk pendaftaran publik (mencegah Privilege Escalation)
+  const peran: Peran = "user";
 
   // 3. Generate Kode OTP 6 Digit & waktu kedaluwarsa (15 menit)
   const otp = generateOtp();
@@ -111,7 +112,7 @@ export async function daftar(req: Request, res: Response) {
     ...pengguna,
     token,
     message: "Pendaftaran berhasil! Kode verifikasi 6 digit telah dikirim ke email Anda.",
-    needs_verification: peran !== "admin",
+    needs_verification: true,
   });
 }
 
@@ -200,7 +201,11 @@ export async function lupaPasswordHandler(req: Request, res: Response) {
 
     const pengguna = await repo.cariPenggunaByEmail(email);
     if (!pengguna) {
-      res.status(404).json({ error: "Akun dengan email tersebut tidak ditemukan" });
+      // Kembalikan pesan netral 200 OK agar tidak membocorkan daftar email terdaftar (Anti User Enumeration)
+      res.json({
+        success: true,
+        message: "Jika email terdaftar di sistem kami, kode OTP untuk reset password telah dikirim ke email Anda.",
+      });
       return;
     }
 
@@ -212,7 +217,7 @@ export async function lupaPasswordHandler(req: Request, res: Response) {
 
     res.json({
       success: true,
-      message: "Kode OTP untuk reset password telah dikirim ke email Anda.",
+      message: "Jika email terdaftar di sistem kami, kode OTP untuk reset password telah dikirim ke email Anda.",
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Gagal memproses lupa password";
@@ -285,7 +290,6 @@ export async function ubahPenggunaHandler(req: Request, res: Response) {
     const authReq = req as AuthenticatedRequest;
     const currentUser = authReq.user;
     const id = Number(req.params.id);
-    const peranLama = String(req.query.peran || "user") as Peran;
     const { nama, email, peran, password } = req.body ?? {};
 
     if (!id || isNaN(id)) {
@@ -293,13 +297,28 @@ export async function ubahPenggunaHandler(req: Request, res: Response) {
       return;
     }
 
-    // Otorisasi: User biasa hanya boleh mengubah akunnya sendiri & tidak boleh mengubah peran
-    if (!currentUser || currentUser.peran !== "admin") {
-      if (!currentUser || currentUser.id !== id) {
+    if (!currentUser) {
+      res.status(401).json({ error: "Autentikasi diperlukan." });
+      return;
+    }
+
+    // Otorisasi ketat: Non-admin hanya boleh mengubah akun 'user' miliknya sendiri dan dilarang menyentuh peran/email akun lain
+    const isAdmin = currentUser.peran === "admin";
+    if (!isAdmin) {
+      if (currentUser.id !== id) {
         res.status(403).json({ error: "Akses ditolak: Anda hanya dapat mengubah data profil Anda sendiri." });
         return;
       }
+      if (email && String(email).trim().toLowerCase() !== currentUser.email.toLowerCase()) {
+        res.status(403).json({ error: "Akses ditolak: Pengubahan email akun hanya dapat dilakukan melalui Administrator." });
+        return;
+      }
     }
+
+    // Kunci peranLama berdasarkan JWT untuk non-admin (cegah manipulasi query ?peran=admin)
+    const peranLama: Peran = isAdmin
+      ? (req.query.peran === "admin" ? "admin" : "user")
+      : "user";
 
     if (!nama || !email) {
       res.status(400).json({ error: "Nama dan email wajib diisi" });
@@ -320,9 +339,9 @@ export async function ubahPenggunaHandler(req: Request, res: Response) {
       passwordHash = await bcrypt.hash(String(password), 10);
     }
 
-    const targetPeran = currentUser?.peran === "admin"
-      ? ((peran === "admin" ? "admin" : "user") as Peran)
-      : peranLama;
+    const targetPeran: Peran = isAdmin
+      ? (peran === "admin" ? "admin" : "user")
+      : "user";
 
     const updated = await repo.ubahPengguna(id, peranLama, {
       nama: String(nama),

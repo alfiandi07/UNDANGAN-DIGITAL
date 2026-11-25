@@ -377,9 +377,18 @@ export async function uploadCoverHandler(req: Request, res: Response) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
 
-    const ext = path.extname(file.originalname) || ".jpg";
-    const cleanExt = ext.startsWith(".") ? ext : `.${ext}`;
-    const filename = `cover-${Date.now()}-${Math.floor(Math.random() * 10000)}${cleanExt}`;
+    const mimeToExt: Record<string, string> = {
+      "image/jpeg": ".jpg",
+      "image/jpg": ".jpg",
+      "image/png": ".png",
+      "image/webp": ".webp",
+    };
+    const safeExt = mimeToExt[file.mimetype.toLowerCase()];
+    if (!safeExt) {
+      res.status(400).json({ error: "Format gambar cover tidak valid (hanya JPG, PNG, WEBP)" });
+      return;
+    }
+    const filename = `cover-${Date.now()}-${Math.floor(Math.random() * 10000)}${safeExt}`;
     const filePath = path.join(targetDir, filename);
 
     fs.writeFileSync(filePath, file.buffer);

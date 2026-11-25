@@ -34,12 +34,8 @@ export function createRateLimiter(options: RateLimitOptions) {
     res: Response,
     next: NextFunction
   ): void {
-    const forwarded = req.headers["x-forwarded-for"];
-    const ip =
-      (typeof forwarded === "string" ? forwarded.split(",")[0].trim() : undefined) ||
-      req.ip ||
-      req.socket.remoteAddress ||
-      "unknown-client";
+    // Gunakan req.ip (yang telah divalidasi oleh Express trust proxy) untuk mencegah spoofing X-Forwarded-For
+    const ip = req.ip || req.socket.remoteAddress || "unknown-client";
 
     const now = Date.now();
     const record = clients.get(ip);

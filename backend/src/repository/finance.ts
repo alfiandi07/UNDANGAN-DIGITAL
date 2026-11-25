@@ -1,6 +1,7 @@
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import { pool } from "../db.js";
 import type { OperationalCost, FinanceSummary } from "../models/finance.js";
+import { deleteFromCloudinary } from "../lib/cloudinary.js";
 
 type BarisCost = RowDataPacket & OperationalCost;
 
@@ -119,6 +120,18 @@ export async function jalankanCleanupServer(): Promise<{
     try {
       details = typeof row.event_details === "string" ? JSON.parse(row.event_details) : row.event_details;
     } catch {}
+
+    // Hapus aset fisik di Cloudinary agar tidak ada orphaned storage
+    if (Array.isArray(details.photos)) {
+      for (const photoUrl of details.photos) {
+        if (typeof photoUrl === "string" && photoUrl.includes("cloudinary.com")) {
+          const match = photoUrl.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/);
+          if (match?.[1]) {
+            await deleteFromCloudinary(match[1]);
+          }
+        }
+      }
+    }
 
     // Kosongkan array foto untuk menghemat kapasitas server/storage
     details.photos = [];
