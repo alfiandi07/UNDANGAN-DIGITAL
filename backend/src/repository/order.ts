@@ -236,3 +236,13 @@ export async function updateInvitationStatus(
 ): Promise<void> {
   await pool.execute("UPDATE invitations SET status = ? WHERE id = ?", [status, id]);
 }
+
+export async function updateOrderPaymentStatus(
+  orderId: string,
+  status: "expired" | "failed"
+): Promise<void> {
+  await pool.execute(
+    "UPDATE orders SET payment_status = ? WHERE order_id = ? AND payment_status = 'pending'",
+    [status, orderId]
+  );
+}

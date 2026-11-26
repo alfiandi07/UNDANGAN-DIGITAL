@@ -118,8 +118,8 @@ export async function createOrder(req: Request, res: Response) {
 
     // 2. Ambil detail template & hitung harga sesuai paket PRD
     const template = await templateRepo.cariTemplateById(Number(template_id));
-    if (!template) {
-      res.status(404).json({ error: "Template tidak ditemukan" });
+    if (!template || !template.is_active) {
+      res.status(404).json({ error: "Template tidak ditemukan atau sedang tidak aktif" });
       return;
     }
 
@@ -321,9 +321,21 @@ export async function midtransWebhook(req: Request, res: Response) {
     if (isPaid) {
       const order = await repo.cariOrderByOrderId(String(order_id));
       if (order) {
+        // Verifikasi kesesuaian nominal transaksi (Defense-in-Depth)
+        if (Math.abs(Number(gross_amount) - Number(order.gross_amount)) > 0.01) {
+          console.warn(
+            `[PAYMENT ALERT] Gross amount mismatch untuk order ${order.order_id}: webhook=${gross_amount}, db=${order.gross_amount}`
+          );
+          res.status(400).json({ error: "Gross amount mismatch" });
+          return;
+        }
         const expiresAt = hitungMasaAktif(order.package_type);
         await repo.setOrderPaid(order.order_id, expiresAt);
       }
+    } else if (transaction_status === "expire") {
+      await repo.updateOrderPaymentStatus(String(order_id), "expired");
+    } else if (transaction_status === "cancel" || transaction_status === "deny") {
+      await repo.updateOrderPaymentStatus(String(order_id), "failed");
     }
 
     res.json({ status: "ok" });
@@ -498,6 +510,17 @@ export async function saveEventDetails(req: Request, res: Response) {
       return;
     }
 
+    if (
+      invitation.status === "expired" ||
+      invitation.status === "cleaned" ||
+      new Date() > new Date(invitation.expires_at)
+    ) {
+      res.status(403).json({
+        error: "Masa aktif undangan telah berakhir. Data acara tidak dapat diubah lagi.",
+      });
+      return;
+    }
+
     const { event_details } = req.body ?? {};
     if (!event_details || typeof event_details !== "object") {
       res.status(400).json({ error: "Format data acara tidak valid" });
@@ -539,11 +562,20 @@ export async function saveEventDetails(req: Request, res: Response) {
     if (event_details.music_url) {
       event_details.music_url = sanitizeUrlBackend(event_details.music_url);
     }
+    if (Array.isArray(event_details.photos)) {
+      event_details.photos = event_details.photos
+        .map((p: unknown) => sanitizeUrlBackend(p))
+        .filter(Boolean);
+    }
+
+    const sanitizedPhotosCount = Array.isArray(event_details.photos)
+      ? event_details.photos.length
+      : 0;
 
     const updated = await repo.updateEventDetails(
       slug,
       event_details,
-      photos.length,
+      sanitizedPhotosCount,
     );
     res.json({
       success: true,
@@ -570,6 +602,17 @@ export async function uploadPhotoHandler(req: Request, res: Response) {
     const invitation = await repo.cariInvitationBySlug(slug);
     if (!invitation) {
       res.status(404).json({ error: "Undangan tidak ditemukan" });
+      return;
+    }
+
+    if (
+      invitation.status === "expired" ||
+      invitation.status === "cleaned" ||
+      new Date() > new Date(invitation.expires_at)
+    ) {
+      res.status(403).json({
+        error: "Masa aktif undangan telah berakhir. Data acara tidak dapat diubah lagi.",
+      });
       return;
     }
 
@@ -643,6 +686,17 @@ export async function deletePhotoHandler(req: Request, res: Response) {
     const invitation = await repo.cariInvitationBySlug(slug);
     if (!invitation) {
       res.status(404).json({ error: "Undangan tidak ditemukan" });
+      return;
+    }
+
+    if (
+      invitation.status === "expired" ||
+      invitation.status === "cleaned" ||
+      new Date() > new Date(invitation.expires_at)
+    ) {
+      res.status(403).json({
+        error: "Masa aktif undangan telah berakhir. Data acara tidak dapat diubah lagi.",
+      });
       return;
     }
 

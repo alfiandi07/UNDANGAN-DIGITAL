@@ -9,11 +9,21 @@ export function generateOtp(): string {
   return crypto.randomInt(100000, 1000000).toString();
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function kirimEmailOtp(
   email: string,
   nama: string,
   otp: string
 ): Promise<{ success: boolean; message: string }> {
+  const safeNama = escapeHtml(nama);
   const subject = `[asm.invitation] Kode Verifikasi Akun Anda: ${otp}`;
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; border: 1px solid #eaeaea; rounded: 12px; background-color: #ffffff;">
@@ -23,7 +33,7 @@ export async function kirimEmailOtp(
       </div>
       
       <div style="background-color: #FAF7F2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-        <h3 style="margin: 0 0 10px 0; color: #333333; font-size: 16px;">Halo, ${nama}!</h3>
+        <h3 style="margin: 0 0 10px 0; color: #333333; font-size: 16px;">Halo, ${safeNama}!</h3>
         <p style="margin: 0; color: #555555; font-size: 14px; line-height: 1.5;">
           Terima kasih telah mendaftar di <strong>asm.invitation</strong>. Untuk mengaktifkan akun Anda, silakan masukkan 6 digit kode verifikasi berikut:
         </p>
@@ -91,6 +101,7 @@ export async function kirimEmailResetPassword(
   nama: string,
   otp: string
 ): Promise<{ success: boolean; message: string }> {
+  const safeNama = escapeHtml(nama);
   const subject = `[asm.invitation] Permintaan Reset Password: ${otp}`;
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 12px; background-color: #ffffff;">
@@ -100,7 +111,7 @@ export async function kirimEmailResetPassword(
       </div>
       
       <div style="background-color: #FAF7F2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-        <h3 style="margin: 0 0 10px 0; color: #333333; font-size: 16px;">Halo, ${nama}!</h3>
+        <h3 style="margin: 0 0 10px 0; color: #333333; font-size: 16px;">Halo, ${safeNama}!</h3>
         <p style="margin: 0; color: #555555; font-size: 14px; line-height: 1.5;">
           Kami menerima permintaan untuk mengatur ulang kata sandi akun Anda di <strong>asm.invitation</strong>. Silakan gunakan 6 digit kode OTP verifikasi berikut:
         </p>

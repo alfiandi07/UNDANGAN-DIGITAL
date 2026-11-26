@@ -102,8 +102,8 @@ export function verifyToken(token: string): TokenPayload | null {
     const payload: TokenPayload = JSON.parse(base64UrlDecode(encodedPayload));
     const now = Math.floor(Date.now() / 1000);
 
-    if (payload.exp && payload.exp < now) {
-      return null; // Expired
+    if (typeof payload.exp !== "number" || payload.exp < now) {
+      return null; // Missing or expired exp
     }
 
     return payload;

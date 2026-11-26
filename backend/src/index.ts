@@ -44,8 +44,15 @@ app.use((_req, res, next) => {
 
 // Sajikan folder static template hasil ekstrak ZIP (PRD: Zip Template Engine)
 app.use("/templates", express.static(path.join(__dirname, "../public/templates")));
-// Sajikan folder static gambar cover template
-app.use("/covers", express.static(path.join(__dirname, "../public/covers")));
+// Sajikan folder static gambar cover template dengan CSP ketat (hanya izinkan gambar, blokir eksekusi skrip)
+app.use(
+  "/covers",
+  (_req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'none'; img-src 'self' data:; style-src 'none'; script-src 'none';");
+    next();
+  },
+  express.static(path.join(__dirname, "../public/covers"))
+);
 app.get(
   "/api/cek",
 

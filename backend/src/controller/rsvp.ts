@@ -30,6 +30,11 @@ export async function kirimRsvp(req: Request, res: Response) {
       return;
     }
 
+    if (invitation.status !== "active" || new Date() > new Date(invitation.expires_at)) {
+      res.status(403).json({ error: "Undangan ini belum aktif atau masa berlakunya telah berakhir." });
+      return;
+    }
+
     const { guest_name, attendance, pax, message } = req.body ?? {};
 
     if (!guest_name || !message) {
@@ -37,14 +42,27 @@ export async function kirimRsvp(req: Request, res: Response) {
       return;
     }
 
+    const cleanName = String(guest_name).trim();
+    const cleanMessage = String(message).trim();
+    if (!cleanName || cleanName.length > 100) {
+      res.status(400).json({ error: "Nama tamu wajib diisi (maksimal 100 karakter)" });
+      return;
+    }
+    if (!cleanMessage || cleanMessage.length > 500) {
+      res.status(400).json({ error: "Ucapan doa wajib diisi (maksimal 500 karakter)" });
+      return;
+    }
+
     const att: Attendance =
       attendance === "tidak_hadir" || attendance === "ragu" ? attendance : "hadir";
+    const parsedPax = Number.isFinite(Number(pax)) ? Math.floor(Number(pax)) : 1;
+    const cleanPax = att === "hadir" ? Math.min(Math.max(parsedPax, 1), 20) : 0;
 
     const rsvp = await rsvpRepo.tambahRsvp(invitation.id, {
-      guest_name: String(guest_name).trim(),
+      guest_name: cleanName,
       attendance: att,
-      pax: Number(pax) || 1,
-      message: String(message).trim(),
+      pax: cleanPax,
+      message: cleanMessage,
     });
 
     res.status(201).json({
